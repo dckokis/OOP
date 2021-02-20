@@ -32,11 +32,19 @@ void set_destroy(void* set, void (*destroy)(void*)) {
 }
 
 void* set_init(void* set, size_t itemSize, size_t hash(const void*), bool (*equals)(const void*, const void*),
-               void (*destroy)(void*));
-void set_clear(void* set, void (*destroy)(void*));
+               void (*destroy)(void*)) {
 
-size_t set_count(const void* set);
-bool set_contains(const void* set, const void* item);
+}
+void set_clear(void* set, void (*destroy)(void*)) {
+
+}
+
+size_t set_count(const void* set) {
+
+}
+bool set_contains(const void* set, const void* item) {
+
+}
 bool set_insert(void* set, const void* item);
 void set_remove(void* set, const void* item, void (*destroy)(void*));
 
