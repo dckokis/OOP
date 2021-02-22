@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 typedef struct SETITEM {
+    size_t item_id;
     const void *data;
 } SETITEM;
 
@@ -32,6 +33,9 @@ void *set_create(size_t itemSize, size_t hash(const void *), bool (*equals)(cons
     pSet->equals = equals;
     pSet->setSize = 0;
     pSet->item = calloc(pSet->setSize, sizeof(SETITEM));
+    if (pSet->item == NULL) {
+        return (void *) INVALID;
+    }
     return pSet;
 }
 
@@ -62,6 +66,7 @@ void set_destroy(void *set, void (*destroy)(void *)) {
     pSet->itemSize = -1;
     free(pSet->item);
     pSet->setSize = -1;
+    free(pSet->item);
     free(set);
 }
 
@@ -106,7 +111,7 @@ size_t set_count(const void *set) {
         if (&(pSet->item[i]) != NULL) {
             amount += 1;
         } else if (&(pSet->item[i]) == NULL) {
-            continue;
+            break;
         }
     }
     return amount;
@@ -118,14 +123,13 @@ bool set_contains(const void *set, const void *item) {
         return INVALID;
     }
     SET const *pSet = set;
-    int i;
-    for (i = 0; i < pSet->setSize; i++) {
-        if (&(pSet->item[i]) != NULL) {
-            if (pSet->item[i].data == item) {
-                return true;
-            } else continue;
-        } else if (&(pSet->item[i]) == NULL) {
-            continue;
+    SETITEM const *pItem = item;
+    size_t hash = pSet->hash(pItem->data);
+    int i = 0;
+    for (i; i < pSet->setSize; i++) {
+        if (pSet->item[i].item_id ==
+            hash) { //либо можно так: номер i = hash, тогда быстрый поиск но могут быть коллизии
+            return true;
         }
     }
     return false;
@@ -136,31 +140,32 @@ bool set_contains(const void *set, const void *item) {
 ///*если такой элемент уже существует -- false.
 bool set_insert(void *set, const void *item) {
     SET *pSet = set;
-    SETITEM const* pItem = item;
-    size_t hash = pSet->hash(pItem->data);
-    if (&(pSet->item[hash]) != NULL) {
-        pSet->item[hash].data = item;
-        return true;
-    } else return false;
+    SETITEM const *pItem = item;
+    for (int i = 0; i < pSet->setSize; i++) {
+        if (&(pSet->item[i]) != NULL && pSet->item[i].data == NULL) {
+            pSet->item[i].data = pItem->data;
+            pSet->item[i].item_id = pSet->hash(pItem->data);
+            return true;
+        } else break;
+    }
+    return false;
 }
 
 ///*Найти элемент и удалить из множества.
 ///*Если указана функция destroy, то вызвать её для удаляемого элемента setItem.///
 void set_remove(void *set, const void *item, void (*destroy)(void *)) {
     SET *pSet = set;
-    int i;
-    for (i = 0; i < pSet->setSize; i++) {
-        if (&(pSet->item[i]) != NULL) {
-            if (pSet->item[i].data == item) {
-                if (destroy != NULL) {
-                    (*destroy)(&(pSet->item[i]));
-                    free(&(pSet->item[i]));
-                } else if (destroy == NULL) {
-                    pSet->item[i].data = NULL;
-                    free(&(pSet->item[i]));
-                }
-            } else continue;
-        } else continue;
+    SETITEM const *pItem = item;
+    size_t item_id = pSet->hash(pItem->data);
+    for (int i = 0; i < pSet->setSize; i++) {
+        if (pSet->item[i].item_id == item_id && pSet->item[i].data != NULL) {
+            if (destroy == NULL) {
+                pSet->item[i].data = NULL;
+                free(&(pSet->item[i]));
+            } else if (destroy != NULL) {}
+            (*destroy)(&(pSet->item[i].data));
+            free(&(pSet->item[i].data));
+        } else break;
     }
 }
 
@@ -176,11 +181,10 @@ size_t set_first(const void *set) {
     while (&(pSet->item[i]) == NULL) {
         i++;
     }
-    if (i  > pSet->setSize) {
-        set_stop(set);
-    }
-    else {
-        return (size_t) pSet->item[i].data;
+    if (i > pSet->setSize) {
+        return INVALID;
+    } else {
+        return pSet->item[i].item_id;
     }
 }
 
@@ -196,10 +200,9 @@ size_t set_last(const void *set) {
         i--;
     }
     if (i < 0) {
-        set_stop(set);
-    }
-    else {
-        return (size_t) pSet->item[i].data;
+        return INVALID;
+    } else {
+        return pSet->item[i].item_id;
     }
 }
 
@@ -210,15 +213,14 @@ size_t set_next(const void *set, size_t item_id) {
         return INVALID;
     }
     SET const *pSet = set;
-    size_t cur_id = item_id;
-    int i = 1;
-    while (&(pSet->item[cur_id + i]) == NULL) {
+    int i = 0;
+    while (pSet->item[i].item_id != item_id) {
         i++;
     }
-    if (cur_id + i > pSet->setSize) {
+    if (i >= pSet->setSize) {
         set_stop(set);
     } else {
-        return (size_t) pSet->item[cur_id + i].data;
+        return (size_t) pSet->item[i + 1].item_id;
     }
 }
 
@@ -228,23 +230,23 @@ size_t set_prev(const void *set, size_t item_id) {
     if (set == NULL) {
         return INVALID;
     }
-    SET const *pSet = set;
-    size_t cur_id = item_id;
-    int i = 1;
-    while (&(pSet->item[cur_id - i]) == NULL) {
+    SET const *pSet = set;;
+    int i = 0;
+    while (pSet->item[i].item_id != item_id) {
         i++;
     }
-    if (i > cur_id) {
+    if (i >= pSet->setSize) {
         set_stop(set);
     } else {
-        return (size_t) pSet->item[cur_id - i].data;
+        return pSet->item[i - 1].item_id;
     }
 }
 
 ///*Идентификатор, получаемый при попытке
 ///*обратиться к элементу за пределами множества.*///
 size_t set_stop(const void *set) {
-    return INVALID;
+    SET const *pSet = set;
+    return (size_t) (pSet->item[pSet->setSize].data);
 }
 
 ///*Получить указатель на элемент по его идентификатору.*///
@@ -252,11 +254,15 @@ const void *set_current(const void *set, size_t item_id) {
     if (set == NULL) {
         return (const void *) (INVALID);
     }
-    SET const* pSet = set;
-    size_t hash = pSet->hash((const void *) item_id);
-    if (&(pSet->item[hash]) != NULL) {
-        return pSet->item[hash].data;
+    SET const *pSet = set;
+    int i = 0;
+    while (pSet->item[i].item_id != item_id) {
+        i++;
     }
+    if(i > pSet->setSize) {
+        return (const void *) INVALID;
+    } else
+        return (const void*)(&(pSet->item[i]));
 }
 
 ///*Удаление элемента множества по его идентификатору.
@@ -264,5 +270,16 @@ const void *set_current(const void *set, size_t item_id) {
 ///*После удаления элемента,
 ///*идентификаторы любых элементов из этого множества могут стать невалидным.///
 void set_erase(void *set, size_t item_id, void (*destroy)(void *)) {
-
+    SET const *pSet = set;
+    int i = 0;
+    while (pSet->item[i].item_id != item_id) {
+        i++;
+    }
+    if (destroy == NULL) {
+        pSet->item[i].data = NULL;
+        free(&(pSet->item[i]));
+    } else if (destroy != NULL) {
+        (*destroy)(&(pSet->item[i].data));
+        free(&(pSet->item[i]));
+    }
 }
