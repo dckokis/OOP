@@ -39,7 +39,7 @@ void *set_create(size_t itemSize, size_t hash(const void *), bool (*equals)(cons
     return pSet;
 }
 
-void *_set_destroy_each_item(void *set, void (*destroy)(void *)) {
+static void *_set_destroy_each_item(void *set, void (*destroy)(void *)) {
     SET *pSet = set;
     int i;
     if (destroy == NULL) {
