@@ -37,6 +37,8 @@ int main(int argc, char* argv[])
     void* set = set_create(sizeof(KeyValue), hash, equals);
 
     assert(0 == set_count(set));
+    size_t y = set_stop(set);
+    size_t x = set_first(set);
     assert(set_stop(set) == set_first(set));
 
     //Создаем ключ-значение для множества
@@ -52,6 +54,7 @@ int main(int argc, char* argv[])
     assert(0 == strcmp(item->name, keyValue.name));
 
     assert(set_last(set) == set_first(set));
+    size_t z = set_next(set, set_first(set));
     assert(set_next(set, set_first(set)) == set_stop(set));
 
     set_destroy(set, NULL);
