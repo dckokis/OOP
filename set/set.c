@@ -190,7 +190,6 @@ bool set_insert(void *set, const void *item) {
     size_t insert_id = pSet->hash(item) % pSet->setSize;
     for (int i = 0; i < pSet->setSize - insert_id; i++) {
         if (pSet->conditions[insert_id + i] == 1) {
-            void *x = &pSet->items[insert_id + i];///////////////////////////
             if (&pSet->items[insert_id + i] == NULL) {
                 memcpy(&pSet->items[insert_id + i], item, pSet->itemSize);
                 pSet->conditions[insert_id + i] = 1;
