@@ -65,6 +65,16 @@ void *set_resize(void *set, size_t new_setSize) {
     return pSet;
 }
 
+void *set_item_create(size_t itemSize) {
+    if (itemSize == 0) {
+        return NULL;
+    }
+    void *new_item = calloc(1, itemSize);
+    if (new_item == NULL) {
+        return NULL;
+    }
+    return new_item;
+}
 
 static void *set_destroy_each_item(void *set, void (*destroy)(void *)) {
     SET *pSet = set;
@@ -73,13 +83,11 @@ static void *set_destroy_each_item(void *set, void (*destroy)(void *)) {
         if (pSet->conditions[i] == 1) {
             if (destroy == NULL) {
                 pSet->items[i] = NULL;
-                pSet->conditions[i] = 0;
             } else {
                 destroy(pSet->items[i]);
-                pSet->conditions[i] = 0;
             }
-        } else {
-            continue;
+            free(pSet->items[i]);
+            pSet->conditions[i] = 0;
         }
     }
     return pSet;
@@ -245,6 +253,7 @@ bool set_insert(void *set, const void *item) {
                 continue;
             }
         } else if (pSet->conditions[i] == 0) {
+
             pSet->items[i] = (void *) item;
             pSet->conditions[i] = 1;
             return true;
@@ -258,7 +267,12 @@ bool set_insert(void *set, const void *item) {
                 continue;
             }
         } else if (pSet->conditions[i] == 0) {
-            pSet->items[i] = (void *) item;
+            pSet->items[i] = set_item_create(pSet->itemSize);
+            if (pSet->items[i] != NULL) {
+                pSet->items[i] = (void *) item;
+            } else {
+                return INVALID;
+            }
             pSet->conditions[i] = 1;
             return true;
         }
