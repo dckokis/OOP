@@ -2,8 +2,9 @@
 #include <assert.h>
 
 #include "set.h"
+
 #define _CRTDBG_MAP_ALLOC
-#include <string.h>
+
 #include <crtdbg.h>
 typedef struct {
     char name[10];
@@ -33,10 +34,9 @@ static bool equals(const void* lhsp, const void* rhsp) {
     return 0 == strcmp(lhs->name, rhs->name);
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     //Создаем множество с элементами типа KeyValue;
-    void* set = set_create(sizeof(KeyValue), hash, equals);
+    void *set = set_create(sizeof(KeyValue), hash, equals);
 
     assert(0 == set_count(set));
     size_t y = set_stop(set);
@@ -44,14 +44,14 @@ int main(int argc, char* argv[])
     assert(set_stop(set) == set_first(set));
 
     //Создаем ключ-значение для множества
-    const KeyValue keyValue = { "Key-value" };
+    const KeyValue keyValue = {"Key-value"};
 
     //Добавляем ключ-значение
-    const bool isCreated = (KeyValue*)set_insert(set, &keyValue);
+    const bool isCreated = (KeyValue *) set_insert(set, &keyValue);
     assert(true == isCreated);
 
     assert(true == set_contains(set, &keyValue));
-    const KeyValue* item = (const KeyValue*)set_current(set, set_first(set));
+    const KeyValue *item = (const KeyValue *) set_current(set, set_first(set));
 
     assert(0 == strcmp(item->name, keyValue.name));
 

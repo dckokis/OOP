@@ -1,5 +1,6 @@
 #include "set.h"
 #include <stdlib.h>
+#include <assert.h>
 
 static const size_t MIN_SIZE = 5;
 
@@ -17,11 +18,11 @@ typedef struct SET {
 
 void *set_resize(void *set, size_t new_setSize) {
     SET *pSet = set;
-    void **new_items = malloc(new_setSize * sizeof(size_t));
+    void **new_items = calloc(new_setSize, new_setSize * sizeof(size_t));
     if (new_items == NULL) {
         return NULL;
     }
-    int *new_conditions = malloc(new_setSize * sizeof(int));
+    int *new_conditions = calloc(new_setSize, new_setSize * sizeof(int));
     if (new_conditions == NULL) {
         return NULL;
     }
@@ -64,34 +65,21 @@ void *set_resize(void *set, size_t new_setSize) {
     return pSet;
 }
 
-static void *set_item_create(const void *set) {
-    SET const *pSet = set;
-    void *new_item = malloc(pSet->itemSize);
-    return new_item;
-}
 
 static void *set_destroy_each_item(void *set, void (*destroy)(void *)) {
     SET *pSet = set;
     int i;
-    if (destroy == NULL) {
-        for (i = 0; i < pSet->setSize; i++) {
-            if (pSet->conditions[i] == 1) {
+    for (i = 0; i < pSet->setSize; i++) {
+        if (pSet->conditions[i] == 1) {
+            if (destroy == NULL) {
                 pSet->items[i] = NULL;
                 pSet->conditions[i] = 0;
-                free(pSet->items[i]);
             } else {
-                continue;
-            }
-        }
-    } else {
-        for (i = 0; i < pSet->setSize; i++) {
-            if (pSet->conditions[i] == 1) {
-                (*destroy)(&(pSet->items[i]));
+                destroy(pSet->items[i]);
                 pSet->conditions[i] = 0;
-                free(pSet->items[i]);
-            } else {
-                continue;
             }
+        } else {
+            continue;
         }
     }
     return pSet;
@@ -101,20 +89,24 @@ static void *set_destroy_each_item(void *set, void (*destroy)(void *)) {
 ///*Размер элемента -- itemSize, для обработки элементов использовать функцию хеширования hash,
 ///*и функцию проверки на равенство equals.*
 void *set_create(size_t itemSize, size_t hash(const void *), bool (*equals)(const void *, const void *)) {
-    struct SET *pSet;
-    pSet = malloc(sizeof(struct SET));
-    if (pSet == NULL || itemSize == 0 || hash == NULL || equals == NULL) {
+    SET *pSet;
+    pSet = malloc(sizeof(SET));
+    if (pSet == NULL) {
+        return NULL;
+    }
+    if (itemSize == 0 || hash == NULL || equals == NULL) {
+        free(pSet);
         return NULL;
     }
     pSet->itemSize = itemSize;
     pSet->setSize = MIN_SIZE;
     pSet->hash = hash;
     pSet->equals = equals;
-    pSet->items = malloc(pSet->setSize * sizeof(size_t));
+    pSet->items = calloc(pSet->setSize, sizeof(size_t));
     if (pSet->items == NULL) {
         return NULL;
     }
-    pSet->conditions = malloc(pSet->setSize);
+    pSet->conditions = calloc(pSet->setSize, sizeof(int));
     if (pSet->conditions == NULL) {
         return NULL;
     }
@@ -134,11 +126,11 @@ void set_destroy(void *set, void (*destroy)(void *)) {
     SET *pSet = set_destroy_each_item(set, destroy);
     pSet->equals = NULL;
     pSet->hash = NULL;
-    pSet->itemSize = -1;
+    pSet->itemSize = INVALID;
+    pSet->setSize = INVALID;
     free(pSet->items);
-    pSet->setSize = -1;
     free(pSet->conditions);
-    free(set);
+    free(pSet);
 }
 
 ///*Инициализировать множество новыми параметрами.
@@ -164,7 +156,7 @@ void *set_init(void *set, size_t itemSize, size_t hash(const void *), bool (*equ
     free(pSet->items);
     pSet->items = new_items;
 
-    int *new_conditions = realloc(pSet->conditions, pSet->setSize);
+    int *new_conditions = realloc(pSet->conditions, pSet->setSize * sizeof(int));
     if (new_conditions == NULL) {
         return NULL;
     }
