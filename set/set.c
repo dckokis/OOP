@@ -212,24 +212,27 @@ size_t set_count(const void *set) {
 
 ///*Проверить наличие во множестве заданного элемента.///
 bool set_contains(const void *set, const void *item) {
-    if (set == NULL) {
+    if (set == NULL || item == NULL) {
         return NULL;
     }
     SET const *pSet = set;
     size_t contain_id = pSet->hash(item) % pSet->setSize;
+    if (contain_id >= pSet->setSize) {
+        return set_stop(pSet);
+    }
     int i;
-    for (i = contain_id; i < pSet->setSize; contain_id++) {
-        if (pSet->equals(pSet->items[i], item) == true) {
-            return true;
-        } else {
-            continue;
+    for (i = contain_id; i < pSet->setSize; i++) {
+        if (pSet->conditions[i] == 1) {
+            if (pSet->equals(pSet->items[i], item) == true) {
+                return true;
+            }
         }
     }
     for (i = 0; i < contain_id; i++) {
-        if (pSet->equals(pSet->items[i], item) == true) {
-            return true;
-        } else {
-            continue;
+        if (pSet->conditions[i] == 1) {
+            if (pSet->equals(pSet->items[i], item) == true) {
+                return true;
+            }
         }
     }
     return false;
@@ -400,7 +403,8 @@ const void *set_current(const void *set, size_t item_id) {
     if (pSet == NULL || item_id >= pSet->setSize || pSet->conditions[item_id] == 0) {
         return NULL;
     }
-    return (pSet->items[item_id]);
+    size_t current_id = item_id % pSet->setSize;
+    return (pSet->items[current_id]);
 }
 
 ///*Удаление элемента множества по его идентификатору.
@@ -412,16 +416,15 @@ void set_erase(void *set, size_t item_id, void (*destroy)(void *)) {
         return;
     }
     SET const *pSet = set;
-    if (pSet->conditions[item_id] == 1) {
+    size_t erase_id = item_id % pSet->setSize;
+    if (pSet->conditions[erase_id] == 1) {
         if (destroy != NULL) {
-            (*destroy)(&(pSet->items[item_id]));
-            free(pSet->items[item_id]);
-            pSet->conditions[item_id] = 0;
+            destroy(pSet->items[erase_id]);
         } else if (destroy == NULL) {
-            pSet->items[item_id] = NULL;
-            free(pSet->items[item_id]);
-            pSet->conditions[item_id] = 0;
+            pSet->items[erase_id] = NULL;
         }
+        free(pSet->items[erase_id]);
+        pSet->conditions[erase_id] = 0;
     }
 }
 
