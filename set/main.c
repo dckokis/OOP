@@ -36,7 +36,8 @@ static bool equals(const void* lhsp, const void* rhsp) {
 
 int main(int argc, char* argv[]) {
     //Создаем множество с элементами типа KeyValue;
-    void *set = set_create(sizeof(KeyValue), hash, equals);
+    void *set = set_create(1, hash, equals);
+    set = set_init(set, sizeof(KeyValue), hash, equals, NULL);
     assert(set_init(NULL, 8, hash, equals, NULL) == NULL);
     assert(0 == set_count(set));
     size_t y = set_stop(set);

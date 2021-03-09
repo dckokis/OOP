@@ -152,29 +152,9 @@ void *set_init(void *set, size_t itemSize, size_t hash(const void *), bool (*equ
         return NULL;
     }
     SET *pSet = set_destroy_each_item(set, destroy);
-    pSet->equals = equals;
-    pSet->hash = hash;
-    pSet->itemSize = itemSize;
-    pSet->setSize = MIN_SIZE;
-
-    void **new_items = realloc(pSet->items, pSet->setSize * sizeof(size_t));
-    if (new_items == NULL) {
-        return NULL;
-    }
     free(pSet->items);
-    pSet->items = new_items;
-
-    int *new_conditions = realloc(pSet->conditions, pSet->setSize * sizeof(int));
-    if (new_conditions == NULL) {
-        return NULL;
-    }
     free(pSet->conditions);
-    pSet->conditions = new_conditions;
-
-    for (int i = 0; i < pSet->setSize; i++) {
-        pSet->conditions[i] = 0;
-    }
-
+    pSet = set_create(itemSize, hash, equals);
     return pSet;
 }
 

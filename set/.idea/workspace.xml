@@ -12,14 +12,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="808d62af-7c91-4acf-93ca-453d1dae730f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../lab_fabric/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../lab_fabric/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../lab_fabric/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../lab_fabric/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/set.c" beforeDir="false" afterPath="$PROJECT_DIR$/set.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/set.h" beforeDir="false" afterPath="$PROJECT_DIR$/set.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +51,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -69,7 +68,7 @@
       <workItem from="1615135209008" duration="1276000" />
       <workItem from="1615217673761" duration="3410000" />
       <workItem from="1615223925193" duration="2186000" />
-      <workItem from="1615307430347" duration="2154000" />
+      <workItem from="1615307430347" duration="2453000" />
     </task>
     <task id="LOCAL-00001" summary="Гит хуета, сломалось все 10 раз.">
       <created>1615135406633</created>
@@ -92,7 +91,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615221037331</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Need to realize create throw init.">
+      <created>1615309611196</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1615309611196</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
