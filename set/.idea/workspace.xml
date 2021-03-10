@@ -11,7 +11,8 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="808d62af-7c91-4acf-93ca-453d1dae730f" name="Default Changelist" comment="">
+    <list default="true" id="808d62af-7c91-4acf-93ca-453d1dae730f" name="Default Changelist" comment="Init works throw calling create.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/set.c" beforeDir="false" afterPath="$PROJECT_DIR$/set.c" afterDir="false" />
     </list>
@@ -38,14 +39,10 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../list/linked_list.c" />
     <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="set" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="set" TARGET_NAME="set" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="set" RUN_TARGET_NAME="set">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -68,7 +65,8 @@
       <workItem from="1615135209008" duration="1276000" />
       <workItem from="1615217673761" duration="3410000" />
       <workItem from="1615223925193" duration="2186000" />
-      <workItem from="1615307430347" duration="2453000" />
+      <workItem from="1615307430347" duration="3551000" />
+      <workItem from="1615363982716" duration="4608000" />
     </task>
     <task id="LOCAL-00001" summary="Гит хуета, сломалось все 10 раз.">
       <created>1615135406633</created>
@@ -98,7 +96,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615309611196</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Init works throw calling create.">
+      <created>1615309944178</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1615309944178</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -117,6 +122,7 @@
     <MESSAGE value="Гит хуета, сломалось все 10 раз." />
     <MESSAGE value="Failure on set_destroy." />
     <MESSAGE value="Need to realize create throw init." />
-    <option name="LAST_COMMIT_MESSAGE" value="Need to realize create throw init." />
+    <MESSAGE value="Init works throw calling create." />
+    <option name="LAST_COMMIT_MESSAGE" value="Init works throw calling create." />
   </component>
 </project>

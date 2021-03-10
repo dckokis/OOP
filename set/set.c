@@ -1,9 +1,9 @@
 #include "set.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <vcruntime_string.h>
 
 static const size_t MIN_SIZE = 5;
-
 
 typedef struct SET {
     size_t itemSize;
@@ -76,34 +76,30 @@ void *set_item_create(size_t itemSize) {
     return new_item;
 }
 
-static void *set_destroy_each_item(void *set, void (*destroy)(void *)) {
+static void set_destroy_each_item(void *set, void (*destroy)(void *)) {
     SET *pSet = set;
     int i;
     for (i = 0; i < pSet->setSize; i++) {
         if (pSet->conditions[i] == 1) {
-            if (destroy == NULL) {
-                pSet->items[i] = NULL;
-            } else {
+            if (destroy) {
                 destroy(pSet->items[i]);
             }
             free(pSet->items[i]);
             pSet->conditions[i] = 0;
         }
     }
-    return pSet;
 }
 
 ///*Создать новое пустое множество.
 ///*Размер элемента -- itemSize, для обработки элементов использовать функцию хеширования hash,
 ///*и функцию проверки на равенство equals.*
 void *set_create(size_t itemSize, size_t hash(const void *), bool (*equals)(const void *, const void *)) {
+    if (itemSize == 0 || hash == NULL || equals == NULL) {
+        return NULL;
+    }
     SET *pSet;
     pSet = malloc(sizeof(SET));
     if (pSet == NULL) {
-        return NULL;
-    }
-    if (itemSize == 0 || hash == NULL || equals == NULL) {
-        free(pSet);
         return NULL;
     }
     pSet->itemSize = itemSize;
@@ -131,7 +127,8 @@ void set_destroy(void *set, void (*destroy)(void *)) {
     if (set == NULL) {
         return;
     }
-    SET *pSet = set_destroy_each_item(set, destroy);
+    SET *pSet = set;
+    set_destroy_each_item(pSet, destroy);
     pSet->equals = NULL;
     pSet->hash = NULL;
     pSet->itemSize = INVALID;
@@ -151,7 +148,8 @@ void *set_init(void *set, size_t itemSize, size_t hash(const void *), bool (*equ
     if (set == NULL || itemSize == 0 || hash == NULL || equals == NULL) {
         return NULL;
     }
-    SET *pSet = set_destroy_each_item(set, destroy);
+    SET *pSet = set;
+    set_destroy_each_item(pSet, destroy);
     free(pSet->items);
     free(pSet->conditions);
     pSet = set_create(itemSize, hash, equals);
@@ -165,7 +163,8 @@ void set_clear(void *set, void (*destroy)(void *)) {
     if (set == NULL) {
         return;
     }
-    SET *pSet = set_destroy_each_item(set, destroy);
+    SET *pSet = set;
+    set_destroy_each_item(pSet, destroy);
     for (int i = 0; i < pSet->setSize; i++) {
         pSet->conditions[i] = 0;
     }
@@ -193,12 +192,12 @@ size_t set_count(const void *set) {
 ///*Проверить наличие во множестве заданного элемента.///
 bool set_contains(const void *set, const void *item) {
     if (set == NULL || item == NULL) {
-        return NULL;
+        return false;
     }
     SET const *pSet = set;
     size_t contain_id = pSet->hash(item) % pSet->setSize;
     if (contain_id >= pSet->setSize) {
-        return set_stop(pSet);
+        return false;
     }
     int i;
     for (i = contain_id; i < pSet->setSize; i++) {
@@ -222,8 +221,8 @@ bool set_contains(const void *set, const void *item) {
 ///*В случае успеха, функция возвращает true,
 ///*если такой элемент уже существует -- false.
 bool set_insert(void *set, const void *item) {
-    if (set == NULL) {
-        return INVALID;
+    if (set == NULL || item == NULL) {
+        return false;
     }
     SET *pSet = set;
     size_t insert_id = pSet->hash(item) % pSet->setSize;
@@ -236,8 +235,12 @@ bool set_insert(void *set, const void *item) {
                 continue;
             }
         } else if (pSet->conditions[i] == 0) {
-
-            pSet->items[i] = (void *) item;
+            pSet->items[i] = set_item_create(pSet->itemSize);
+            if (pSet->items[i] != NULL) {
+                memcpy(pSet->items[i], item, pSet->itemSize);
+            } else {
+                return false;
+            }
             pSet->conditions[i] = 1;
             return true;
         }
@@ -252,22 +255,22 @@ bool set_insert(void *set, const void *item) {
         } else if (pSet->conditions[i] == 0) {
             pSet->items[i] = set_item_create(pSet->itemSize);
             if (pSet->items[i] != NULL) {
-                pSet->items[i] = (void *) item;
+                memcpy(pSet->items[i], item, pSet->itemSize);
             } else {
-                return INVALID;
+                return false;
             }
             pSet->conditions[i] = 1;
             return true;
         }
     }
     pSet = set_resize(set, pSet->setSize * 2);
-    set_insert(pSet, item);
+    return set_insert(pSet, item);
 }
 
 ///*Найти элемент и удалить из множества.
 ///*Если указана функция destroy, то вызвать её для удаляемого элемента setItem.///
 void set_remove(void *set, const void *item, void (*destroy)(void *)) {
-    if (set == NULL) {
+    if (set == NULL || item == NULL) {
         return;
     }
     SET *pSet = set;
@@ -301,7 +304,7 @@ void set_remove(void *set, const void *item, void (*destroy)(void *)) {
 ///*Идентификатор может стать невалидным при модификации множества.*///
 size_t set_first(const void *set) {
     if (set == NULL) {
-        return INVALID;
+        return set_stop(set);
     }
     SET const *pSet = set;
     size_t item_id;
@@ -319,7 +322,7 @@ size_t set_first(const void *set) {
 ///*Идентификатор может стать невалидным при модификации множества.*///
 size_t set_last(const void *set) {
     if (set == NULL) {
-        return (size_t) NULL;
+        return set_stop(set);
     }
     SET const *pSet = set;
     size_t item_id;
@@ -337,7 +340,7 @@ size_t set_last(const void *set) {
 ///*идентификатор следующего элемента множества.*///
 size_t set_next(const void *set, size_t item_id) {
     if (set == NULL) {
-        return INVALID;
+        return set_stop(set);
     }
     SET const *pSet = set;
     size_t current_id = item_id % pSet->setSize;
@@ -356,7 +359,7 @@ size_t set_next(const void *set, size_t item_id) {
 ///*идентификатор предыдущего элемента множества.*///
 size_t set_prev(const void *set, size_t item_id) {
     if (set == NULL) {
-        return INVALID;
+        return set_stop(set);
     }
     SET const *pSet = set;
     size_t current_id = item_id % pSet->setSize;
@@ -397,6 +400,9 @@ void set_erase(void *set, size_t item_id, void (*destroy)(void *)) {
     }
     SET const *pSet = set;
     size_t erase_id = item_id % pSet->setSize;
+    if(erase_id == pSet->setSize - 1) {
+        return;
+    }
     if (pSet->conditions[erase_id] == 1) {
         if (destroy != NULL) {
             destroy(pSet->items[erase_id]);
@@ -407,4 +413,3 @@ void set_erase(void *set, size_t item_id, void (*destroy)(void *)) {
         pSet->conditions[erase_id] = 0;
     }
 }
-
