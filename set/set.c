@@ -183,7 +183,7 @@ size_t set_count(const void *set) {
         if (pSet->conditions[i] == 1) {
             amount++;
         } else if (pSet->conditions[i] == 0) {
-            break;
+            continue;
         }
     }
     return amount;
@@ -227,7 +227,7 @@ bool set_insert(void *set, const void *item) {
     SET *pSet = set;
     size_t insert_id = pSet->hash(item) % pSet->setSize;
     int i;
-    for (i = insert_id; i < pSet->setSize; insert_id++) {
+    for (i = insert_id; i < pSet->setSize; i++) {
         if (pSet->conditions[i] == 1) {
             if (pSet->equals(pSet->items[i], item) == true) {
                 return false;
@@ -326,7 +326,7 @@ size_t set_last(const void *set) {
     }
     SET const *pSet = set;
     size_t item_id;
-    for (item_id = pSet->setSize - 1; item_id >= 0; item_id--) {
+    for (item_id = pSet->setSize - 1; item_id > 0; item_id--) {
         if (pSet->conditions[item_id] == 1) {
             return item_id;
         } else {
@@ -371,7 +371,7 @@ size_t set_prev(const void *set, size_t item_id) {
             return current_id - i;
         } else continue;
     }
-    return INVALID;
+    return set_stop(pSet);
 }
 
 ///*Идентификатор, получаемый при попытке

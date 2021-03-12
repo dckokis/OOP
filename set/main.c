@@ -37,15 +37,35 @@ static bool equals(const void* lhsp, const void* rhsp) {
 int main(int argc, char* argv[]) {
     //Создаем множество с элементами типа KeyValue;
     void *set = set_create(1, hash, equals);
+    //Создаем ключ-значение для множества
+    const KeyValue keyValue = {"Key-value"};
+    const KeyValue keyValue1 = {"Key-value1"};
+    const KeyValue keyValue2 = {"Key-value2"};
+    const KeyValue keyValue3 = {"Key-value3"};
     set = set_init(set, sizeof(KeyValue), hash, equals, NULL);
     assert(set_init(NULL, 8, hash, equals, NULL) == NULL);
     assert(0 == set_count(set));
+    assert(set_stop(set) == set_first(set));
+    assert(set_stop(set) == set_last(set));
+    assert(set_next(set, set_first(set)) == set_stop(set));
+    assert(set_next(set, set_last(set)) == set_stop(set));
+    assert(set_prev(set, set_first(set)) == set_stop(set));
+    assert(set_prev(set, set_last(set)) == set_stop(set));
+    assert(set_insert(NULL, &keyValue) == false);
+    assert(set_contains(set, &keyValue) == false);
+    assert(set_stop(set) + 1 == set_count(NULL));
+
+    set_insert(set, &keyValue);
+    set_insert(set, &keyValue1);
+    set_insert(set, &keyValue2);
+    set_insert(set, &keyValue3);
+    assert(set_count(set) == 4);
+    set_clear(set, NULL);
     size_t y = set_stop(set);
     size_t x = set_first(set);
     assert(set_stop(set) == set_first(set));
+    assert(set_insert(set, NULL) == false);
 
-    //Создаем ключ-значение для множества
-    const KeyValue keyValue = {"Key-value"};
 
     //Добавляем ключ-значение
     const bool isCreated = (KeyValue *) set_insert(set, &keyValue);
