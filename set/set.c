@@ -16,62 +16,7 @@ typedef struct SET {
     bool (*equals)(const void *, const void *);
 } SET;
 
-//void set_resize(void *set, size_t new_setSize) {
-//    SET *pSet = set;
-//    void **new_items = calloc(new_setSize, new_setSize * sizeof(size_t));
-//    if (new_items == NULL) {
-//        return;
-//    }
-//    int *new_conditions = calloc(new_setSize, new_setSize * sizeof(int));
-//    if (new_conditions == NULL) {
-//        return;
-//    }
-//    int i;
-//    size_t clone_id;
-//    for (i = 0; i < pSet->setSize; i++) {
-//        clone_id = pSet->hash(pSet->items[i]) % new_setSize;
-//        if (new_conditions[clone_id] == 0) {
-//            new_items[clone_id] = pSet->items[i];
-//            if (pSet->conditions[i] == 1) {
-//                new_conditions[clone_id] = 1;
-//            }
-//        } else if (new_conditions[clone_id] == 1) {
-//            if (pSet->equals(pSet->items[i], new_items[clone_id]) == false) {
-//                size_t j;
-//                for (j = clone_id + 1; j < new_setSize; j++) {
-//                    if (new_conditions[j] == 0) {
-//                        new_items[j] = pSet->items[i];
-//                        if (pSet->conditions[i] == 1) {
-//                            new_conditions[j] = 1;
-//                        }
-//                        break;
-//                    } else if (new_conditions[j] == 1) {
-//                        continue;
-//                    }
-//                }
-//                if (new_items[j] != pSet->items[i]) {
-//                    for (j = 0; j < clone_id; j++) {
-//                        if (new_conditions[j] == 0) {
-//                            new_items[j] = pSet->items[i];
-//                            if (pSet->conditions[i] == 1) {
-//                                new_conditions[j] = 1;
-//                            }
-//                        } else if (new_conditions[j] == 1) {
-//                            continue;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    free(pSet->items);
-//    free(pSet->conditions);
-//    size_t old_size = pSet->setSize;
-//    pSet->setSize = new_setSize;
-//    pSet->items = new_items;
-//    pSet->conditions = new_conditions;
-//}
-void *set_resize(void *set, size_t new_setSize) {
+static void *set_resize(void *set, size_t new_setSize) {
     SET *pSet = set;
     void **new_items = calloc(new_setSize, new_setSize * sizeof(size_t));
     if (new_items == NULL) {
@@ -80,6 +25,15 @@ void *set_resize(void *set, size_t new_setSize) {
     int *new_conditions = calloc(new_setSize, new_setSize * sizeof(int));
     if (new_conditions == NULL) {
         return NULL;
+    }
+    if (new_setSize == 0) {
+        pSet->setSize = 0;
+        set_destroy(pSet, NULL);
+        free(pSet->items);
+        free(pSet->conditions);
+        pSet->items = new_items;
+        pSet->conditions = new_conditions;
+        return pSet;
     }
     int i;
     size_t clone_id;
@@ -125,7 +79,8 @@ void *set_resize(void *set, size_t new_setSize) {
     pSet->conditions = new_conditions;
     return pSet;
 }
-void *set_item_create(size_t itemSize) {
+
+static void *set_item_create(size_t itemSize) {
     if (itemSize == 0) {
         return NULL;
     }
@@ -174,9 +129,6 @@ void *set_create(size_t itemSize, size_t hash(const void *), bool (*equals)(cons
     if (pSet->conditions == NULL) {
         return NULL;
     }
-    for (int i = 0; i < pSet->setSize; i++) {
-        pSet->conditions[i] = 0;
-    }
     return pSet;
 }
 
@@ -212,6 +164,7 @@ void *set_init(void *set, size_t itemSize, size_t hash(const void *), bool (*equ
     set_destroy_each_item(pSet, destroy);
     free(pSet->items);
     free(pSet->conditions);
+    free(pSet);
     pSet = set_create(itemSize, hash, equals);
     return pSet;
 }
@@ -329,7 +282,7 @@ bool set_insert(void *set, const void *item) {
             return true;
         }
     }
-    set_resize(set, pSet->setSize * 2);
+    set = set_resize(set, pSet->setSize * 2);
     return set_insert(pSet, item);
 }
 
@@ -355,16 +308,11 @@ void set_remove(void *set, const void *item, void (*destroy)(void *)) {
         }
     }
 
-    size_t not_NULL_item = 0;
-    int i;
-    for (i = 0; i < pSet->setSize; i++) {
-        if (pSet->conditions[i] == 1) {
-            not_NULL_item++;
-        }
-    }
+    size_t not_NULL_item = set_count(pSet);
 
-    if (not_NULL_item < pSet->setSize / 2) {
-        set_resize(pSet, pSet->setSize / 2);
+
+    if (not_NULL_item < pSet->setSize / 2 && not_NULL_item != 0) {
+        set = set_resize(pSet, pSet->setSize / 2);
     }
 }
 
@@ -477,7 +425,7 @@ void set_erase(void *set, size_t item_id, void (*destroy)(void *)) {
     }
     SET const *pSet = set;
     size_t erase_id = item_id % pSet->setSize;
-    if(erase_id > pSet->setSize - 1) {
+    if (erase_id > pSet->setSize - 1) {
         return;
     }
     if (pSet->conditions[erase_id] == 1) {
