@@ -408,7 +408,7 @@ size_t set_stop(const void *set) {
 ///*Получить указатель на элемент по его идентификатору.*///
 const void *set_current(const void *set, size_t item_id) {
     SET const *pSet = set;
-    if (pSet == NULL || item_id >= pSet->setSize || pSet->conditions[item_id] == 0) {
+    if (pSet == NULL || item_id >= pSet->setSize || pSet->setSize == 0 || pSet->conditions[item_id] == 0) {
         return NULL;
     }
     size_t current_id = item_id % pSet->setSize;
@@ -424,6 +424,9 @@ void set_erase(void *set, size_t item_id, void (*destroy)(void *)) {
         return;
     }
     SET const *pSet = set;
+    if (pSet->setSize == 0) {
+        return;
+    }
     size_t erase_id = item_id % pSet->setSize;
     if (erase_id > pSet->setSize - 1) {
         return;

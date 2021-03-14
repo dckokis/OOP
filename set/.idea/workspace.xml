@@ -13,6 +13,7 @@
   <component name="ChangeListManager">
     <list default="true" id="808d62af-7c91-4acf-93ca-453d1dae730f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/set.c" beforeDir="false" afterPath="$PROJECT_DIR$/set.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -55,11 +56,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -75,7 +71,8 @@
       <workItem from="1615307430347" duration="3551000" />
       <workItem from="1615363982716" duration="4668000" />
       <workItem from="1615514361436" duration="3179000" />
-      <workItem from="1615609180991" duration="14979000" />
+      <workItem from="1615609180991" duration="15600000" />
+      <workItem from="1615718810581" duration="2461000" />
     </task>
     <task id="LOCAL-00001" summary="Гит хуета, сломалось все 10 раз.">
       <created>1615135406633</created>
@@ -133,7 +130,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615696719899</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Memory leak fixed.">
+      <created>1615699162870</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1615699162870</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -156,7 +160,8 @@
     <MESSAGE value="Need to write tests." />
     <MESSAGE value="Tests added, works properly." />
     <MESSAGE value="Memory leak 24 bytes detected." />
-    <option name="LAST_COMMIT_MESSAGE" value="Memory leak 24 bytes detected." />
+    <MESSAGE value="Memory leak fixed." />
+    <option name="LAST_COMMIT_MESSAGE" value="Memory leak fixed." />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

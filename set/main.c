@@ -45,6 +45,14 @@ int main()
     const KeyValue keyValue5 = {"Key-valu5"};
     set = set_init(set, sizeof(KeyValue), hash, equals, NULL);
     assert(set_init(NULL, 8, hash, equals, NULL) == NULL);
+    set_erase(set, (size_t) &keyValue, NULL);
+    assert(set_contains(set, NULL) == false);
+    assert(set_next(set, (size_t) &keyValue) == set_stop(set));
+    assert(set_prev(set, (size_t) &keyValue) == set_stop(set));
+    assert(set_last(set) == set_stop(set));
+    assert(set_first(set) == set_stop(set));
+    assert(set_insert(set, NULL) == false);
+    assert(set_insert(NULL, &keyValue) == false);
     assert(0 == set_count(set));
     assert(set_stop(set) == set_first(set));
     assert(set_stop(set) == set_last(set));
@@ -53,12 +61,14 @@ int main()
     assert(set_next(set, set_last(set)) == set_stop(set));
     assert(set_prev(set, set_first(set)) == set_stop(set));
     assert(set_prev(set, set_last(set)) == set_stop(set));
-    assert(set_insert(NULL, &keyValue) == false);
     assert(set_contains(set, &keyValue) == false);
     assert(set_stop(set) + 1 == set_count(NULL));
 
     assert(set_insert(set, &keyValue));
     assert(set_count(set) == 1);
+    assert(set_first(set) == set_last(set));
+
+
     assert(set_insert(set, &keyValue1));
     assert(set_count(set) == 2);
     assert(set_insert(set, &keyValue2));
