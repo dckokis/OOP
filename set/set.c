@@ -105,6 +105,35 @@ static void set_destroy_each_item(void *set, void (*destroy)(void *)) {
     }
 }
 
+static const size_t find_place(const void *set, const void *item) {
+    const SET *pSet = set;
+    size_t item_id = pSet->hash(item) % pSet->setSize;
+    size_t i;
+    for (i = item_id; i < pSet->setSize; i++) {
+        if (pSet->conditions[i] == 1) {
+            if (pSet->equals(pSet->items[i], item) == true) {
+                return INVALID;
+            } else {
+                continue;
+            }
+        } else if (pSet->conditions[i] == 0) {
+            return i;
+        }
+    }
+    for (i = 0; i < item_id; i++) {
+        if (pSet->conditions[i] == 1) {
+            if (pSet->equals(pSet->items[i], item) == true) {
+                return INVALID;
+            } else {
+                continue;
+            }
+        } else if (pSet->conditions[i] == 0) {
+            return i;
+        }
+    }
+    return set_stop(pSet);
+}
+
 ///*Создать новое пустое множество.
 ///*Размер элемента -- itemSize, для обработки элементов использовать функцию хеширования hash,
 ///*и функцию проверки на равенство equals.*
@@ -244,46 +273,25 @@ bool set_insert(void *set, const void *item) {
     if (pSet->setSize == 0) {
         set_resize(set, 2);
     }
-    size_t insert_id = pSet->hash(item) % pSet->setSize;
-    int i;
-    for (i = insert_id; i < pSet->setSize; i++) {
-        if (pSet->conditions[i] == 1) {
-            if (pSet->equals(pSet->items[i], item) == true) {
-                return false;
-            } else {
-                continue;
-            }
-        } else if (pSet->conditions[i] == 0) {
-            pSet->items[i] = set_item_create(pSet->itemSize);
-            if (pSet->items[i] != NULL) {
-                memcpy(pSet->items[i], item, pSet->itemSize);
-            } else {
-                return false;
-            }
-            pSet->conditions[i] = 1;
-            return true;
-        }
+    size_t insert_id = find_place(pSet, item);
+    if (insert_id == set_stop(pSet)) {
+        set = set_resize(set, pSet->setSize * 2);
+        return set_insert(pSet, item);
     }
-    for (i = 0; i < insert_id; i++) {
-        if (pSet->conditions[i] == 1) {
-            if (pSet->equals(pSet->items[i], item) == true) {
-                return false;
-            } else {
-                continue;
-            }
-        } else if (pSet->conditions[i] == 0) {
-            pSet->items[i] = set_item_create(pSet->itemSize);
-            if (pSet->items[i] != NULL) {
-                memcpy(pSet->items[i], item, pSet->itemSize);
-            } else {
-                return false;
-            }
-            pSet->conditions[i] = 1;
-            return true;
-        }
+    if (insert_id == INVALID) {
+        return false;
     }
-    set = set_resize(set, pSet->setSize * 2);
-    return set_insert(pSet, item);
+    if (pSet->conditions[insert_id] == 0) {
+        pSet->items[insert_id] = set_item_create(pSet->itemSize);
+        if (pSet->items[insert_id] != NULL) {
+            memcpy(pSet->items[insert_id], item, pSet->itemSize);
+        } else {
+            return false;
+        }
+        pSet->conditions[insert_id] = 1;
+        return true;
+    }
+
 }
 
 ///*Найти элемент и удалить из множества.
@@ -298,20 +306,14 @@ void set_remove(void *set, const void *item, void (*destroy)(void *)) {
     }
     size_t remove_id = pSet->hash(item) % pSet->setSize;
     if (pSet->conditions[remove_id] == 1) {
-        if (destroy != NULL) {
-            (*destroy)(&(pSet->items[remove_id]));
-            free(pSet->items[remove_id]);
-            pSet->conditions[remove_id] = 0;
-        } else if (destroy == NULL) {
-            free(pSet->items[remove_id]);
-            pSet->conditions[remove_id] = 0;
+        if (destroy) {
+            destroy(pSet->items[remove_id]);
         }
+        free(pSet->items[remove_id]);
+        pSet->conditions[remove_id] = 0;
     }
 
-    size_t not_NULL_item = set_count(pSet);
-
-
-    if (not_NULL_item < pSet->setSize / 2 && not_NULL_item != 0) {
+    if (set_count(pSet) < pSet->setSize / 2 && set_count(pSet) != 0) {
         set = set_resize(pSet, pSet->setSize / 2);
     }
 }

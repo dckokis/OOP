@@ -12,8 +12,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="808d62af-7c91-4acf-93ca-453d1dae730f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/set.c" beforeDir="false" afterPath="$PROJECT_DIR$/set.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -51,6 +49,11 @@
     <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="RunManager">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="set" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="set" TARGET_NAME="set" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="set" RUN_TARGET_NAME="set">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -72,7 +75,7 @@
       <workItem from="1615363982716" duration="4668000" />
       <workItem from="1615514361436" duration="3179000" />
       <workItem from="1615609180991" duration="15600000" />
-      <workItem from="1615718810581" duration="2461000" />
+      <workItem from="1615718810581" duration="4038000" />
     </task>
     <task id="LOCAL-00001" summary="Гит хуета, сломалось все 10 раз.">
       <created>1615135406633</created>
@@ -137,7 +140,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615699162870</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="...">
+      <created>1615721348995</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1615721348995</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -161,7 +171,8 @@
     <MESSAGE value="Tests added, works properly." />
     <MESSAGE value="Memory leak 24 bytes detected." />
     <MESSAGE value="Memory leak fixed." />
-    <option name="LAST_COMMIT_MESSAGE" value="Memory leak fixed." />
+    <MESSAGE value="..." />
+    <option name="LAST_COMMIT_MESSAGE" value="..." />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
