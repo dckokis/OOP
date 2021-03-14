@@ -1,11 +1,9 @@
+#define _CRTDBG_MAP_ALLOC
 #include <string.h>
 #include <assert.h>
-
 #include "set.h"
-
-#define _CRTDBG_MAP_ALLOC
-
 #include <crtdbg.h>
+
 typedef struct {
     char name[10];
 } KeyValue;
@@ -34,19 +32,23 @@ static bool equals(const void* lhsp, const void* rhsp) {
     return 0 == strcmp(lhs->name, rhs->name);
 }
 
-int main(int argc, char* argv[]) {
+int main()
+{
     //Создаем множество с элементами типа KeyValue;
     void *set = set_create(1, hash, equals);
     //Создаем ключ-значение для множества
     const KeyValue keyValue = {"Key-value"};
-    const KeyValue keyValue1 = {"Key-value1"};
-    const KeyValue keyValue2 = {"Key-value2"};
-    const KeyValue keyValue3 = {"Key-value3"};
+    const KeyValue keyValue1 = {"Key-valu1"};
+    const KeyValue keyValue2 = {"Key-valu2"};
+    const KeyValue keyValue3 = {"Key-valu3"};
+    const KeyValue keyValue4 = {"Key-valu4"};
+    const KeyValue keyValue5 = {"Key-valu5"};
     set = set_init(set, sizeof(KeyValue), hash, equals, NULL);
     assert(set_init(NULL, 8, hash, equals, NULL) == NULL);
     assert(0 == set_count(set));
     assert(set_stop(set) == set_first(set));
     assert(set_stop(set) == set_last(set));
+    assert(set_next(NULL, 2) == set_stop(NULL));
     assert(set_next(set, set_first(set)) == set_stop(set));
     assert(set_next(set, set_last(set)) == set_stop(set));
     assert(set_prev(set, set_first(set)) == set_stop(set));
@@ -55,11 +57,20 @@ int main(int argc, char* argv[]) {
     assert(set_contains(set, &keyValue) == false);
     assert(set_stop(set) + 1 == set_count(NULL));
 
-    set_insert(set, &keyValue);
-    set_insert(set, &keyValue1);
-    set_insert(set, &keyValue2);
-    set_insert(set, &keyValue3);
+    assert(set_insert(set, &keyValue));
+    assert(set_count(set) == 1);
+    assert(set_insert(set, &keyValue1));
+    assert(set_count(set) == 2);
+    assert(set_insert(set, &keyValue2));
+    assert(set_count(set) == 3);
+    assert(set_insert(set, &keyValue3));
     assert(set_count(set) == 4);
+    assert(set_insert(set, &keyValue4));
+    assert(set_count(set) == 5);
+    assert(set_insert(set, &keyValue5));
+    assert(set_count(set) == 6);
+    set_remove(set, &keyValue,NULL);
+    assert(set_count(set) == 5);
     set_clear(set, NULL);
     size_t y = set_stop(set);
     size_t x = set_first(set);
@@ -86,6 +97,18 @@ int main(int argc, char* argv[]) {
     assert(set_count(NULL) == -1);
 
     set_destroy(set, NULL);
-    return 0;
+
+    // Send all reports to STDOUT
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+    _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDOUT);
+    _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDOUT);
+
     _CrtDumpMemoryLeaks();
+
+
+    return 0;
+
 }

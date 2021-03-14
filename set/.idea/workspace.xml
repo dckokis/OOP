@@ -43,14 +43,14 @@
     <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="set" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="set" TARGET_NAME="set" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="set" RUN_TARGET_NAME="set">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="set" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="set" TARGET_NAME="set" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="set" RUN_TARGET_NAME="set">
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -67,7 +67,8 @@
       <workItem from="1615223925193" duration="2186000" />
       <workItem from="1615307430347" duration="3551000" />
       <workItem from="1615363982716" duration="4668000" />
-      <workItem from="1615514361436" duration="2976000" />
+      <workItem from="1615514361436" duration="3179000" />
+      <workItem from="1615609180991" duration="12672000" />
     </task>
     <task id="LOCAL-00001" summary="Гит хуета, сломалось все 10 раз.">
       <created>1615135406633</created>
@@ -111,7 +112,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615387699023</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Tests added, works properly.">
+      <created>1615517560913</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1615517560914</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -132,15 +140,21 @@
     <MESSAGE value="Need to realize create throw init." />
     <MESSAGE value="Init works throw calling create." />
     <MESSAGE value="Need to write tests." />
-    <option name="LAST_COMMIT_MESSAGE" value="Need to write tests." />
+    <MESSAGE value="Tests added, works properly." />
+    <option name="LAST_COMMIT_MESSAGE" value="Tests added, works properly." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/main.c</url>
-          <line>59</line>
-          <option name="timeStamp" value="9" />
+          <line>98</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/main.c</url>
+          <line>67</line>
+          <option name="timeStamp" value="44" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
