@@ -56,31 +56,6 @@ void *define_object(FILE *input) {
         y2 = atoi(buff);
         p = new(Rect, x1, y1, x2, y2);
     }
-//    switch (obj_numb) {
-//        case 0:
-//            p = new(Point, x1, y1);
-//            break;
-//        case 1:
-//            fscanf(input, "%s", &buff);
-//            rad = atoi(buff);
-//            p = new(Circle, x1, y1, rad);
-//            break;
-//        case 2:
-//            fscanf(input, "%s", &buff);
-//            x2 = atoi(buff);
-//            fscanf(input, "%s", &buff);
-//            y2 = atoi(buff);
-//            p = new(Line, x1, y1, x2, y2);
-//            break;
-//        case 3:
-//            fscanf(input, "%s", &buff);
-//            x2 = atoi(buff);
-//            fscanf(input, "%s", &buff);
-//            y2 = atoi(buff);
-//            p = new(Rect, x1, y1, x2, y2);
-//            break;
-
-//    }
     return p;
 }
 
@@ -90,7 +65,6 @@ int draw_object(FILE *input) {
         return -1;
     }
 
-    //int i;
     void *p;
     while (true) {
         p = define_object(input);
@@ -100,5 +74,4 @@ int draw_object(FILE *input) {
         delete(p);
 
     }
-    return 0;
 }

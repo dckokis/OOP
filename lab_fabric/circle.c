@@ -14,6 +14,10 @@ static void *Circle_ctor(void *_self, va_list *app) {
 static void Circle_draw(const void * _self)
 {
     const struct Circle * self = _self;
+    if (self->rad <= 0) {
+        printf("Radius of circle must be a positive number!\n");
+        return;
+    }
     printf("circle at (%d,%d), rad = %d\n", x(self), y(self), self->rad);
 }
 

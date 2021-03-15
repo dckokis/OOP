@@ -2,7 +2,7 @@
 #include "line.h"
 #include "new.h"
 
-// Объявление конструктора для Circle
+// Объявление конструктора для Line
 static void *Line_ctor(void *_self, va_list *app) {
 
     struct Line *self = ((const struct Class *)Point)->ctor(_self, app);

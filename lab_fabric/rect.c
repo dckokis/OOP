@@ -19,9 +19,7 @@ static void *Rect_ctor(void *_self, va_list *app) {
 
 static void Rect_draw(const void * _self)
 {
-
     const struct Rect *self = _self;
-
 
     printf("rectangle at (%d, %d) and (%d, %d)\n", x(self), y(self), self->x_end, self->y_end);
 }
