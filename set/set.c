@@ -1,6 +1,5 @@
 #include "set.h"
 #include <stdlib.h>
-#include <assert.h>
 #include <vcruntime_string.h>
 
 static const size_t MIN_SIZE = 0;
@@ -291,7 +290,6 @@ bool set_insert(void *set, const void *item) {
         pSet->conditions[insert_id] = 1;
         return true;
     }
-
 }
 
 ///*Найти элемент и удалить из множества.
