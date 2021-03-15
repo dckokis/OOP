@@ -11,12 +11,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2e4a59e0-e26a-495e-b1d5-9f0e08bec9f5" name="Default Changelist" comment="">
+    <list default="true" id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circle.c" beforeDir="false" afterPath="$PROJECT_DIR$/circle.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/draw_object.c" beforeDir="false" afterPath="$PROJECT_DIR$/draw_object.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/line.c" beforeDir="false" afterPath="$PROJECT_DIR$/line.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rect.c" beforeDir="false" afterPath="$PROJECT_DIR$/rect.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../set/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_03_2021_22_47__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../set/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_03_2021_22_47__Default_Changelist_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../set/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_03_2021_22_50__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../set/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_03_2021_22_50__Default_Changelist_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../set/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../set/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +50,11 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="lab_fabric" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="lab_fabric" TARGET_NAME="lab_fabric" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="lab_fabric" RUN_TARGET_NAME="lab_fabric">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
