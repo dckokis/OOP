@@ -12,11 +12,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/fabric.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fabric.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../lab_set/.idea/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circle.c" beforeDir="false" afterPath="$PROJECT_DIR$/circle.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/draw_object.c" beforeDir="false" afterPath="$PROJECT_DIR$/draw_object.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/draw_object.h" beforeDir="false" afterPath="$PROJECT_DIR$/draw_object.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../set/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_03_2021_22_47__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../set/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_03_2021_22_47__Default_Changelist_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../set/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_03_2021_22_50__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../set/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_03_2021_22_50__Default_Changelist_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../set/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../set/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/point.c" beforeDir="false" afterPath="$PROJECT_DIR$/point.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/point.h" beforeDir="false" afterPath="$PROJECT_DIR$/point.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../set/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_set/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../set/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_set/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../set/.idea/set.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_set/.idea/lab_set.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../set/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_set/.idea/vcs.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,9 +60,9 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
     <configuration name="lab_fabric" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="lab_fabric" TARGET_NAME="lab_fabric" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="lab_fabric" RUN_TARGET_NAME="lab_fabric">
@@ -69,13 +79,14 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="2e4a59e0-e26a-495e-b1d5-9f0e08bec9f5" name="Default Changelist" comment="" />
+      <changelist id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="" />
       <created>1615739131157</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1615739131157</updated>
       <workItem from="1615739141517" duration="4516000" />
       <workItem from="1615781458742" duration="1025000" />
+      <workItem from="1616225904948" duration="14849000" />
     </task>
     <task id="LOCAL-00001" summary="Started.">
       <created>1615739189083</created>

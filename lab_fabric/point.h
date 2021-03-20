@@ -6,8 +6,6 @@ struct Point {
     int x, y; /* координаты */
 };
 
-void move(void *_self, int dx, int dy);
-
 extern const void *Point;
 
 #endif

@@ -24,7 +24,7 @@ static void Circle_draw(const void * _self)
 static const struct Class _Circle = {
         sizeof(struct Circle),      // size
         Circle_ctor,                // ctor
-        0,                          // dtor
+        0,                     // dtor
         Circle_draw                 // draw
 };
 

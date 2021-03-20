@@ -1,5 +1,6 @@
 #pragma once
 
 #include <stdio.h>
+#include <stdbool.h>
 
-int draw_object(FILE *input);
+bool draw_object(void *object);

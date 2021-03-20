@@ -4,13 +4,6 @@
 #include "point.h"
 #include "new.h"
 
-void move(void * _self, int dx, int dy)
-{
-    struct Point * self = _self;
-    self->x += dx;
-    self->y += dy;
-}
-
 static void *Point_ctor(void *_self, va_list *app)
 {
     struct Point *self = _self;
@@ -29,7 +22,7 @@ static void Point_draw(const void *_self)
 static const struct Class _Point = {
         sizeof(struct Point),       // size
         Point_ctor,                 // ctor
-        0,                          // dtor
+        0,                     // dtor
         Point_draw                  // draw
 };
 
