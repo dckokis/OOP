@@ -13,6 +13,7 @@ Vector::Vector(double x, double y) {
     Y = y;
     //////
     Rad = sqrt(X * X + Y * Y);
+
     Alpha = acos(X / Rad);
 }
 
@@ -33,7 +34,7 @@ Vector Vector::makePolar(double rad, double alpha) const {
     //////
     polar_vector.X = Rad * cos(alpha);
     polar_vector.Y = Rad * sin(alpha);
-    return Vector();
+    return polar_vector;
 }
 
 double Vector::x(void) const {
@@ -222,4 +223,38 @@ Vector &Vector::transformFrom(const Vector &e1, const Vector &e2) {
     return *this;
 }
 
+Vector operator*(const double &lhs, const Vector &rhs) {
+    double x = lhs * rhs.x();
+    double y = lhs * rhs.y();
+    return Vector(x, y);
+}
 
+Vector rotate(const Vector &v, double angle) {
+    double x = v.x() * cos(angle) - v.y() * sin(angle);
+    double y = v.y() * cos(angle) + v.x() * sin(angle);
+    return Vector(x, y);
+}
+
+Vector rotate(const Vector &v, int quad) {
+//    X = X * cos(3.14 * quad / 2) - Y * sin(3.14 * quad / 2);
+//    Y = Y * cos(3.14 * quad / 2) + X * sin(3.14 * quad / 2);
+    double x = v.x() * cos(3.14 * quad / 2) - v.y() * sin(3.14 * quad / 2);
+    double y = v.y() * cos(3.14 * quad / 2) + v.x() * sin(3.14 * quad / 2);
+    return Vector(x, y);
+}
+
+double module2(const Vector &v) {
+
+}
+
+double angle(const Vector &v);
+
+double angle(const Vector &v1, const Vector &v2);
+
+double projection(const Vector &v, const Vector &base);
+
+Vector normalize(const Vector &v);
+
+Vector transformTo(const Vector &v, const Vector &e1, const Vector &e2);
+
+Vector transformFrom(const Vector &v, const Vector &e1, const Vector &e2);
