@@ -236,25 +236,41 @@ Vector rotate(const Vector &v, double angle) {
 }
 
 Vector rotate(const Vector &v, int quad) {
-//    X = X * cos(3.14 * quad / 2) - Y * sin(3.14 * quad / 2);
-//    Y = Y * cos(3.14 * quad / 2) + X * sin(3.14 * quad / 2);
     double x = v.x() * cos(3.14 * quad / 2) - v.y() * sin(3.14 * quad / 2);
     double y = v.y() * cos(3.14 * quad / 2) + v.x() * sin(3.14 * quad / 2);
     return Vector(x, y);
 }
 
 double module2(const Vector &v) {
-
+    return v.module2();
 }
 
-double angle(const Vector &v);
+double angle(const Vector &v) {
+    return v.angle();
+}
 
-double angle(const Vector &v1, const Vector &v2);
+double angle(const Vector &v1, const Vector &v2) {
+    double phi = v1.operator*(v2) / sqrt(v1.module2() * v2.module2());
+    return phi;
+}
 
-double projection(const Vector &v, const Vector &base);
+double projection(const Vector &v, const Vector &base) {
+    double projection = v.operator*(base) / sqrt(base.module2());
+    return projection;
+}
 
-Vector normalize(const Vector &v);
+Vector normalize(const Vector &v) {
+    return v.operator/(sqrt(v.module2()));
+}
 
-Vector transformTo(const Vector &v, const Vector &e1, const Vector &e2);
+Vector transformTo(const Vector &v, const Vector &e1, const Vector &e2) {
+    double x = e2.y() * v.x() - e1.y() * v.y();
+    double y = -e2.x() * v.x() + e1.y() * v.y();
+    return Vector(x, y);
+}
 
-Vector transformFrom(const Vector &v, const Vector &e1, const Vector &e2);
+Vector transformFrom(const Vector &v, const Vector &e1, const Vector &e2) {
+    double x = e1.x() * v.x() + e2.x() * v.y();
+    double y = e1.y() * v.x() + e2.y() * v.y();
+    return Vector(x, y);
+}
