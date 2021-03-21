@@ -10,7 +10,7 @@
 #include "rect.h"
 
 
-enum Names {
+enum Objects {
     POINT,
     CIRCLE,
     LINE,
