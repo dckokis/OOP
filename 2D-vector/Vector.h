@@ -75,7 +75,7 @@ public:
 private:
     double X;
     double Y;
-    double Rad;
+    double Rad;///// не надо его хранить
     double Alpha;
 };
 

@@ -1,6 +1,6 @@
 #include "Vector.h"
 #include <cmath>
-
+///////////////////////////////добавить проверку деления на ноль
 Vector::Vector(void) {
     X = 0;
     Y = 0;
@@ -13,7 +13,6 @@ Vector::Vector(double x, double y) {
     Y = y;
     //////
     Rad = sqrt(X * X + Y * Y);
-
     Alpha = acos(X / Rad);
 }
 
@@ -150,15 +149,11 @@ Vector Vector::operator-() {
 }
 
 bool Vector::operator==(const Vector &that) const {
-    if (X == that.X && Y == that.Y)
-        return true;
-    else return false;
+    return X == that.X && Y == that.Y;
 }
 
 bool Vector::operator!=(const Vector &that) const {
-    if (X != that.X || Y != that.Y)
-        return true;
-    else return false;
+    return X != that.X || Y != that.Y;
 }
 
 Vector &Vector::rotate(double angle) {
