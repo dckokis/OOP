@@ -26,32 +26,32 @@ public:
     void y(double newY);
 
 public:
-    Vector operator+(const Vector &that) const;
+    Vector operator+(const Vector &that) const;///
 
-    Vector operator-(const Vector &that) const;
+    Vector operator-(const Vector &that) const;///
 
-    double operator*(const Vector &that) const;
+    double operator*(const Vector &that) const;///
 
-    Vector operator*(const double &that) const;
+    Vector operator*(const double &that) const;///
 
-    Vector operator/(const double &that) const;
+    Vector operator/(const double &that) const;///
 
 public:
-    Vector &operator+=(const Vector &that);
+    Vector &operator+=(const Vector &that);///
 
-    Vector &operator-=(const Vector &that);
+    Vector &operator-=(const Vector &that);///
 
-    Vector &operator*=(const double &that);
+    Vector &operator*=(const double &that);///
 
-    Vector &operator/=(const double &that);
+    Vector &operator/=(const double &that);///
 
 public:
     Vector operator-();
 
 public:
-    bool operator==(const Vector &that) const;
+    bool operator==(const Vector &that) const;///
 
-    bool operator!=(const Vector &that) const;
+    bool operator!=(const Vector &that) const;///
 
 public:
     Vector &rotate(double angle);
@@ -75,8 +75,6 @@ public:
 private:
     double X;
     double Y;
-    double Rad;///// не надо его хранить
-    double Alpha;
 };
 
 Vector operator*(const double &lhs, const Vector &rhs);
