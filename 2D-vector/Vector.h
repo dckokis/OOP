@@ -1,6 +1,4 @@
 #pragma once
-//#ifndef INC_2D_VECTOR_VECTOR_H
-//#define INC_2D_VECTOR_VECTOR_H
 
 class Vector {
 public:
@@ -26,32 +24,32 @@ public:
     void y(double newY);
 
 public:
-    Vector operator+(const Vector &that) const;///
+    Vector operator+(const Vector &that) const;
 
-    Vector operator-(const Vector &that) const;///
+    Vector operator-(const Vector &that) const;
 
-    double operator*(const Vector &that) const;///
+    double operator*(const Vector &that) const;
 
-    Vector operator*(const double &that) const;///
+    Vector operator*(const double &that) const;
 
-    Vector operator/(const double &that) const;///
+    Vector operator/(const double &that) const;
 
 public:
-    Vector &operator+=(const Vector &that);///
+    Vector &operator+=(const Vector &that);
 
-    Vector &operator-=(const Vector &that);///
+    Vector &operator-=(const Vector &that);
 
-    Vector &operator*=(const double &that);///
+    Vector &operator*=(const double &that);
 
-    Vector &operator/=(const double &that);///
+    Vector &operator/=(const double &that);
 
 public:
     Vector operator-();
 
 public:
-    bool operator==(const Vector &that) const;///
+    bool operator==(const Vector &that) const;
 
-    bool operator!=(const Vector &that) const;///
+    bool operator!=(const Vector &that) const;
 
 public:
     Vector &rotate(double angle);
@@ -96,6 +94,3 @@ Vector normalize(const Vector &v);
 Vector transformTo(const Vector &v, const Vector &e1, const Vector &e2);
 
 Vector transformFrom(const Vector &v, const Vector &e1, const Vector &e2);
-
-
-//#endif //INC_2D_VECTOR_VECTOR_H

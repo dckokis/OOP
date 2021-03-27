@@ -2,7 +2,7 @@
 #include <cmath>
 
 #define EPSILON 1e-7
-#define PI 3.1415926
+#define PI 3.14
 
 Vector::Vector(void) {
     X = 0;
@@ -45,38 +45,26 @@ void Vector::y(double newY) {
 }
 
 Vector Vector::operator+(const Vector &that) const {
-    Vector result;
-    result.X = this->X + that.X;
-    result.Y = this->Y + that.Y;
-    return result;
+    return Vector(X + that.X, Y + that.Y);
 }
 
 Vector Vector::operator-(const Vector &that) const {
-    Vector result;
-    result.X = this->X - that.X;
-    result.Y = this->Y - that.Y;
-    return result;
+    return Vector(X - that.X, Y - that.Y);
 }
 
 double Vector::operator*(const Vector &that) const {
     double result = this->X * that.X + this->Y * that.Y;
     return result;
-
 }
 
 Vector Vector::operator*(const double &that) const {
-    Vector result;
-    result.X = that * this->X;
-    result.Y = that * this->Y;
-    return result;
+    return Vector(that * this->X, that * this->Y);
 }
 
 Vector Vector::operator/(const double &that) const {
-    Vector result;
     if (that == 0) {
         throw "Can not divide vector by a zero scalar";
-    } else result = Vector(this->X / that, this->Y / that);
-    return result;
+    } else return Vector(X / that, Y / that);
 }
 
 Vector &Vector::operator+=(const Vector &that) {
@@ -114,15 +102,13 @@ Vector Vector::operator-() {
 }
 
 bool Vector::operator==(const Vector &that) const {
-    if (abs(X - that.X) <= EPSILON && abs(Y - that.Y) <= EPSILON) {
-        return true;
-    } else return false;
+    return (abs(X - that.X) <= EPSILON && abs(Y - that.Y) <= EPSILON);
 }
 
 bool Vector::operator!=(const Vector &that) const {
-    if (abs(X - that.X) >= EPSILON || abs(Y - that.Y) >= EPSILON) {
-        return true;
-    } else return false;
+    if (this->operator==(that))
+        return false;
+    else return true;
 }
 
 Vector &Vector::rotate(double angle) {
@@ -143,17 +129,17 @@ double Vector::module2(void) const {
 }
 
 double Vector::angle(void) const {
-    if (abs(X - 0) <= EPSILON) {
-        return PI/2;
+    if (X <= EPSILON) {
+        return PI / 2;
     }
-    double angle = atan(Y / X);
+    double angle = atan2(Y, X);
     return angle;
 }
 
 double Vector::angle(const Vector &that) {
     double module_a = sqrt(X * X + Y * Y);
     double module_b = sqrt(that.X * that.X + that.Y * that.Y);
-    if (abs(module_a - 0) <= EPSILON || abs(module_b - 0) <= EPSILON) {
+    if (module_a <= EPSILON || module_b <= EPSILON) {
         throw "Can not find the angle between Vector and Zero-Vector";
     }
     double scalar_product = X * that.X + Y * that.Y;
@@ -169,8 +155,7 @@ double Vector::projection(const Vector &base) const {
 }
 
 Vector &Vector::normalize(void) {
-    X = X / sqrt(X * X + Y * Y);
-    Y = Y / sqrt(X * X + Y * Y);
+    this->operator/=(sqrt(this->module2()));
     return *this;
 }
 
