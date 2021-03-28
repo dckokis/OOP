@@ -12,19 +12,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Parser.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Parser.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circle.h" beforeDir="false" afterPath="$PROJECT_DIR$/circle.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/draw_object.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/draw_object.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/Parser.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fabric.c" beforeDir="false" afterPath="$PROJECT_DIR$/fabric.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fabric.h" beforeDir="false" afterPath="$PROJECT_DIR$/fabric.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/new.h" beforeDir="false" afterPath="$PROJECT_DIR$/new.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/point.h" beforeDir="false" afterPath="$PROJECT_DIR$/point.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rect.c" beforeDir="false" afterPath="$PROJECT_DIR$/rect.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/point.c" beforeDir="false" afterPath="$PROJECT_DIR$/point.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,6 +138,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Started." />

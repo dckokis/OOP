@@ -6,7 +6,7 @@
 #include "circle.h"
 #include "line.h"
 #include "rect.h"
-
+#include <stdio.h>
 
 enum Objects {
     POINT = 0,
@@ -29,33 +29,35 @@ int identify_object_name(const char *obj_name) {
     return UNDEFINED;
 }
 
-void *object_create(char *str) {
+void *object_create(const char *str) {
     char *separate_symbol = " ";
-    char *object_name = strtok(str, separate_symbol);
+    char *source = str;
+    char *object_name = strtok(source, separate_symbol);
     int obj_numb = identify_object_name(object_name);
 
     //creating_shape
     if (obj_numb >= POINT && obj_numb <SHAPES_AMOUNT) {
         void *shape = NULL;
         int x1, y1, x2, y2, rad;
-        x1 = atoi(strtok(str, separate_symbol));
-        y1 = atoi(strtok(str, separate_symbol));
+        x1 = atoi(strtok(source, separate_symbol));
+        y1 = atoi(strtok(source, separate_symbol));
         if (obj_numb == POINT) {
             shape = new(Point, x1, y1);
         } else if (obj_numb == CIRCLE) {
-            rad = atoi(strtok(str, separate_symbol));
+            rad = atoi(strtok(source, separate_symbol));
             shape = new(Circle, x1, y1, rad);
         } else if (obj_numb == LINE) {
-            x2 = atoi(strtok(str, separate_symbol));
-            y2 = atoi(strtok(str, separate_symbol));
+            x2 = atoi(strtok(source, separate_symbol));
+            y2 = atoi(strtok(source, separate_symbol));
             shape = new(Line, x1, y1, x2, y2);
         } else if (obj_numb == RECTANGLE) {
-            x2 = atoi(strtok(str, separate_symbol));
-            y2 = atoi(strtok(str, separate_symbol));
+            x2 = atoi(strtok(source, separate_symbol));
+            y2 = atoi(strtok(source, separate_symbol));
             shape = new(Rect, x1, y1, x2, y2);
         }
         return shape;
     }
+    return NULL;
 }
 
 bool draw_object(void *object) {

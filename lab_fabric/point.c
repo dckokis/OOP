@@ -1,5 +1,4 @@
 #include <stdarg.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include "point.h"
 #include "new.h"
