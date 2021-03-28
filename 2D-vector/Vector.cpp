@@ -165,8 +165,9 @@ Vector &Vector::normalize(void) {
 }
 
 Vector &Vector::transformTo(const Vector &e1, const Vector &e2) {
-    X = e2.Y * X - e1.Y * Y;
-    Y = -e2.X * X + e1.Y * Y;
+    double det = e1.X * e2.Y - e2.X * e1.Y;
+    X = (e2.Y * X - e1.X * Y) / det;
+    Y = (-e2.X * X + e1.Y * Y) / det;
     return *this;
 }
 
