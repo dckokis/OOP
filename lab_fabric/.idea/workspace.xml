@@ -11,7 +11,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="" />
+    <list default="true" id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/Parser.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric.c" beforeDir="false" afterPath="$PROJECT_DIR$/fabric.c" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -91,7 +95,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615778541609</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="NOW IT IS FINALLY WORKS.">
+      <created>1616950611601</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1616950611601</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -136,6 +147,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Started." />
     <MESSAGE value="It works. Need some reviews." />
-    <option name="LAST_COMMIT_MESSAGE" value="It works. Need some reviews." />
+    <MESSAGE value="NOW IT IS FINALLY WORKS." />
+    <option name="LAST_COMMIT_MESSAGE" value="NOW IT IS FINALLY WORKS." />
   </component>
 </project>
