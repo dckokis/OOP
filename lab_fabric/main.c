@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     void *object;
-    while (by_line_parser(input) != NULL) {
+    while (!feof (input)) {
         object = object_create(by_line_parser(input));
         draw_object(object);
         delete(object);

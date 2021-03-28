@@ -6,7 +6,7 @@
 #include "circle.h"
 #include "line.h"
 #include "rect.h"
-#include <stdio.h>
+
 
 enum Objects {
     POINT = 0,
@@ -18,20 +18,27 @@ enum Objects {
 };
 
 int identify_object_name(const char *obj_name) {
-    if (strcmp(obj_name, "point") == 0)
-        return POINT;
-    if (strcmp(obj_name, "circle") == 0)
-        return CIRCLE;
-    if (strcmp(obj_name, "line") == 0)
-        return LINE;
-    if (strcmp(obj_name, "rect") == 0)
-        return RECTANGLE;
+    if (obj_name != NULL) {
+        if (strcmp(obj_name, "point") == 0)
+            return POINT;
+        if (strcmp(obj_name, "circle") == 0)
+            return CIRCLE;
+        if (strcmp(obj_name, "line") == 0)
+            return LINE;
+        if (strcmp(obj_name, "rect") == 0)
+            return RECTANGLE;
+    }
     return UNDEFINED;
 }
 
 void *object_create(const char *str) {
+    if (str ==NULL) {
+        return NULL;
+    }
     char *separate_symbol = " ";
-    char *source = str;
+//    char *source = str;
+    char source[100] = "";
+    strcpy_s(source, 100, str);
     char *object_name = strtok(source, separate_symbol);
     int obj_numb = identify_object_name(object_name);
 
@@ -39,20 +46,21 @@ void *object_create(const char *str) {
     if (obj_numb >= POINT && obj_numb <SHAPES_AMOUNT) {
         void *shape = NULL;
         int x1, y1, x2, y2, rad;
-        x1 = atoi(strtok(source, separate_symbol));
-        y1 = atoi(strtok(source, separate_symbol));
+        char* end;
+        x1 = strtol(strtok(NULL, separate_symbol), &end, 0);
+        y1 = strtol(strtok(NULL, separate_symbol), &end, 0);
         if (obj_numb == POINT) {
             shape = new(Point, x1, y1);
         } else if (obj_numb == CIRCLE) {
-            rad = atoi(strtok(source, separate_symbol));
+            rad = strtol(strtok(NULL, separate_symbol), &end, 0);
             shape = new(Circle, x1, y1, rad);
         } else if (obj_numb == LINE) {
-            x2 = atoi(strtok(source, separate_symbol));
-            y2 = atoi(strtok(source, separate_symbol));
+            x2 = strtol(strtok(NULL, separate_symbol), &end, 0);
+            y2 = strtol(strtok(NULL, separate_symbol), &end, 0);
             shape = new(Line, x1, y1, x2, y2);
         } else if (obj_numb == RECTANGLE) {
-            x2 = atoi(strtok(source, separate_symbol));
-            y2 = atoi(strtok(source, separate_symbol));
+            x2 = strtol(strtok(NULL, separate_symbol), &end, 0);
+            y2 = strtol(strtok(NULL, separate_symbol), &end, 0);
             shape = new(Rect, x1, y1, x2, y2);
         }
         return shape;

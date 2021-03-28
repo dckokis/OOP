@@ -5,24 +5,31 @@
 // Объявление конструктора для Line
 static void *Line_ctor(void *_self, va_list *app) {
 
-    struct Line *self = ((const struct Class *)Point)->ctor(_self, app);
-
-    self->x_end = va_arg(*app, int);
-    self->y_end = va_arg(*app, int);
-
+//    struct Line *self = ((const struct Class *)Point)->ctor(_self, app);
+//
+//    self->x_end = va_arg(*app, int);
+//    self->y_end = va_arg(*app, int);
+    struct Line *self = (struct Line*) _self;
+    int x = va_arg(*app, int);
+    int y = va_arg(*app, int);
+    self->first = new(Point, x, y);
+    x = va_arg(*app, int);
+    y = va_arg(*app, int);
+    self->second = new(Point, x, y);
     return self;
 }
 
 
-#define x(p) (((const struct Point *)(p)) -> x)
-#define y(p) (((const struct Point *)(p)) -> y)
+//#define x(p) (((const struct Point *)(p)) -> x)
+//#define y(p) (((const struct Point *)(p)) -> y)
 
 // Реализация виртуальной функции draw для класса Line
 static void Line_draw(const void * _self)
 {
     const struct Line *self = _self;
 
-    printf("line through (%d,%d) and (%d, %d)\n", x(self), y(self), self->x_end, self->y_end);
+    printf("line through (%d,%d) and (%d, %d)\n", self->first->x, self->first->y,
+           self->second->x, self->second->y);
 }
 
 // Описание класса Line
