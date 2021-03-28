@@ -129,14 +129,19 @@ double Vector::module2(void) const {
 }
 
 double Vector::angle(void) const {
-    if (X <= EPSILON) {
-        return PI / 2;
+    if (abs(X) <= EPSILON) {
+        if (Y < 0) {
+            return PI / 2;
+        } else if (Y > 0) {
+            return -PI / 2;
+        }
+
     }
     double angle = atan2(Y, X);
     return angle;
 }
 
-double Vector::angle(const Vector &that) {
+double Vector::angle(const Vector &that) const{
     double module_a = sqrt(X * X + Y * Y);
     double module_b = sqrt(that.X * that.X + that.Y * that.Y);
     if (module_a <= EPSILON || module_b <= EPSILON) {
@@ -169,6 +174,10 @@ Vector &Vector::transformFrom(const Vector &e1, const Vector &e2) {
     X = e1.X * X + e2.X * Y;
     Y = e1.Y * X + e2.Y * Y;
     return *this;
+}
+
+double Vector::length(void) const {
+    return sqrt(this->module2());
 }
 
 Vector operator*(const double &lhs, const Vector &rhs) {
@@ -221,4 +230,8 @@ Vector transformFrom(const Vector &v, const Vector &e1, const Vector &e2) {
     double x = e1.x() * v.x() + e2.x() * v.y();
     double y = e1.y() * v.x() + e2.y() * v.y();
     return Vector(x, y);
+}
+
+double length(const Vector &v) {
+    return sqrt(v.module2());
 }

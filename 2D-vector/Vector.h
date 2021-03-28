@@ -60,7 +60,9 @@ public:
 
     double angle(void) const;
 
-    double angle(const Vector &that);
+    double angle(const Vector &that) const;
+
+    double length(void) const;
 
     double projection(const Vector &base) const;
 
@@ -82,6 +84,8 @@ Vector rotate(const Vector &v, double angle);
 Vector rotate(const Vector &v, int quad);
 
 double module2(const Vector &v);
+
+double length(const Vector & v);
 
 double angle(const Vector &v);
 

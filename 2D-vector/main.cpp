@@ -66,5 +66,5 @@ TEST(OPERATORS, ARITHMETIC) {
     test_vector1.y(1);
     ASSERT_NEAR(test_vector1.angle(test_vector3), 3.14159, 5);
     ASSERT_EQ(test_vector1.angle(), atan(1));
-    ASSERT_EQ(test_vector3.angle(), atan(1) + 3.14);
+    ASSERT_EQ(test_vector3.angle(), atan2(-1, -1));
 }
