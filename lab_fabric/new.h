@@ -1,6 +1,4 @@
-#ifndef __new_h
-#define __new_h
-
+#pragma once
 #include <stddef.h>
 #include <stdarg.h>
 
@@ -15,4 +13,3 @@ void *new(const void *class, ...);
 void delete(void *item);
 void draw(const void *self);
 
-#endif

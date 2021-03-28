@@ -1,8 +1,6 @@
 #include <string.h>
 #include "new.h"
-#include <stdio.h>
 #include <stdlib.h>
-
 #include "fabric.h"
 #include "point.h"
 #include "circle.h"
@@ -11,10 +9,11 @@
 
 
 enum Objects {
-    POINT,
+    POINT = 0,
     CIRCLE,
     LINE,
     RECTANGLE,
+    SHAPES_AMOUNT,
     UNDEFINED = -1
 };
 
@@ -30,26 +29,13 @@ int identify_object_name(const char *obj_name) {
     return UNDEFINED;
 }
 
-
-
-char *parser(FILE *input) {
-    char *str;
-    str = fgets(str, 256, input);
-    if (str == NULL) {
-        return NULL;
-    }
-}
-
 void *object_create(char *str) {
-//    if (str == NULL) {
-//
-//    }
-     char *separate_symbol = " ";
-     char *object_name = strtok(str, separate_symbol);
-     int obj_numb = identify_object_name(object_name);
+    char *separate_symbol = " ";
+    char *object_name = strtok(str, separate_symbol);
+    int obj_numb = identify_object_name(object_name);
 
-     //creating_shape
-     if (obj_numb >= POINT && obj_numb <= RECTANGLE) {
+    //creating_shape
+    if (obj_numb >= POINT && obj_numb <SHAPES_AMOUNT) {
         void *shape = NULL;
         int x1, y1, x2, y2, rad;
         x1 = atoi(strtok(str, separate_symbol));
@@ -68,11 +54,13 @@ void *object_create(char *str) {
             y2 = atoi(strtok(str, separate_symbol));
             shape = new(Rect, x1, y1, x2, y2);
         }
-            return shape;
+        return shape;
     }
 }
 
-
-void object_destroy(void *object) {
-    delete(object);
+bool draw_object(void *object) {
+    if (object == NULL)
+        return false;
+    draw(object);
+    return true;
 }

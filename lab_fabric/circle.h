@@ -1,5 +1,4 @@
-#ifndef __circle_h
-#define __circle_h
+#pragma once
 
 #include "point.h"
 
@@ -9,5 +8,3 @@ struct Circle {
 };
 
 extern const void *Circle;
-
-#endif

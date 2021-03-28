@@ -5,28 +5,26 @@
       <config projectName="lab_fabric" targetName="lab_fabric" />
     </generated>
   </component>
-  <component name="CMakeSettings">
+  <component name="CMakeSettings" AUTO_RELOAD="true">
     <configurations>
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/fabric.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fabric.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../lab_set/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Parser.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Parser.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circle.c" beforeDir="false" afterPath="$PROJECT_DIR$/circle.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/draw_object.c" beforeDir="false" afterPath="$PROJECT_DIR$/draw_object.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/draw_object.h" beforeDir="false" afterPath="$PROJECT_DIR$/draw_object.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circle.h" beforeDir="false" afterPath="$PROJECT_DIR$/circle.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/draw_object.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/draw_object.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric.c" beforeDir="false" afterPath="$PROJECT_DIR$/fabric.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric.h" beforeDir="false" afterPath="$PROJECT_DIR$/fabric.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/point.c" beforeDir="false" afterPath="$PROJECT_DIR$/point.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/new.h" beforeDir="false" afterPath="$PROJECT_DIR$/new.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/point.h" beforeDir="false" afterPath="$PROJECT_DIR$/point.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../set/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_set/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../set/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_set/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../set/.idea/set.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_set/.idea/lab_set.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../set/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_set/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rect.c" beforeDir="false" afterPath="$PROJECT_DIR$/rect.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +54,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\OOP\lab_fabric" />
       <recent name="C:\OOP\lab_fabric\cmake-build-debug" />
     </key>
   </component>
@@ -87,6 +86,10 @@
       <workItem from="1615739141517" duration="4516000" />
       <workItem from="1615781458742" duration="1025000" />
       <workItem from="1616225904948" duration="14849000" />
+      <workItem from="1616860743903" duration="1274000" />
+      <workItem from="1616862061313" duration="899000" />
+      <workItem from="1616862977906" duration="2824000" />
+      <workItem from="1616866482674" duration="682000" />
     </task>
     <task id="LOCAL-00001" summary="Started.">
       <created>1615739189083</created>
@@ -104,6 +107,44 @@
     </task>
     <option name="localTasksCounter" value="3" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="HEAD" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Started." />

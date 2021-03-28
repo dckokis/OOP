@@ -1,5 +1,4 @@
-#ifndef __point_h
-#define __point_h
+#pragma once
 
 struct Point {
     const void *class;
@@ -7,5 +6,3 @@ struct Point {
 };
 
 extern const void *Point;
-
-#endif
