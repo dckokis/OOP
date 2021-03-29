@@ -8,7 +8,7 @@
 #include "rect.h"
 
 
-enum Objects {
+enum Shape {
     POINT = 0,
     CIRCLE,
     LINE,
@@ -31,30 +31,29 @@ int identify_object_name(const char *obj_name) {
     return UNDEFINED;
 }
 
+/// можно сделать так: парсить строку прямо тут, в object_create передавать условно структуру с параметрами(имя параметры)
 void *object_create(const char *str) {
-    if (str ==NULL) {
+    if (str == NULL) {
         return NULL;
     }
-    char *separate_symbol = " ";
+    const char *separate_symbol = " ";
     char source[256] = "";
     strcpy_s(source, 256, str);
     char *object_name = strtok(source, separate_symbol);
     int obj_numb = identify_object_name(object_name);
 
     //creating_shape
-    if (obj_numb >= POINT && obj_numb <SHAPES_AMOUNT) {
+    if (obj_numb >= POINT && obj_numb < SHAPES_AMOUNT) {
         void *shape = NULL;
         int x1, y1, x2, y2, rad;
-        char* end;
-        char EMPTY[2] = "";
+        char *end;
+        ///можно стртол в отдельную функцию
         x1 = strtol(strtok(NULL, separate_symbol), &end, 0);
         y1 = strtol(strtok(NULL, separate_symbol), &end, 0);
-//        if (x1 == LONG_MAX || x1 == LONG_MIN || y1 == LONG_MAX || y1 == LONG_MIN) {
-//            return NULL;
-//        }
-        if (strcmp(EMPTY, end) != 0 && strcmp("\n", end) != 0) {
+        if (strcmp("", end) != 0 && strcmp("\n", end) != 0) {
             return NULL;
         }
+        /// switch case быстрее
         if (obj_numb == POINT) {
             shape = new(Point, x1, y1);
         } else if (obj_numb == CIRCLE) {
