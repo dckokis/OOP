@@ -1,5 +1,4 @@
 #include "fabric.h"
-#include "Parser.h"
 #include "new.h"
 #include <stdio.h>
 
@@ -13,8 +12,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     void *object;
+    char buffer[1024];
     while (!feof (input)) {
-        object = object_create(by_line_parser(input));
+        object = object_create(fgets(buffer, 1024, input));
         draw_object(object);
         delete(object);
     }
