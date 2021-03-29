@@ -1,4 +1,4 @@
-#include "Vector.h"
+#include "Vector.hpp"
 #include <gtest/gtest.h>
 
 TEST(EQUAL, ZERO_VECTORS_EQUAL) {
@@ -10,7 +10,6 @@ TEST(EQUAL, ZERO_VECTORS_EQUAL) {
     ASSERT_FALSE(test_vector1 != test_vector2);
     ASSERT_TRUE(test_vector1 == test_vector2);
     ASSERT_EQ(test_vector1 * test_vector2, 0);
-    //ASSERT_ANY_THROW(test_vector1.angle(test_vector2));
     ASSERT_ANY_THROW(test_vector3 / 0);
     ASSERT_ANY_THROW(test_vector3 /= 0);
 }
@@ -21,20 +20,16 @@ TEST(EQUAL, COORD_EQUAL) {
 
     ASSERT_EQ(test_vector1.x(), 1);
     ASSERT_EQ(test_vector1.y(), 2);
-    //ASSERT_EQ(test_vector1.angle(), atan(2.0));
 
     test_vector1.x(2);
     test_vector1.y(1);
     ASSERT_EQ(test_vector1.x(), 2);
     ASSERT_EQ(test_vector1.y(), 1);
 
-    //ASSERT_EQ(test_vector1.angle(), atan(0.5));
     test_vector1.x(1);
     test_vector1.y(1);
     ASSERT_EQ(test_vector1.module2(), 2);
     ASSERT_EQ(zero.module2(), 0);
-
-    //ASSERT_EQ(test_vector1.angle(), atan(1.0));
 }
 
 TEST(OPERATORS, SELF_APPROPRIATION) {
