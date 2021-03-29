@@ -12,7 +12,7 @@ public:
     Vector &operator=(const Vector &that);
 
 public:
-    Vector makePolar(double rad, double alpha) const;
+    static Vector makePolar(double rad, double alpha);
 
 public:
     double x(void) const;

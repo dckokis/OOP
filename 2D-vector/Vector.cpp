@@ -21,7 +21,7 @@ Vector::Vector(const Vector &that) {
 
 Vector &Vector::operator=(const Vector &that) = default;
 
-Vector Vector::makePolar(double rad, double alpha) const {
+Vector Vector::makePolar(double rad, double alpha) {
     Vector polar_vector;
     polar_vector.X = rad * cos(alpha);
     polar_vector.Y = rad * sin(alpha);
