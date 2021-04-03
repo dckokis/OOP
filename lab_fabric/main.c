@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     void *object;
     char buffer[1024];
     while (!feof (input)) {
-        object = object_create(fgets(buffer, 1024, input));
+        object = object_create(parser(fgets(buffer, 1024, input)));///////
         draw_object(object);
         delete(object);
     }

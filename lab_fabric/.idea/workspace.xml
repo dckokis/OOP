@@ -13,8 +13,6 @@
   <component name="ChangeListManager">
     <list default="true" id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Parser.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Parser.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/fabric.c" beforeDir="false" afterPath="$PROJECT_DIR$/fabric.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fabric.h" beforeDir="false" afterPath="$PROJECT_DIR$/fabric.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
@@ -62,11 +60,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -83,6 +76,8 @@
       <workItem from="1616862061313" duration="899000" />
       <workItem from="1616862977906" duration="2824000" />
       <workItem from="1616866482674" duration="682000" />
+      <workItem from="1617020002781" duration="19000" />
+      <workItem from="1617449246481" duration="2961000" />
     </task>
     <task id="LOCAL-00001" summary="Started.">
       <created>1615739189083</created>
@@ -105,7 +100,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616950611601</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Начал переделывать.">
+      <created>1617019941564</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1617019941564</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -151,6 +153,7 @@
     <MESSAGE value="Started." />
     <MESSAGE value="It works. Need some reviews." />
     <MESSAGE value="NOW IT IS FINALLY WORKS." />
-    <option name="LAST_COMMIT_MESSAGE" value="NOW IT IS FINALLY WORKS." />
+    <MESSAGE value="Начал переделывать." />
+    <option name="LAST_COMMIT_MESSAGE" value="Начал переделывать." />
   </component>
 </project>
