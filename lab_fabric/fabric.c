@@ -17,7 +17,7 @@ enum Shape {
     UNDEFINED = -1
 };
 
-int identify_object_name(const char *obj_name) {
+int identify_object_type(const char *obj_name) {
     if (obj_name != NULL) {
         if (strcmp(obj_name, "point") == 0)
             return POINT;
@@ -36,56 +36,70 @@ RawStuff *parser(char *str) {
     char source[256] = "";
     strcpy_s(source, 256, str);
     char *object_name = strtok(source, " ");
-    result->obj_name = identify_object_name(object_name);
-//    va_start(result->parameters, result->obj_name);
+    result->obj_type = identify_object_type(object_name);
     char *end;
-//    va_arg(result->parameters, int);
-    result->x1 = strtol(strtok(NULL, " "), &end, 0);
-    result->y1 = strtol(strtok(NULL, " "), &end, 0);
-    switch (result->obj_name) {
+//    result->x1 = strtol(strtok(NULL, " "), &end, 0);
+//    result->y1 = strtol(strtok(NULL, " "), &end, 0);
+    switch (result->obj_type) {
         case POINT:
+            result->params = calloc(2, sizeof(int));
+            result->params[0] = strtol(strtok(NULL, " "), &end, 0); //x1
+            result->params[1] = strtol(strtok(NULL, " "), &end, 0); //y1
             break;
         case CIRCLE:
-            result->rad = strtol(strtok(NULL, " "), &end, 0);
+            result->params = calloc(3, sizeof(int));
+            result->params[0] = strtol(strtok(NULL, " "), &end, 0); //x1
+            result->params[1] = strtol(strtok(NULL, " "), &end, 0); //y1
+            result->params[2] = strtol(strtok(NULL, " "), &end, 0); //rad
+//            result->rad = strtol(strtok(NULL, " "), &end, 0);
             break;
         case LINE:
-            result->x2 = strtol(strtok(NULL, " "), &end, 0);
-            result->y2 = strtol(strtok(NULL, " "), &end, 0);
+            result->params = calloc(4, sizeof(int));
+            result->params[0] = strtol(strtok(NULL, " "), &end, 0); //x1
+            result->params[1] = strtol(strtok(NULL, " "), &end, 0); //y1
+            result->params[2] = strtol(strtok(NULL, " "), &end, 0); //x2
+            result->params[3] = strtol(strtok(NULL, " "), &end, 0); //y2
+//            result->x2 = strtol(strtok(NULL, " "), &end, 0);
+//            result->y2 = strtol(strtok(NULL, " "), &end, 0);
             break;
         case RECTANGLE:
-            result->x2 = strtol(strtok(NULL, " "), &end, 0);
-            result->y2 = strtol(strtok(NULL, " "), &end, 0);
+            result->params = calloc(4, sizeof(int));
+            result->params[0] = strtol(strtok(NULL, " "), &end, 0); //x1
+            result->params[1] = strtol(strtok(NULL, " "), &end, 0); //y1
+            result->params[2] = strtol(strtok(NULL, " "), &end, 0); //x2
+            result->params[3] = strtol(strtok(NULL, " "), &end, 0); //y2
+//            result->x2 = strtol(strtok(NULL, " "), &end, 0);
+//            result->y2 = strtol(strtok(NULL, " "), &end, 0);
             break;
         case UNDEFINED:
             free(result);
             return NULL;
     }
-//    va_end(result->parameters);
     return result;
 }
 
-/// можно сделать так: парсить строку прямо тут, в object_create передавать условно структуру с параметрами(имя параметры)
 void *object_create(RawStuff *rawStuff) {
     if (rawStuff == NULL) {
         return NULL;
     }
-    //creating_shape
-    if (rawStuff->obj_name >= POINT && rawStuff->obj_name < SHAPES_AMOUNT) {
+    ///creating_shape///
+    if (rawStuff->obj_type >= POINT && rawStuff->obj_type < SHAPES_AMOUNT) {
         void *shape = NULL;
-        switch (rawStuff->obj_name) {
+        switch (rawStuff->obj_type) {
             case POINT:
-                shape = new(Point, rawStuff->x1, rawStuff->y1);
+                shape = new(Point, rawStuff->params[0], rawStuff->params[1]);
                 break;
             case CIRCLE:
-                shape = new(Circle, rawStuff->x1, rawStuff->y1, rawStuff->rad);
+                shape = new(Circle, rawStuff->params[0], rawStuff->params[1], rawStuff->params[2]);
                 break;
             case LINE:
-                shape = new(Line, rawStuff->x1, rawStuff->y1, rawStuff->x2, rawStuff->y2);
+                shape = new(Line, rawStuff->params[0], rawStuff->params[1], rawStuff->params[2], rawStuff->params[3]);
                 break;
             case RECTANGLE:
-                shape = new(Rect, rawStuff->x1, rawStuff->y1, rawStuff->x2, rawStuff->y2);
+                shape = new(Rect, rawStuff->params[0], rawStuff->params[1], rawStuff->params[2], rawStuff->params[3]);
                 break;
         }
+        free(rawStuff->params);
         free(rawStuff);
         return shape;
     }
