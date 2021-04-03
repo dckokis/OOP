@@ -15,9 +15,9 @@ public:
     static Vector makePolar(double rad, double alpha);
 
 public:
-    double x(void) const;
+    [[nodiscard]] double x(void) const;
 
-    double y(void) const;
+    [[nodiscard]] double y(void) const;
 
     void x(double newX);
 
@@ -56,15 +56,15 @@ public:
 
     Vector &rotate(int quad);
 
-    double module2(void) const;
+    [[nodiscard]] double module2(void) const;
 
-    double angle(void) const;
+    [[nodiscard]] double angle(void) const;
 
-    double angle(const Vector &that) const;
+    [[nodiscard]] double angle(const Vector &that) const;
 
-    double length(void) const;
+    [[nodiscard]] double length(void) const;
 
-    double projection(const Vector &base) const;
+    [[nodiscard]] double projection(const Vector &base) const;
 
     Vector &normalize(void);
 

@@ -125,3 +125,13 @@ TEST(METHODS, PROJECTION) {
     ASSERT_EQ(test_vector2.projection(e1), -1);
     ASSERT_EQ(test_vector2.projection(e2), -1);
 }
+
+TEST(METHODS, ROTATION) {
+    Vector test_vector1 = Vector(1, 1);
+    Vector test_vector2 = Vector(-1, -1);
+}
+
+int main(int argc, char ** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

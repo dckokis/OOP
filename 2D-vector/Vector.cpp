@@ -1,8 +1,8 @@
 #include "Vector.hpp"
 #include <cmath>
 
-#define EPSILON 1e-7
-#define PI 3.14
+const double EPSILON = 1e-7;
+const double PI = 3.14;
 
 Vector::Vector(void) {
     X = 0;
@@ -141,7 +141,7 @@ double Vector::angle(void) const {
     return angle;
 }
 
-double Vector::angle(const Vector &that) const{
+double Vector::angle(const Vector &that) const {
     double module_a = sqrt(X * X + Y * Y);
     double module_b = sqrt(that.X * that.X + that.Y * that.Y);
     if (module_a <= EPSILON || module_b <= EPSILON) {
