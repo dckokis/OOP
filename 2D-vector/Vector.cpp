@@ -65,11 +65,8 @@ Vector Vector::operator*(const double &that) const {
 }
 
 Vector Vector::operator/(const double &that) const {
-    try {
-        if (that == 0)
-            throw "Can not divide vector by a zero scalar";
-    }
-    catch (char *str) {}
+    if (that == 0)
+        throw "Can not divide vector by a zero scalar";
     return Vector(X / that, Y / that);
 }
 
@@ -93,11 +90,8 @@ Vector &Vector::operator*=(const double &that) {
 }
 
 Vector &Vector::operator/=(const double &that) {
-    try {
-        if (that == 0)
-            throw "Can not divide vector by a zero scalar";
-    }
-    catch (char *str) {}
+    if (that == 0)
+        throw "Can not divide vector by a zero scalar";
     X = X / that;
     Y = Y / that;
     return *this;
@@ -200,16 +194,20 @@ double Vector::angle(void) const {
 double Vector::angle(const Vector &that) const {
     double module_a = sqrt(X * X + Y * Y);
     double module_b = sqrt(that.X * that.X + that.Y * that.Y);
-    try {
-        if (module_a <= EPSILON || module_b <= EPSILON)
-            throw "Can not find the angle between Vector and Zero-Vector";
-    }
-    catch (char *str) {}
+    if (module_a <= EPSILON || module_b <= EPSILON)
+        throw "Can not find the angle between Vector and Zero-Vector";
     if (*this == that) {
         return 0;
     }
     double scalar_product = *this * that;
-    double angle = acos(scalar_product / (module_a * module_b));
+    double sgn = 1.0;
+    if ((this->angle() < that.angle() && this->angle() >= 0) || (this->angle() < 0 && that.angle() > 0)) {
+        sgn = -sgn;
+    }
+//    if (this->angle() < 0) {
+//        sgn = -sgn;
+//    }
+    double angle = sgn * acos(scalar_product / (module_a * module_b));
     return angle;
 }
 
@@ -227,10 +225,13 @@ Vector &Vector::normalize(void) {
 
 Vector &Vector::transformTo(const Vector &e1, const Vector &e2) {
     double det = e1.X * e2.Y - e2.X * e1.Y;
+    if (det == 0) {
+        throw "(e1;e2) is not a basis!";
+    }
     double tempX = X;
     double tempY = Y;
-    X = (e2.Y * tempX - e1.X * tempY) / det;
-    Y = (-e2.X * tempX + e1.Y * tempY) / det;
+    X = (e2.Y * tempX - e2.X * tempY) / det;
+    Y = (-e1.Y * tempX + e1.X * tempY) / det;
     return *this;
 }
 

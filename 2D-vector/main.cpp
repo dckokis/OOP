@@ -88,7 +88,7 @@ TEST(METHODS, ANGLES) {
     Vector test_vector2 = Vector(-1, -1);
     Vector zero = Vector();
 
-    ASSERT_NEAR(test_vector1.angle(test_vector2), 3.14159, 5);
+    ASSERT_NEAR(test_vector1.angle(test_vector2), M_PI, 0.0001);
     ASSERT_EQ(test_vector1.angle(), atan(1));
     ASSERT_EQ(test_vector2.angle(), atan2(-1, -1));
     ASSERT_ANY_THROW(test_vector1.angle(zero));
@@ -96,7 +96,12 @@ TEST(METHODS, ANGLES) {
     ASSERT_EQ(Vector(0, 1).angle(), M_PI / 2);
     ASSERT_EQ(Vector(0, -1).angle(), -M_PI / 2);
     ASSERT_EQ(Vector(1, 1).angle(Vector(1, 1)), 0);
-//    ASSERT_EQ(Vector(1, -1).angle(Vector(1, 1)), -M_PI / 2);
+    ASSERT_EQ(Vector(1, -1).angle(), -M_PI / 4);
+    ASSERT_EQ(Vector(-1, -1).angle(), -M_PI * 3 /4);
+    ASSERT_EQ(Vector(-1, 1).angle(), M_PI * 3 /4);
+    ASSERT_EQ(Vector(1, -1).angle(Vector(1, 1)), -M_PI / 2);
+    ASSERT_EQ(Vector(0, -1).angle(Vector(1, 1)), -M_PI * 3 /4);
+    ASSERT_NEAR(Vector(2, 0).angle(Vector(1, 1)), -M_PI / 4, 0.0001);
 }
 
 TEST(METHODS, MODULE2) {
@@ -143,7 +148,7 @@ TEST(METHODS, ROTATION) {
     ASSERT_EQ(Vector(1, 1).rotate(2).angle(), Vector(-1, -1).angle());
     ASSERT_EQ(Vector(1, -1).rotate(-M_PI / 4).angle(), -M_PI / 2);
     ASSERT_EQ(Vector(0, 1).rotate(M_PI / 2).angle(), M_PI);
-//    ASSERT_EQ(Vector(0, -1).rotate(-M_PI / 2).angle(), -M_PI);
+    ASSERT_EQ(Vector(0, -1).rotate(-M_PI / 2).angle(), M_PI);
     ASSERT_EQ(Vector(1, sqrt(3)).rotate(M_PI / 4).angle(), M_PI / 3 + M_PI / 4);
     ASSERT_EQ(Vector(2, 0).rotate(M_PI * 3 / 4).angle(), M_PI * 3 / 4);
     ASSERT_EQ(Vector(1, 0).rotate(1).angle(), M_PI / 2);
@@ -160,5 +165,8 @@ TEST(METHODS, ROTATION) {
 }
 
 TEST(METHODS, TRANSFORMTO) {
-
+    ASSERT_TRUE(Vector(1, 1).transformTo(Vector(0, 1), Vector(1, 0)) == Vector(1, 1));
+    ASSERT_TRUE(Vector(1, 1).transformFrom(Vector(0, 1), Vector(1, 0)) == Vector(1, 1));
+    ASSERT_ANY_THROW(Vector(1, 1).transformTo(Vector(0, 0), Vector()));
+    ASSERT_TRUE(Vector(0, 0).transformTo(Vector(88, 90), Vector(1, 111)) == Vector());
 }
