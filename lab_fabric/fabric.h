@@ -4,8 +4,7 @@
 
 typedef struct RawStuff{
     enum Shape obj_type;
-    int *params;
-//    int x1, y1, x2, y2, rad;
+    void **params;
 }RawStuff;
 
 RawStuff *parser(char *str);

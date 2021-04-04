@@ -38,38 +38,31 @@ RawStuff *parser(char *str) {
     char *object_name = strtok(source, " ");
     result->obj_type = identify_object_type(object_name);
     char *end;
-//    result->x1 = strtol(strtok(NULL, " "), &end, 0);
-//    result->y1 = strtol(strtok(NULL, " "), &end, 0);
     switch (result->obj_type) {
         case POINT:
             result->params = calloc(2, sizeof(int));
-            result->params[0] = strtol(strtok(NULL, " "), &end, 0); //x1
-            result->params[1] = strtol(strtok(NULL, " "), &end, 0); //y1
+            result->params[0] = (void *) strtol(strtok(NULL, " "), &end, 0); //x1
+            result->params[1] = (void *) strtol(strtok(NULL, " "), &end, 0); //y1
             break;
         case CIRCLE:
             result->params = calloc(3, sizeof(int));
-            result->params[0] = strtol(strtok(NULL, " "), &end, 0); //x1
-            result->params[1] = strtol(strtok(NULL, " "), &end, 0); //y1
-            result->params[2] = strtol(strtok(NULL, " "), &end, 0); //rad
-//            result->rad = strtol(strtok(NULL, " "), &end, 0);
+            result->params[0] = (void *) strtol(strtok(NULL, " "), &end, 0); //x1
+            result->params[1] = (void *) strtol(strtok(NULL, " "), &end, 0); //y1
+            result->params[2] = (void *) strtol(strtok(NULL, " "), &end, 0); //rad
             break;
         case LINE:
             result->params = calloc(4, sizeof(int));
-            result->params[0] = strtol(strtok(NULL, " "), &end, 0); //x1
-            result->params[1] = strtol(strtok(NULL, " "), &end, 0); //y1
-            result->params[2] = strtol(strtok(NULL, " "), &end, 0); //x2
-            result->params[3] = strtol(strtok(NULL, " "), &end, 0); //y2
-//            result->x2 = strtol(strtok(NULL, " "), &end, 0);
-//            result->y2 = strtol(strtok(NULL, " "), &end, 0);
+            result->params[0] = (void *) strtol(strtok(NULL, " "), &end, 0); //x1
+            result->params[1] = (void *) strtol(strtok(NULL, " "), &end, 0); //y1
+            result->params[2] = (void *) strtol(strtok(NULL, " "), &end, 0); //x2
+            result->params[3] = (void *) strtol(strtok(NULL, " "), &end, 0); //y2
             break;
         case RECTANGLE:
             result->params = calloc(4, sizeof(int));
-            result->params[0] = strtol(strtok(NULL, " "), &end, 0); //x1
-            result->params[1] = strtol(strtok(NULL, " "), &end, 0); //y1
-            result->params[2] = strtol(strtok(NULL, " "), &end, 0); //x2
-            result->params[3] = strtol(strtok(NULL, " "), &end, 0); //y2
-//            result->x2 = strtol(strtok(NULL, " "), &end, 0);
-//            result->y2 = strtol(strtok(NULL, " "), &end, 0);
+            result->params[0] = (void *) strtol(strtok(NULL, " "), &end, 0); //x1
+            result->params[1] = (void *) strtol(strtok(NULL, " "), &end, 0); //y1
+            result->params[2] = (void *) strtol(strtok(NULL, " "), &end, 0); //x2
+            result->params[3] = (void *) strtol(strtok(NULL, " "), &end, 0); //y2
             break;
         case UNDEFINED:
             free(result);
