@@ -1,4 +1,8 @@
 #include "Vector.hpp"
+
+#define _USE_MATH_DEFINES
+
+#include <cmath>
 #include <gtest/gtest.h>
 
 TEST(EQUAL, ZERO_VECTORS_EQUAL) {
@@ -89,6 +93,10 @@ TEST(METHODS, ANGLES) {
     ASSERT_EQ(test_vector2.angle(), atan2(-1, -1));
     ASSERT_ANY_THROW(test_vector1.angle(zero));
     ASSERT_ANY_THROW(zero.angle(zero));
+    ASSERT_EQ(Vector(0, 1).angle(), M_PI / 2);
+    ASSERT_EQ(Vector(0, -1).angle(), -M_PI / 2);
+    ASSERT_EQ(Vector(1, 1).angle(Vector(1, 1)), 0);
+//    ASSERT_EQ(Vector(1, -1).angle(Vector(1, 1)), -M_PI / 2);
 }
 
 TEST(METHODS, MODULE2) {
@@ -129,9 +137,28 @@ TEST(METHODS, PROJECTION) {
 TEST(METHODS, ROTATION) {
     Vector test_vector1 = Vector(1, 1);
     Vector test_vector2 = Vector(-1, -1);
+
+    ASSERT_EQ(M_PI / 2, test_vector1.rotate(M_PI / 4).angle());
+    ASSERT_EQ(-M_PI / 2, test_vector2.rotate(M_PI / 4).angle());
+    ASSERT_EQ(Vector(1, 1).rotate(2).angle(), Vector(-1, -1).angle());
+    ASSERT_EQ(Vector(1, -1).rotate(-M_PI / 4).angle(), -M_PI / 2);
+    ASSERT_EQ(Vector(0, 1).rotate(M_PI / 2).angle(), M_PI);
+//    ASSERT_EQ(Vector(0, -1).rotate(-M_PI / 2).angle(), -M_PI);
+    ASSERT_EQ(Vector(1, sqrt(3)).rotate(M_PI / 4).angle(), M_PI / 3 + M_PI / 4);
+    ASSERT_EQ(Vector(2, 0).rotate(M_PI * 3 / 4).angle(), M_PI * 3 / 4);
+    ASSERT_EQ(Vector(1, 0).rotate(1).angle(), M_PI / 2);
+    ASSERT_EQ(Vector(1, 0).rotate(2).angle(), M_PI);
+    ASSERT_EQ(Vector(1, 0).rotate(3).angle(), -M_PI / 2);
+    ASSERT_EQ(Vector(1, 0).rotate(4).angle(), 0);
+    ASSERT_EQ(Vector(1, 0).rotate(5).angle(), M_PI / 2);
+    ASSERT_EQ(Vector(1, 0).rotate(-1).angle(), -M_PI / 2);
+    ASSERT_EQ(Vector(1, 0).rotate(-2).angle(), M_PI);
+    ASSERT_EQ(Vector(1, 0).rotate(-3).angle(), M_PI / 2);
+    ASSERT_EQ(Vector(1, 0).rotate(-4).angle(), 0);
+    ASSERT_EQ(Vector(1, 0).rotate(-5).angle(), -M_PI / 2);
+    ASSERT_EQ( Vector(1, 1).rotate(1).angle(), M_PI * 3 / 4);
 }
 
-int main(int argc, char ** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+TEST(METHODS, TRANSFORMTO) {
+
 }

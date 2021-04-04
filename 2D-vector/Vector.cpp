@@ -1,8 +1,11 @@
 #include "Vector.hpp"
+
+#define _USE_MATH_DEFINES
+
 #include <cmath>
 
 const double EPSILON = 1e-7;
-const double PI = 3.14;
+
 
 Vector::Vector(void) {
     X = 0;
@@ -62,9 +65,12 @@ Vector Vector::operator*(const double &that) const {
 }
 
 Vector Vector::operator/(const double &that) const {
-    if (that == 0) {
-        throw "Can not divide vector by a zero scalar";
-    } else return Vector(X / that, Y / that);
+    try {
+        if (that == 0)
+            throw "Can not divide vector by a zero scalar";
+    }
+    catch (char *str) {}
+    return Vector(X / that, Y / that);
 }
 
 Vector &Vector::operator+=(const Vector &that) {
@@ -87,9 +93,11 @@ Vector &Vector::operator*=(const double &that) {
 }
 
 Vector &Vector::operator/=(const double &that) {
-    if (that == 0) {
-        throw "Can not divide vector by a zero scalar";
+    try {
+        if (that == 0)
+            throw "Can not divide vector by a zero scalar";
     }
+    catch (char *str) {}
     X = X / that;
     Y = Y / that;
     return *this;
@@ -112,14 +120,62 @@ bool Vector::operator!=(const Vector &that) const {
 }
 
 Vector &Vector::rotate(double angle) {
-    X = X * cos(angle) - Y * sin(angle);
-    Y = Y * cos(angle) + X * sin(angle);
+    for (int i = 1; i <= 4; i++) {
+        if (abs(angle) == M_PI * i / 2) {
+            if (angle > 0) {
+                this->rotate(i);
+            } else if (angle < 0) {
+                this->rotate(-i);
+            }
+            return *this;
+        }
+    }
+    double tempX = X;
+    double tempY = Y;
+    X = tempX * cos(angle) - tempY * sin(angle);
+    Y = tempX * sin(angle) + tempY * cos(angle);
+    ///// наверное надо как то иначе
+    if (X == -0) X = 0;
+    if(Y == -0) Y = 0;
     return *this;
 }
 
 Vector &Vector::rotate(int quad) {
-    X = X * cos(PI * quad / 2) - Y * sin(PI * quad / 2);
-    Y = Y * cos(PI * quad / 2) + X * sin(PI * quad / 2);
+    int rot_amount = quad % 4;
+    if (rot_amount == 0) {
+        return *this;
+    }
+    double temp;
+    if (rot_amount % 2 == 0) {
+        X = -X;
+        Y = -Y;
+    } else if (rot_amount % 2 != 0) {
+        switch (rot_amount) {
+            case 1:
+                temp = X;
+                X = -Y;
+                Y = temp;
+                break;
+            case 3:
+                temp = Y;
+                Y = -X;
+                X = -temp;
+                break;
+            case -1:
+                temp = X;
+                X = Y;
+                Y = -temp;
+                break;
+            case -3:
+                temp = X;
+                X = -Y;
+                Y = temp;
+                break;
+        }
+    }
+    ///// наверное надо как то иначе
+    if (X == -0) X = 0;
+    if(Y == -0) Y = 0;
     return *this;
 }
 
@@ -130,10 +186,10 @@ double Vector::module2(void) const {
 
 double Vector::angle(void) const {
     if (abs(X) <= EPSILON) {
-        if (Y < 0) {
-            return PI / 2;
-        } else if (Y > 0) {
-            return -PI / 2;
+        if (Y > 0) {
+            return M_PI / 2;
+        } else if (Y < 0) {
+            return -M_PI / 2;
         }
 
     }
@@ -144,10 +200,15 @@ double Vector::angle(void) const {
 double Vector::angle(const Vector &that) const {
     double module_a = sqrt(X * X + Y * Y);
     double module_b = sqrt(that.X * that.X + that.Y * that.Y);
-    if (module_a <= EPSILON || module_b <= EPSILON) {
-        throw "Can not find the angle between Vector and Zero-Vector";
+    try {
+        if (module_a <= EPSILON || module_b <= EPSILON)
+            throw "Can not find the angle between Vector and Zero-Vector";
     }
-    double scalar_product = X * that.X + Y * that.Y;
+    catch (char *str) {}
+    if (*this == that) {
+        return 0;
+    }
+    double scalar_product = *this * that;
     double angle = acos(scalar_product / (module_a * module_b));
     return angle;
 }
@@ -166,14 +227,18 @@ Vector &Vector::normalize(void) {
 
 Vector &Vector::transformTo(const Vector &e1, const Vector &e2) {
     double det = e1.X * e2.Y - e2.X * e1.Y;
-    X = (e2.Y * X - e1.X * Y) / det;
-    Y = (-e2.X * X + e1.Y * Y) / det;
+    double tempX = X;
+    double tempY = Y;
+    X = (e2.Y * tempX - e1.X * tempY) / det;
+    Y = (-e2.X * tempX + e1.Y * tempY) / det;
     return *this;
 }
 
 Vector &Vector::transformFrom(const Vector &e1, const Vector &e2) {
-    X = e1.X * X + e2.X * Y;
-    Y = e1.Y * X + e2.Y * Y;
+    double tempX = X;
+    double tempY = Y;
+    X = e1.X * tempX + e2.X * tempY;
+    Y = e1.Y * tempX + e2.Y * tempY;
     return *this;
 }
 
@@ -194,8 +259,8 @@ Vector rotate(const Vector &v, double angle) {
 }
 
 Vector rotate(const Vector &v, int quad) {
-    double x = v.x() * cos(PI * quad / 2) - v.y() * sin(PI * quad / 2);
-    double y = v.y() * cos(PI * quad / 2) + v.x() * sin(PI * quad / 2);
+    double x = v.x() * cos(M_PI * quad / 2) - v.y() * sin(M_PI * quad / 2);
+    double y = v.y() * cos(M_PI * quad / 2) + v.x() * sin(M_PI * quad / 2);
     return Vector(x, y);
 }
 
