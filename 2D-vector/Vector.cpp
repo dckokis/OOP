@@ -3,8 +3,8 @@
 #define _USE_MATH_DEFINES
 
 #include <cmath>
-
-const double EPSILON = 1e-7;
+/////////необьязательно делать rotate(угол) через rotate(quad), модуль для даблов, сравнения везде проверить
+const double EPSILON = 1e-7;// как сделать не глобальной?
 
 
 Vector::Vector(void) {
