@@ -90,10 +90,10 @@ TEST(METHODS, ANGLES) {
     ASSERT_EQ(Vector(0, -1).angle(), -M_PI / 2);
     ASSERT_EQ(Vector(1, 1).angle(Vector(1, 1)), 0);
     ASSERT_EQ(Vector(1, -1).angle(), -M_PI / 4);
-    ASSERT_EQ(Vector(-1, -1).angle(), -M_PI * 3 /4);
-    ASSERT_EQ(Vector(-1, 1).angle(), M_PI * 3 /4);
+    ASSERT_EQ(Vector(-1, -1).angle(), -M_PI * 3 / 4);
+    ASSERT_EQ(Vector(-1, 1).angle(), M_PI * 3 / 4);
     ASSERT_EQ(Vector(1, -1).angle(Vector(1, 1)), -M_PI / 2);
-    ASSERT_EQ(Vector(0, -1).angle(Vector(1, 1)), -M_PI * 3 /4);
+    ASSERT_EQ(Vector(0, -1).angle(Vector(1, 1)), -M_PI * 3 / 4);
     ASSERT_NEAR(Vector(2, 0).angle(Vector(1, 1)), -M_PI / 4, 0.0001);
 }
 
@@ -154,7 +154,7 @@ TEST(METHODS, ROTATION) {
     ASSERT_EQ(Vector(1, 0).rotate(-3).angle(), M_PI / 2);
     ASSERT_EQ(Vector(1, 0).rotate(-4).angle(), 0);
     ASSERT_EQ(Vector(1, 0).rotate(-5).angle(), -M_PI / 2);
-    ASSERT_EQ( Vector(1, 1).rotate(1).angle(), M_PI * 3 / 4);
+    ASSERT_EQ(Vector(1, 1).rotate(1).angle(), M_PI * 3 / 4);
     ASSERT_EQ(Vector(1, 1).rotate(3).angle(), -M_PI / 4);
 }
 

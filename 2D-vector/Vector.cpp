@@ -65,8 +65,6 @@ Vector Vector::operator*(const double &that) const {
 }
 
 Vector Vector::operator/(const double &that) const {
-//    if (that == 0)
-//        throw "Can not divide vector by a zero scalar";
     return Vector(X / that, Y / that);
 }
 
@@ -90,8 +88,6 @@ Vector &Vector::operator*=(const double &that) {
 }
 
 Vector &Vector::operator/=(const double &that) {
-//    if (that == 0)
-//        throw "Can not divide vector by a zero scalar";
     X = X / that;
     Y = Y / that;
     return *this;
@@ -130,7 +126,7 @@ Vector &Vector::rotate(double angle) {
     Y = tempX * sin(angle) + tempY * cos(angle);
 
     if (abs(X) <= EPSILON) X = 0;
-    if(abs(Y) <= EPSILON) Y = 0;
+    if (abs(Y) <= EPSILON) Y = 0;
     return *this;
 }
 
@@ -169,7 +165,7 @@ Vector &Vector::rotate(int quad) {
     }
 
     if (abs(X) <= EPSILON) X = 0;
-    if(abs(Y) <= EPSILON) Y = 0;
+    if (abs(Y) <= EPSILON) Y = 0;
     return *this;
 }
 
@@ -194,8 +190,6 @@ double Vector::angle(void) const {
 double Vector::angle(const Vector &that) const {
     double module_a = sqrt(X * X + Y * Y);
     double module_b = sqrt(that.X * that.X + that.Y * that.Y);
-//    if (module_a <= EPSILON || module_b <= EPSILON)
-//        throw "Can not find the angle between Vector and Zero-Vector";
     if (*this == that) {
         return 0;
     }
@@ -222,9 +216,6 @@ Vector &Vector::normalize(void) {
 
 Vector &Vector::transformTo(const Vector &e1, const Vector &e2) {
     double det = e1.X * e2.Y - e2.X * e1.Y;
-//    if (det == 0) {
-//        throw "(e1;e2) is not a basis!";
-//    }
     double tempX = X;
     double tempY = Y;
     X = (e2.Y * tempX - e2.X * tempY) / det;

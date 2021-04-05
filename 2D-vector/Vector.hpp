@@ -85,7 +85,7 @@ Vector rotate(const Vector &v, int quad);
 
 double module2(const Vector &v);
 
-double length(const Vector & v);
+double length(const Vector &v);
 
 double angle(const Vector &v);
 
