@@ -11,7 +11,13 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="" />
+    <list default="true" id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric.c" beforeDir="false" afterPath="$PROJECT_DIR$/fabric.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric.h" beforeDir="false" afterPath="$PROJECT_DIR$/fabric.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/square.c" beforeDir="false" afterPath="$PROJECT_DIR$/square.c" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,6 +26,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
@@ -106,7 +113,14 @@
       <option name="project" value="LOCAL" />
       <updated>1617019941564</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Поправить, что поправить указано в с файле.">
+      <created>1617624229584</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1617624229584</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -153,6 +167,7 @@
     <MESSAGE value="It works. Need some reviews." />
     <MESSAGE value="NOW IT IS FINALLY WORKS." />
     <MESSAGE value="Начал переделывать." />
-    <option name="LAST_COMMIT_MESSAGE" value="Начал переделывать." />
+    <MESSAGE value="Поправить, что поправить указано в с файле." />
+    <option name="LAST_COMMIT_MESSAGE" value="Поправить, что поправить указано в с файле." />
   </component>
 </project>

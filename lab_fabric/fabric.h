@@ -4,14 +4,14 @@
 
 typedef struct RawStuff{
     enum Shape obj_type;
+    int params_amount;
     void **params;
 }RawStuff;
 
 RawStuff *parser(char *str);
 
-int identify_object_type(const char *obj_name);
-
 void *object_create(RawStuff *rawStuff);
 
 bool draw_object(void *object);
 
+void RawStuffDtor(RawStuff *rawStuff);

@@ -41,17 +41,20 @@ RawStuff *parser(char *str) {
     switch (result->obj_type) {
         case POINT:
             result->params = calloc(2, sizeof(int));
+            result->params_amount = 2;
             result->params[0] = (void *) strtol(strtok(NULL, " "), &end, 0); //x1
             result->params[1] = (void *) strtol(strtok(NULL, " "), &end, 0); //y1
             break;
         case CIRCLE:
             result->params = calloc(3, sizeof(int));
+            result->params_amount = 3;
             result->params[0] = (void *) strtol(strtok(NULL, " "), &end, 0); //x1
             result->params[1] = (void *) strtol(strtok(NULL, " "), &end, 0); //y1
             result->params[2] = (void *) strtol(strtok(NULL, " "), &end, 0); //rad
             break;
         case LINE:
             result->params = calloc(4, sizeof(int));
+            result->params_amount = 4;
             result->params[0] = (void *) strtol(strtok(NULL, " "), &end, 0); //x1
             result->params[1] = (void *) strtol(strtok(NULL, " "), &end, 0); //y1
             result->params[2] = (void *) strtol(strtok(NULL, " "), &end, 0); //x2
@@ -59,6 +62,7 @@ RawStuff *parser(char *str) {
             break;
         case RECTANGLE:
             result->params = calloc(4, sizeof(int));
+            result->params_amount = 4;
             result->params[0] = (void *) strtol(strtok(NULL, " "), &end, 0); //x1
             result->params[1] = (void *) strtol(strtok(NULL, " "), &end, 0); //y1
             result->params[2] = (void *) strtol(strtok(NULL, " "), &end, 0); //x2
@@ -96,11 +100,18 @@ void *object_create(RawStuff *rawStuff) {
             default:
                 return NULL;
         }
-        free(rawStuff->params);
-        free(rawStuff);
         return shape;
     }
     return NULL;
+}
+
+void RawStuffDtor(RawStuff *rawStuff) {
+    for (int i = 0; i < rawStuff->params_amount; ++i) {
+        free(rawStuff->params[i]);
+    }
+    free(rawStuff->params);
+    rawStuff->params_amount = 0;
+    rawStuff->obj_type = UNDEFINED;
 }
 
 bool draw_object(void *object) {
