@@ -65,8 +65,8 @@ Vector Vector::operator*(const double &that) const {
 }
 
 Vector Vector::operator/(const double &that) const {
-    if (that == 0)
-        throw "Can not divide vector by a zero scalar";
+//    if (that == 0)
+//        throw "Can not divide vector by a zero scalar";
     return Vector(X / that, Y / that);
 }
 
@@ -90,8 +90,8 @@ Vector &Vector::operator*=(const double &that) {
 }
 
 Vector &Vector::operator/=(const double &that) {
-    if (that == 0)
-        throw "Can not divide vector by a zero scalar";
+//    if (that == 0)
+//        throw "Can not divide vector by a zero scalar";
     X = X / that;
     Y = Y / that;
     return *this;
@@ -128,9 +128,9 @@ Vector &Vector::rotate(double angle) {
     double tempY = Y;
     X = tempX * cos(angle) - tempY * sin(angle);
     Y = tempX * sin(angle) + tempY * cos(angle);
-    ///// наверное надо как то иначе
-    if (X == -0) X = 0;
-    if(Y == -0) Y = 0;
+
+    if (abs(X) <= EPSILON) X = 0;
+    if(abs(Y) <= EPSILON) Y = 0;
     return *this;
 }
 
@@ -153,7 +153,7 @@ Vector &Vector::rotate(int quad) {
             case 3:
                 temp = Y;
                 Y = -X;
-                X = -temp;
+                X = temp;
                 break;
             case -1:
                 temp = X;
@@ -167,9 +167,9 @@ Vector &Vector::rotate(int quad) {
                 break;
         }
     }
-    ///// наверное надо как то иначе
-    if (X == -0) X = 0;
-    if(Y == -0) Y = 0;
+
+    if (abs(X) <= EPSILON) X = 0;
+    if(abs(Y) <= EPSILON) Y = 0;
     return *this;
 }
 
@@ -194,8 +194,8 @@ double Vector::angle(void) const {
 double Vector::angle(const Vector &that) const {
     double module_a = sqrt(X * X + Y * Y);
     double module_b = sqrt(that.X * that.X + that.Y * that.Y);
-    if (module_a <= EPSILON || module_b <= EPSILON)
-        throw "Can not find the angle between Vector and Zero-Vector";
+//    if (module_a <= EPSILON || module_b <= EPSILON)
+//        throw "Can not find the angle between Vector and Zero-Vector";
     if (*this == that) {
         return 0;
     }
@@ -204,9 +204,6 @@ double Vector::angle(const Vector &that) const {
     if ((this->angle() < that.angle() && this->angle() >= 0) || (this->angle() < 0 && that.angle() > 0)) {
         sgn = -sgn;
     }
-//    if (this->angle() < 0) {
-//        sgn = -sgn;
-//    }
     double angle = sgn * acos(scalar_product / (module_a * module_b));
     return angle;
 }
@@ -225,9 +222,9 @@ Vector &Vector::normalize(void) {
 
 Vector &Vector::transformTo(const Vector &e1, const Vector &e2) {
     double det = e1.X * e2.Y - e2.X * e1.Y;
-    if (det == 0) {
-        throw "(e1;e2) is not a basis!";
-    }
+//    if (det == 0) {
+//        throw "(e1;e2) is not a basis!";
+//    }
     double tempX = X;
     double tempY = Y;
     X = (e2.Y * tempX - e2.X * tempY) / det;
