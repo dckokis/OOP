@@ -14,9 +14,6 @@
     <list default="true" id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fabric.c" beforeDir="false" afterPath="$PROJECT_DIR$/fabric.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabric.h" beforeDir="false" afterPath="$PROJECT_DIR$/fabric.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/square.c" beforeDir="false" afterPath="$PROJECT_DIR$/square.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +117,14 @@
       <option name="project" value="LOCAL" />
       <updated>1617624229584</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Исправил, должно быть ок.">
+      <created>1617638143950</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1617638143950</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -168,6 +172,7 @@
     <MESSAGE value="NOW IT IS FINALLY WORKS." />
     <MESSAGE value="Начал переделывать." />
     <MESSAGE value="Поправить, что поправить указано в с файле." />
-    <option name="LAST_COMMIT_MESSAGE" value="Поправить, что поправить указано в с файле." />
+    <MESSAGE value="Исправил, должно быть ок." />
+    <option name="LAST_COMMIT_MESSAGE" value="Исправил, должно быть ок." />
   </component>
 </project>
