@@ -7,7 +7,7 @@
 #include "line.h"
 #include "rect.h"
 
-
+///функцию-деструктор для структуры сделать=>как то знать размер
 enum Shape {
     POINT = 0,
     CIRCLE,
