@@ -67,6 +67,8 @@ RawStuff *parser(char *str) {
         case UNDEFINED:
             free(result);
             return NULL;
+        default:
+            return NULL;
     }
     return result;
 }
@@ -91,6 +93,8 @@ void *object_create(RawStuff *rawStuff) {
             case RECTANGLE:
                 shape = new(Rect, rawStuff->params[0], rawStuff->params[1], rawStuff->params[2], rawStuff->params[3]);
                 break;
+            default:
+                return NULL;
         }
         free(rawStuff->params);
         free(rawStuff);
