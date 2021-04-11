@@ -20,7 +20,6 @@ void Calendar::DrawCalendarRange() {
 
 }
 
-
 std::vector<std::string> StringParser(char *string) {
     return std::vector<std::string>();
 }
