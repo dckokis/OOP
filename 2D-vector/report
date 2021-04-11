@@ -1,0 +1,107 @@
+  [==========] Running 36 tests from 6 test suites.
+  [----------] Global test environment set-up.
+  [----------] 6 tests from Constructor
+  [ RUN      ] Constructor.Default
+  [       OK ] Constructor.Default (0 ms)
+  [ RUN      ] Constructor.FromRealImaginary
+  [       OK ] Constructor.FromRealImaginary (0 ms)
+  [ RUN      ] Constructor.FromVector
+  [       OK ] Constructor.FromVector (0 ms)
+  [ RUN      ] Constructor.FromPolar
+  [       OK ] Constructor.FromPolar (0 ms)
+  [ RUN      ] Constructor.FromPolarInvalid
+  [       OK ] Constructor.FromPolarInvalid (0 ms)
+  [ RUN      ] Constructor.FromPolar360Degrees
+  [       OK ] Constructor.FromPolar360Degrees (0 ms)
+  [----------] 6 tests from Constructor (1 ms total)
+
+  [----------] 3 tests from StandartMethods
+  [ RUN      ] StandartMethods.get
+  [       OK ] StandartMethods.get (0 ms)
+  [ RUN      ] StandartMethods.set
+  [       OK ] StandartMethods.set (0 ms)
+  [ RUN      ] StandartMethods.length
+  [       OK ] StandartMethods.length (0 ms)
+  [----------] 3 tests from StandartMethods (1 ms total)
+
+  [----------] 3 tests from Operators
+  [ RUN      ] Operators.Assignment
+  [       OK ] Operators.Assignment (0 ms)
+  [ RUN      ] Operators.Equal
+  [       OK ] Operators.Equal (0 ms)
+  [ RUN      ] Operators.NotEqual
+  [       OK ] Operators.NotEqual (0 ms)
+  [----------] 3 tests from Operators (0 ms total)
+
+  [----------] 5 tests from OperatorsWithAssignment
+  [ RUN      ] OperatorsWithAssignment.Plus
+  [       OK ] OperatorsWithAssignment.Plus (0 ms)
+  [ RUN      ] OperatorsWithAssignment.Minus
+  [       OK ] OperatorsWithAssignment.Minus (1 ms)
+  [ RUN      ] OperatorsWithAssignment.MultScalar
+  [       OK ] OperatorsWithAssignment.MultScalar (0 ms)
+  [ RUN      ] OperatorsWithAssignment.DivScalar
+  [       OK ] OperatorsWithAssignment.DivScalar (0 ms)
+  [ RUN      ] OperatorsWithAssignment.DivTo0
+  unknown file: error: Unknown C++ exception thrown in the test body.
+  [  FAILED  ] OperatorsWithAssignment.DivTo0 (1 ms)
+  [----------] 5 tests from OperatorsWithAssignment (2 ms total)
+
+  [----------] 6 tests from MathOperators
+  [ RUN      ] MathOperators.Plus
+  [       OK ] MathOperators.Plus (0 ms)
+  [ RUN      ] MathOperators.Minus
+  [       OK ] MathOperators.Minus (1 ms)
+  [ RUN      ] MathOperators.MultVectorToScalar
+  [       OK ] MathOperators.MultVectorToScalar (0 ms)
+  [ RUN      ] MathOperators.MultScalarToVector
+  [       OK ] MathOperators.MultScalarToVector (0 ms)
+  [ RUN      ] MathOperators.DotProduct
+  [       OK ] MathOperators.DotProduct (0 ms)
+  [ RUN      ] MathOperators.DivScalar
+  [       OK ] MathOperators.DivScalar (0 ms)
+  [----------] 6 tests from MathOperators (1 ms total)
+
+  [----------] 13 tests from Methods
+  [ RUN      ] Methods.LengthAngle360Degrees
+  [       OK ] Methods.LengthAngle360Degrees (0 ms)
+  [ RUN      ] Methods.Rotate
+  [       OK ] Methods.Rotate (0 ms)
+  [ RUN      ] Methods.RotateQuad
+  C:\Workspace\Projects\03-SimpleClass\SimpleVector\Vector.test.cpp(290): error: Expected equality of these values:
+    Vector(1, 1).rotate(3).angle()
+      Which is: -2.3561944901923448
+    -pi / 4
+      Which is: -0.78539816339744828
+  [  FAILED  ] Methods.RotateQuad (1 ms)
+  [ RUN      ] Methods.Module2
+  [       OK ] Methods.Module2 (0 ms)
+  [ RUN      ] Methods.Length
+  [       OK ] Methods.Length (0 ms)
+  [ RUN      ] Methods.Angle
+  [       OK ] Methods.Angle (0 ms)
+  [ RUN      ] Methods.AngleInvalid
+  [       OK ] Methods.AngleInvalid (0 ms)
+  [ RUN      ] Methods.AngleVector
+  [       OK ] Methods.AngleVector (0 ms)
+  [ RUN      ] Methods.Projection
+  [       OK ] Methods.Projection (0 ms)
+  [ RUN      ] Methods.Normalize
+  [       OK ] Methods.Normalize (0 ms)
+  [ RUN      ] Methods.transformTo
+  [       OK ] Methods.transformTo (0 ms)
+  [ RUN      ] Methods.transformFrom
+  [       OK ] Methods.transformFrom (0 ms)
+  [ RUN      ] Methods.transformToFrom
+  [       OK ] Methods.transformToFrom (0 ms)
+  [----------] 13 tests from Methods (3 ms total)
+
+  [----------] Global test environment tear-down
+  [==========] 36 tests from 6 test suites ran. (12 ms total)
+  [  PASSED  ] 34 tests.
+  [  FAILED  ] 2 tests, listed below:
+  [  FAILED  ] OperatorsWithAssignment.DivTo0
+  [  FAILED  ] Methods.RotateQuad
+
+   2 FAILED TESTS
+
