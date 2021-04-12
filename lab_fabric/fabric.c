@@ -16,6 +16,17 @@ enum Shape {
     UNDEFINED = -1
 };
 
+void RawStuffDtor(RawStuff *rawStuff) {
+    for (int i = 0; i < rawStuff->params_amount; i++) {
+        free(rawStuff->params[i]);
+    }
+    free(rawStuff->params);
+    rawStuff->params_amount = -1;
+    rawStuff->obj_type = UNDEFINED;
+    rawStuff->dtor = NULL;
+    free(rawStuff);
+}
+
 int identify_object_type(const char *obj_name) {
     if (obj_name != NULL) {
         if (strcmp(obj_name, "point") == 0)
@@ -32,6 +43,7 @@ int identify_object_type(const char *obj_name) {
 
 RawStuff *parser(char *str) {
     RawStuff *result = malloc(sizeof(RawStuff));
+    result->dtor = RawStuffDtor;
     char source[256] = "";
     strcpy_s(source, 256, str);
     char *object_name = strtok(source, " ");
@@ -102,15 +114,6 @@ void *object_create(RawStuff *rawStuff) {
         return shape;
     }
     return NULL;
-}
-
-void RawStuffDtor(RawStuff *rawStuff) {
-    for (int i = 0; i < rawStuff->params_amount; ++i) {
-        free(rawStuff->params[i]);
-    }
-    free(rawStuff->params);
-    rawStuff->params_amount = 0;
-    rawStuff->obj_type = UNDEFINED;
 }
 
 bool draw_object(void *object) {

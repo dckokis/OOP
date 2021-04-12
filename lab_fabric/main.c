@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     while (!feof (input)) {
         RawStuff *rawStuff = parser(fgets(buffer, 1024, input));
         object = object_create(rawStuff);
-        RawStuffDtor(rawStuff);
+        rawStuff->dtor(rawStuff);
         draw_object(object);
         delete(object);
     }
