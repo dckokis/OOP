@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include "parser.hpp"
 
 namespace {
     enum FORMAT {
@@ -13,26 +14,23 @@ namespace {
 
 class Calendar {
 public:
-    Calendar();
+    Calendar(std::vector<std::string> input);
 
-    void DrawCalendarMonth();
+    void Draw(std::string input);
 
-    void DrawCalendarYear();
-
-    void DrawCalendarRange();
-
-    std::string ReadFile(FILE *input);
-
-private:
-    std::vector<std::string> StringParser(char *string);
-
-    inline int Year() {
+    [[nodiscard]] inline int Year() const {
         return _year;
     }
 
-    inline FORMAT format() {
+    [[nodiscard]] inline FORMAT Format() const{
         return _format;
     }
+private:
+    void DrawCalendarMonth(std::string input);
+
+    void DrawCalendarYear(std::string input);
+
+    void DrawCalendarRange(std::string input);
 
     FORMAT _format = HORIZONTAL;
     int _year;
