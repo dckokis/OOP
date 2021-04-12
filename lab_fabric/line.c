@@ -1,14 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "line.h"
 #include "new.h"
 
 // Объявление конструктора для Line
 static void *Line_ctor(void *_self, va_list *app) {
 
-//    struct Line *self = ((const struct Class *)Point)->ctor(_self, app);
-//
-//    self->x_end = va_arg(*app, int);
-//    self->y_end = va_arg(*app, int);
     struct Line *self = (struct Line*) _self;
     int x = va_arg(*app, int);
     int y = va_arg(*app, int);
@@ -19,6 +16,12 @@ static void *Line_ctor(void *_self, va_list *app) {
     return self;
 }
 
+static void * Line_dtor(void *_self) {
+    struct Line *self = (struct Line*) _self;
+    free(self->first);
+    free(self->second);
+    return self;
+}
 
 //#define x(p) (((const struct Point *)(p)) -> x)
 //#define y(p) (((const struct Point *)(p)) -> y)
@@ -39,7 +42,7 @@ static const struct Class _Line = {
         // Указатель на функцию-конструктор
         Line_ctor,
         // Деструктор отсутствует
-        0,
+        Line_dtor,
         // Указатель на виртуальную функцию draw
         Line_draw
 };

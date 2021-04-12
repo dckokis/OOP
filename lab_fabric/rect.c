@@ -1,14 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "rect.h"
 #include "new.h"
 
 static void *Rect_ctor(void *_self, va_list *app) {
 
-//    struct Rect *self = ((const struct Class *)Point)->ctor(_self, app);
-//
-//
-//    self->x_end = va_arg(*app, int);
-//    self->y_end = va_arg(*app, int);
     struct Rect *self = (struct Rect*) _self;
     int x = va_arg(*app, int);
     int y = va_arg(*app, int);
@@ -19,9 +15,12 @@ static void *Rect_ctor(void *_self, va_list *app) {
     return self;
 }
 
-//#define x(p) (((const struct Point *)(p)) -> x)
-//#define y(p) (((const struct Point *)(p)) -> y)
-
+static void *Rect_dtor(void *_self) {
+    struct Rect *self = (struct Rect*) _self;
+    free(self->right_up_corner);
+    free(self->left_down_corner);
+    return self;
+}
 
 static void Rect_draw(const void * _self)
 {
@@ -38,10 +37,9 @@ static const struct Class _Rect = {
 
         Rect_ctor,
 
-        0,
+        Rect_dtor,
 
         Rect_draw
 };
-
 
 const void *Rect = &_Rect;

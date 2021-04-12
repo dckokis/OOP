@@ -17,13 +17,12 @@ enum Shape {
 };
 
 void RawStuffDtor(RawStuff *rawStuff) {
-    for (int i = 0; i < rawStuff->params_amount; i++) {
-        free(rawStuff->params[i]);
+    if (rawStuff == NULL) {
+        return;
     }
     free(rawStuff->params);
     rawStuff->params_amount = -1;
     rawStuff->obj_type = UNDEFINED;
-    rawStuff->dtor = NULL;
     free(rawStuff);
 }
 
@@ -43,7 +42,6 @@ int identify_object_type(const char *obj_name) {
 
 RawStuff *parser(char *str) {
     RawStuff *result = malloc(sizeof(RawStuff));
-    result->dtor = RawStuffDtor;
     char source[256] = "";
     strcpy_s(source, 256, str);
     char *object_name = strtok(source, " ");

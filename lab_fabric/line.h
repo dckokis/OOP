@@ -8,8 +8,6 @@ struct Line {
     const void *class;
     struct Point *first;
     struct Point *second;
-//    const struct Point _;
-//    int x_end, y_end;
 };
 
 // Ссылка на указатель на описание класса Line, объявленный в line.c.

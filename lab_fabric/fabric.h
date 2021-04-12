@@ -6,8 +6,9 @@ typedef struct RawStuff{
     enum Shape obj_type;
     int params_amount;
     void **params;
-    void (*dtor)(struct RawStuff *rawStuff);
 }RawStuff;
+
+void RawStuffDtor(RawStuff *rawStuff);
 
 RawStuff *parser(char *str);
 
