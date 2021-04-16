@@ -161,7 +161,7 @@ double Vector::angle(const Vector &that) const {
     double sgn = 1.0;
     double angle_this = this->angle();
     double angle_that = that.angle();
-    if ((angle_this < (angle_that - EPSILON) && angle_this >= 0) || ((angle_this + EPSILON) < 0 && (angle_that - EPSILON) > 0)) {
+    if (angle_this < (angle_that - EPSILON)) {
         sgn = -sgn;
     }
     double angle = sgn * acos(scalar_product / (module_a * module_b));
