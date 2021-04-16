@@ -150,16 +150,18 @@ double Vector::angle(void) const {
 
 double Vector::angle(const Vector &that) const {
     if (*this == that) {
-        return 0;
+    return 0;
     }
     double module_a = sqrt(X * X + Y * Y);
     double module_b = sqrt(that.X * that.X + that.Y * that.Y);
+    if (*this == that) {
+        return 0;
+    }
     double scalar_product = *this * that;
     double sgn = 1.0;
     double angle_this = this->angle();
     double angle_that = that.angle();
-    if ((abs(angle_that - angle_this) > EPSILON && angle_this >= 0 && angle_that >= 0) ||
-        (angle_this < 0 && angle_that > 0)) {
+    if ((angle_this < (angle_that - EPSILON) && angle_this >= 0) || ((angle_this + EPSILON) < 0 && (angle_that - EPSILON) > 0)) {
         sgn = -sgn;
     }
     double angle = sgn * acos(scalar_product / (module_a * module_b));
