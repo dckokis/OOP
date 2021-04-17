@@ -1,10 +1,9 @@
-#include "month.hpp"
+#include "date.hpp"
 
-Month::Month() {
-
+Date::Date() {
 }
 
-const std::string Month::DayNames[7] = {
+const std::string Date::DayNames[7] = {
         "Sun",
         "Mon",
         "Tue",
@@ -14,7 +13,7 @@ const std::string Month::DayNames[7] = {
         "Sat"
 };
 
-const std::string Month::MonthNames[12] = {
+const std::string Date::MonthNames[12] = {
         "January",
         "February",
         "March",
@@ -29,7 +28,7 @@ const std::string Month::MonthNames[12] = {
         "December"
 };
 
-const int Month::DaysInMonth[12] = {
+const int Date::MonthDays[12] = {
         31, 28, 31, 30, 31, 30,
         31, 31, 30, 31, 30, 31,
 };

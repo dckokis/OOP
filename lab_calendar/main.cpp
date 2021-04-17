@@ -1,6 +1,8 @@
 #include <iostream>
+#include "calendar.hpp"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    Calendar test = Calendar();
+    test.Run();
     return 0;
 }
