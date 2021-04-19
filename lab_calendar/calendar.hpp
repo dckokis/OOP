@@ -19,6 +19,7 @@ public:
 
     void Run(); //Main Menu system
     static void Draw(const char FormatFileName[]); //Main calendar draw loop
+    static void Draw(string Format);
     void SetYear(int _year);
     int GetYear();
     void SetStartMonth(int Month);

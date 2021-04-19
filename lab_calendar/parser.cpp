@@ -30,32 +30,48 @@ vector<OutputFormat> DefineFormat(const string &RangeType, const string &Orient,
     return Format;
 }
 
-tuple<vector<OutputFormat>, vector<int>> Parser(const char FormatFileName[]) {
+tuple<vector<OutputFormat>, vector<int>> Parser(ifstream FormatFile) {
     string RangeType;
     vector<int> Range;
     string Orient;
     string YearFormat;
-    ifstream FormatFile(FormatFileName);
-    if (!FormatFile) {
-        throw MyExceptionFile(FormatFileName);
+    string Parsing;
+    vector<string> Parsed;
+//    if (!FormatFile) {
+//        throw MyExceptionFile(FormatFileName);
+//    }
+    for (int n = 1; getline(FormatFile, Parsing); ++n) {
+        for (size_t Pos = 0;;) {
+            Pos = Parsing.find_first_not_of(" \t", Pos);
+            if (Pos == string::npos)
+                break;
+
+            size_t Pos1 = Parsing.find_first_of(" \t", Pos);
+            size_t len = (Pos1 == string::npos) ? string::npos : Pos1 - Pos;
+
+            string Word(Parsing.substr(Pos, len));
+            Parsed.push_back(Word);
+            if (Pos1 == string::npos)
+                break;
+            Pos = Pos1;
+        }
     }
-    if (FormatFile >> RangeType) {
-        int var;
-        while (FormatFile >> var) {
-            Range.push_back(var);
-        }
-        if (Range.size() > 4) {
-            throw MyExceptionFormat();
-        }
-    } else throw MyExceptionFormat();
-
-    if (FormatFile >> Orient) {
-    } else throw MyExceptionFormat();
-
-    if (FormatFile >> YearFormat) {
-    } else throw MyExceptionFormat();
+    RangeType = Parsed[0];
+    int rangePos;
+    if (RangeType == "year") {
+        Range.push_back(stoi(Parsed[1]));
+        rangePos = 1;
+    } else if (RangeType == "range") {
+        Range.push_back(stoi(Parsed[1]));
+        Range.push_back(stoi(Parsed[2]));
+        Range.push_back(stoi(Parsed[3]));
+        Range.push_back(stoi(Parsed[4]));
+        rangePos = 4;
+    } else throw MyExceptionFormat(RangeType);
+    Orient = Parsed[rangePos + 1];
+    YearFormat = Parsed[rangePos + 2];
     try {
-        vector<OutputFormat> Format = DefineFormat(RangeType,Orient, YearFormat);
+        vector<OutputFormat> Format = DefineFormat(RangeType, Orient, YearFormat);
         return make_tuple(Format, Range);
     }
     catch (MyExceptionFormat myException) {

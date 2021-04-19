@@ -15,7 +15,7 @@ private:
 public:
     explicit MyExceptionFile(const char FormatFileName[]) : FileName(FormatFileName) {};
     inline void Msg() override {
-        std::cerr << "Your file" << FileName << "could not be opened" << endl;
+        std::cerr << "Your file" << FileName << "could not be opened" << std::endl;
     }
 };
 
@@ -25,6 +25,6 @@ private:
 public:
     explicit MyExceptionFormat(std::string  WrongFormat = "Undefined"): Format(std::move(WrongFormat)) {};
     inline void Msg() override {
-        std::cerr << "Wrong output format:" << Format << ". Choose supported format." << endl;
+        std::cerr << "Wrong output format:" << Format << ". Choose supported format." << std::endl;
     }
 };

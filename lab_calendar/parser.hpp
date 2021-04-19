@@ -14,4 +14,4 @@ enum OutputFormat {
 };
 
 
-std::tuple<std::vector<OutputFormat>, std::vector<int>> Parser(const char FormatFileName[]);
+std::tuple<std::vector<OutputFormat>, std::vector<int>> Parser(std::ifstream FormatFile);

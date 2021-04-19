@@ -21,20 +21,35 @@ void Calendar::Run() {
 
         char UserCmd;
         char FileName[256];
-        string file;
+        string File;
+        string Format;
         cout
-                << "\nD: Draw Calendar"
-                << "\tQ: Quit"
-                << "\nInput your command ";
+                << "\nD: Draw Calendar" << endl
+                << "Q: Quit" << endl
+                << "\nInput your command " << endl;
         cin >> UserCmd;
         if (UserCmd >= 'a' && UserCmd <= 'z')
             UserCmd += ('A' - 'a');
 
         switch (UserCmd) {
             case 'D':
-                cout << "\tInput format file";
-                cin >> FileName;
-                Draw(FileName);
+                char UserCmd1;
+                cout << "Choose format input stream:" << endl
+                     << "F: File\nC: Console" << endl;
+                cin >> UserCmd1;
+                if (UserCmd1 >= 'a' && UserCmd1 <= 'z')
+                    UserCmd1 += ('A' - 'a');
+                switch (UserCmd1) {
+                    case 'F':
+                        cout << "Input format file\n";
+                        cin >> FileName;
+                        Draw(FileName);
+                        break;
+                    case 'C':
+                        cin >> Format;
+                        Draw(Format);
+                        break;
+                }
             case 'Q':
                 run = false;
                 break;
@@ -260,8 +275,6 @@ void DrawHoriz(Calendar CalendarFirst, Calendar CalendarSecond) {
         int yearSecond = CalendarSecond.GetYear();
         int monthBegin = CalendarFirst.GetStartMonth();
         int monthEnd = CalendarSecond.GetEndMonth();;
-//        Date curDay = Date();
-//        curDay.setDate(1, monthBegin, yearFirst);
         if (yearFirst != yearSecond) {
             PrintYearHoriz(yearFirst, monthBegin, 12);
             for (int i = yearFirst + 1; i < yearSecond; i++) {
@@ -269,12 +282,18 @@ void DrawHoriz(Calendar CalendarFirst, Calendar CalendarSecond) {
             }
             PrintYearHoriz(yearSecond, 1, monthEnd);
         }
+    } else if(CalendarFirst.IsFull() && !CalendarSecond.IsFull()) {
+        int yearFirst = CalendarFirst.GetYear();
+        int yearSecond = yearFirst;
+        int monthBegin = CalendarFirst.GetStartMonth();
+        int monthEnd = CalendarFirst.GetEndMonth();
+        PrintYearHoriz(yearFirst, monthBegin, monthEnd);
     }
 }
 
 void Calendar::Draw(const char FormatFileName[]) {
     try {
-        auto[Format, Range] = Parser(FormatFileName);
+        auto[Format, Range] = Parser(ifstream(FormatFileName));
         OutputFormat Orient = Format[0];
 
         Calendar CalendarFirst, CalendarSecond;
@@ -299,6 +318,10 @@ void Calendar::Draw(const char FormatFileName[]) {
     catch (MyExceptionFormat &myException) {
         myException.Msg();
     }
+}
+
+void Calendar::Draw(string Format) {
+
 }
 
 void Calendar::NextMonth() {
@@ -345,4 +368,3 @@ int Calendar::GetStartMonth() {
 int Calendar::GetEndMonth() {
     return endMonth;
 }
-
