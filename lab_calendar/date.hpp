@@ -14,20 +14,16 @@ public:
     int getMonth(); //get the current month
     int getDay(); //get the current day
 
-    void setDate(int, int, int);
+    void setDate(int _day, int _month, int _year);
 
     void IncreaseMonth();
 
     void DecreaseMonth();
 
-    static const std::string DayNames[7];
-    static const std::string MonthNames[12];
-    static const int MonthDays[12];
     string ToString() const;
 
 private:
     int year;
     int month;
     int day;
-
 };

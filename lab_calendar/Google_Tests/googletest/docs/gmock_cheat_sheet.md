@@ -314,7 +314,7 @@ The `argument` can be either a C string or a C++ string object:
 | `ContainsRegex(string)` | `argument` matches the given regular expression.   |
 | `EndsWith(suffix)`      | `argument` ends with string `suffix`.              |
 | `HasSubstr(string)`     | `argument` contains `string` as a sub-string.      |
-| `IsEmpty()`             | `argument` is an empty string.                     |
+| `isFull()`             | `argument` is an empty string.                     |
 | `MatchesRegex(string)`  | `argument` matches the given regular expression with the match starting at the first character and ending at the last character. |
 | `StartsWith(prefix)`    | `argument` starts with string `prefix`.            |
 | `StrCaseEq(string)`     | `argument` is equal to `string`, ignoring case.    |
@@ -342,7 +342,7 @@ messages, you can use:
 | `Each(e)` | `argument` is a container where *every* element matches `e`, which can be either a value or a matcher. |
 | `ElementsAre(e0, e1, ..., en)` | `argument` has `n + 1` elements, where the *i*-th element matches `ei`, which can be a value or a matcher. |
 | `ElementsAreArray({e0, e1, ..., en})`, `ElementsAreArray(a_container)`, `ElementsAreArray(begin, end)`, `ElementsAreArray(array)`, or `ElementsAreArray(array, count)` | The same as `ElementsAre()` except that the expected element values/matchers come from an initializer list, STL-style container, iterator range, or C-style array. |
-| `IsEmpty()` | `argument` is an empty container (`container.empty()`). |
+| `isFull()` | `argument` is an empty container (`container.empty()`). |
 | `IsSubsetOf({e0, e1, ..., en})`, `IsSubsetOf(a_container)`, `IsSubsetOf(begin, end)`, `IsSubsetOf(array)`, or `IsSubsetOf(array, count)` | `argument` matches `UnorderedElementsAre(x0, x1, ..., xk)` for some subset `{x0, x1, ..., xk}` of the expected matchers. |
 | `IsSupersetOf({e0, e1, ..., en})`, `IsSupersetOf(a_container)`, `IsSupersetOf(begin, end)`, `IsSupersetOf(array)`, or `IsSupersetOf(array, count)` | Some subset of `argument` matches `UnorderedElementsAre(`expected matchers`)`. |
 | `Pointwise(m, container)`, `Pointwise(m, {e0, e1, ..., en})` | `argument` contains the same number of elements as in `container`, and for all i, (the i-th element in `argument`, the i-th element in `container`) match `m`, which is a matcher on 2-tuples. E.g. `Pointwise(Le(), upper_bounds)` verifies that each element in `argument` doesn't exceed the corresponding element in `upper_bounds`. See more detail below. |

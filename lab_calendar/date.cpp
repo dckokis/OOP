@@ -3,32 +3,20 @@
 Date::Date() {
 }
 
-const std::string Date::DayNames[7] = {
-        "Sun",
-        "Mon",
-        "Tue",
-        "Wen",
-        "Thu",
-        "Fri",
-        "Sat"
-};
+void Date::setDate(int _day, int _month, int _year) {
+    year = _year;
+    month = _month;
+    day = _day;
+}
 
-const std::string Date::MonthNames[12] = {
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-};
+int Date::getYear() {
+    return year;
+}
 
-const int Date::MonthDays[12] = {
-        31, 28, 31, 30, 31, 30,
-        31, 31, 30, 31, 30, 31,
-};
+int Date::getMonth() {
+    return month;
+}
+
+int Date::getDay() {
+    return day;
+}

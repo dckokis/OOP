@@ -9,7 +9,7 @@ enum OutputFormat {
     Horiz,
     YearForEveryMonth,
     YearOnce,
-    YearRange,
+    Range,
     Year
 };
 

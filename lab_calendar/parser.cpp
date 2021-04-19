@@ -22,7 +22,7 @@ vector<OutputFormat> DefineFormat(const string &RangeType, const string &Orient,
     } else throw MyExceptionFormat(YearFormat);
 
     if (RangeType == "range") {
-        Format.push_back(YearRange);
+        Format.push_back(Range);
     } else if (RangeType == "year") {
         Format.push_back(Year);
     } else throw MyExceptionFormat(RangeType);
