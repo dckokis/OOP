@@ -55,7 +55,7 @@ namespace testing {
 class GTEST_API_ ScopedFakeTestPartResultReporter
     : public TestPartResultReporterInterface {
  public:
-  // The two possible mocking modes of this object.
+  // The two possible mocking Periods of this object.
   enum InterceptMode {
     INTERCEPT_ONLY_CURRENT_THREAD,  // Intercepts only thread local failures.
     INTERCEPT_ALL_THREADS           // Intercepts all failures.

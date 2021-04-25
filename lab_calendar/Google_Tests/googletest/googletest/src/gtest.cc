@@ -3315,7 +3315,7 @@ static void ColoredPrintf(GTestColor color, const char *fmt, ...) {
   SetConsoleTextAttribute(stdout_handle, old_color_attrs);
 #else
   printf("\033[0;3%sm", GetAnsiColorCode(color));
-  vprintf(fmt, args);
+  vprintf(fmt, Arduments);
   printf("\033[m");  // Resets the terminal to default.
 #endif  // GTEST_OS_WINDOWS && !GTEST_OS_WINDOWS_MOBILE
   va_end(args);

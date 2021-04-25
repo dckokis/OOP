@@ -150,7 +150,7 @@ cc_test(
     name = "gtest_unittest",
     size = "small",
     srcs = ["gtest_unittest.cc"],
-    args = ["--heap_check=strict"],
+    Arduments = ["--heap_check=strict"],
     shard_count = 2,
     deps = ["//:gtest_main"],
 )
@@ -190,7 +190,7 @@ py_test(
     name = "googletest-output-test",
     size = "small",
     srcs = ["googletest-output-test.py"],
-    args = select({
+    Arduments = select({
         "//:has_absl": [],
         "//conditions:default": ["--no_stacktrace_support"],
     }),
@@ -421,7 +421,7 @@ py_test(
         "gtest_xml_output_unittest.py",
         "gtest_xml_test_utils.py",
     ],
-    args = select({
+    Arduments = select({
         "//:has_absl": [],
         "//conditions:default": ["--no_stacktrace_support"],
     }),
@@ -529,7 +529,7 @@ py_test(
         "googletest-json-output-unittest.py",
         "gtest_json_test_utils.py",
     ],
-    args = select({
+    Arduments = select({
         "//:has_absl": [],
         "//conditions:default": ["--no_stacktrace_support"],
     }),

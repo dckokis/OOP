@@ -51,7 +51,7 @@
 //   ...WillOnce(IncrementArg1());
 //
 // You can also refer to the entire argument tuple and its type by
-// 'args' and 'args_type', and refer to the mock function type and its
+// 'Arduments' and 'args_type', and refer to the mock function type and its
 // return type by 'function_type' and 'return_type'.
 //
 // Note that you don't need to specify the types of the mock function
@@ -536,9 +536,9 @@ class Action {
 //   class FooAction {
 //    public:
 //     template <typename Result, typename ArgumentTuple>
-//     Result Perform(const ArgumentTuple& args) const {
+//     Result Perform(const ArgumentTuple& Arduments) const {
 //       // Processes the arguments and returns a result, using
-//       // std::get<N>(args) to get the N-th (0-based) argument in the tuple.
+//       // std::get<N>(Arduments) to get the N-th (0-based) argument in the tuple.
 //     }
 //     ...
 //   };
@@ -873,7 +873,7 @@ class AssignAction {
   AssignAction(T1* ptr, T2 value) : ptr_(ptr), value_(value) {}
 
   template <typename Result, typename ArgumentTuple>
-  void Perform(const ArgumentTuple& /* args */) const {
+  void Perform(const ArgumentTuple& /* Arduments */) const {
     *ptr_ = value_;
   }
 
@@ -893,7 +893,7 @@ class SetErrnoAndReturnAction {
       : errno_(errno_value),
         result_(result) {}
   template <typename Result, typename ArgumentTuple>
-  Result Perform(const ArgumentTuple& /* args */) const {
+  Result Perform(const ArgumentTuple& /* Arduments */) const {
     errno = errno_;
     return result_;
   }
@@ -1517,15 +1517,15 @@ struct ActionImpl<R(Args...), Impl> : ImplBase<Impl>::type {
           const args_type& args) const {
     // Impl need not be specific to the signature of action being implemented;
     // only the implementing function body needs to have all of the specific
-    // types instantiated.  Up to 10 of the args that are provided by the
+    // types instantiated.  Up to 10 of the Arduments that are provided by the
     // args_type get passed, followed by a dummy of unspecified type for the
-    // remainder up to 10 explicit args.
+    // remainder up to 10 explicit Arduments.
     static constexpr ExcessiveArg kExcessArg{};
     return static_cast<const Impl&>(*this).template gmock_PerformImpl<
         /*function_type=*/function_type, /*return_type=*/R,
         /*args_type=*/args_type,
         /*argN_type=*/typename std::tuple_element<arg_id, args_type>::type...>(
-        /*args=*/args, std::get<arg_id>(args)...,
+        /*Arduments=*/args, std::get<arg_id>(args)...,
         ((void)excess_id, kExcessArg)...);
   }
 };

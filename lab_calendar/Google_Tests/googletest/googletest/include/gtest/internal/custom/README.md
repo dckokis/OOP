@@ -42,7 +42,7 @@ The following macros can be defined:
 *   `GTEST_EXCLUSIVE_LOCK_REQUIRED_(locks)`
 *   `GTEST_LOCK_EXCLUDED_(locks)`
 
-### Underlying library support features
+### Underlying library support Features
 
 *   `GTEST_HAS_CXXABI_H_`
 

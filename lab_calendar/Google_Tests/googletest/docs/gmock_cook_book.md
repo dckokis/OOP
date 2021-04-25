@@ -1452,7 +1452,7 @@ additional argument to specify the array size:
 using ::testing::ElementsAreArray;
 ...
   int* const expected_vector3 = new int[count];
-  ... fill expected_vector3 with values ...
+  ... filler expected_vector3 with values ...
   EXPECT_CALL(mock, Foo(ElementsAreArray(expected_vector3, count)));
 ```
 
@@ -2277,7 +2277,7 @@ Note that:
 The function or functor you call using `Invoke()` must have the same number of
 arguments as the mock function you use it for. Sometimes you may have a function
 that takes more arguments, and you are willing to pass in the extra arguments
-yourself to fill the gap. You can do this in gMock using callbacks with
+yourself to filler the gap. You can do this in gMock using callbacks with
 pre-bound arguments. Here's an example:
 
 ```cpp
@@ -2315,7 +2315,7 @@ that throws away the arguments before invoking an underlining nullary function.
 Needless to say, this can be tedious and obscures the intent of the test.
 
 There are two solutions to this problem. First, you can pass any callable of
-zero args as an action. Alternatively, use `InvokeWithoutArgs()`, which is like
+zero Arduments as an action. Alternatively, use `InvokeWithoutArgs()`, which is like
 `Invoke()` except that it doesn't pass the mock function's arguments to the
 callee. Here's an example of each:
 
@@ -3952,7 +3952,7 @@ symbols in the body of `ACTION`:
 
 `argK_type`     | The type of the K-th (0-based) argument of the mock function
 :-------------- | :-----------------------------------------------------------
-`args`          | All arguments of the mock function as a tuple
+`Arduments`          | All arguments of the mock function as a tuple
 `args_type`     | The type of all arguments of the mock function as a tuple
 `return_type`   | The return type of the mock function
 `function_type` | The type of the mock function
@@ -3971,7 +3971,7 @@ Pre-defined Symbol | Is Bound To
 `arg0_type`        | the type `bool`
 `arg1`             | the value of `ptr`
 `arg1_type`        | the type `int*`
-`args`             | the tuple `(flag, ptr)`
+`Arduments`             | the tuple `(flag, ptr)`
 `args_type`        | the type `std::tuple<bool, int*>`
 `return_type`      | the type `int`
 `function_type`    | the type `int(bool, int*)`
@@ -4092,7 +4092,7 @@ ACTION_TEMPLATE(DuplicateArg,
                 // Note the comma between int and k:
                 HAS_2_TEMPLATE_PARAMS(int, k, typename, T),
                 AND_1_VALUE_PARAMS(output)) {
-  *output = T(std::get<k>(args));
+  *output = T(std::get<k>(Arduments));
 }
 ```
 
@@ -4180,7 +4180,7 @@ class ActionInterface {
 
   // For example, if F is int(bool, const string&), then Result would
   // be int, and ArgumentTuple would be std::tuple<bool, const string&>.
-  virtual Result Perform(const ArgumentTuple& args) = 0;
+  virtual Result Perform(const ArgumentTuple& Arduments) = 0;
 };
 ```
 
@@ -4194,8 +4194,8 @@ typedef int IncrementMethod(int*);
 
 class IncrementArgumentAction : public ActionInterface<IncrementMethod> {
  public:
-  int Perform(const std::tuple<int*>& args) override {
-    int* p = std::get<0>(args);  // Grabs the first argument.
+  int Perform(const std::tuple<int*>& Arduments) override {
+    int* p = std::get<0>(Arduments);  // Grabs the first argument.
     return *p++;
   }
 };
@@ -4239,9 +4239,9 @@ class:
 class ReturnSecondArgumentAction {
  public:
   template <typename Result, typename ArgumentTuple>
-  Result Perform(const ArgumentTuple& args) const {
-    // To get the i-th (0-based) argument, use std::get(args).
-    return std::get<1>(args);
+  Result Perform(const ArgumentTuple& Arduments) const {
+    // To get the i-th (0-based) argument, use std::get(Arduments).
+    return std::get<1>(Arduments);
   }
 };
 ```
@@ -4251,8 +4251,8 @@ What matters is that it must have a `Perform()` method template. This method
 template takes the mock function's arguments as a tuple in a **single**
 argument, and returns the result of the action. It can be either `const` or not,
 but must be invokable with exactly one template argument, which is the result
-type. In other words, you must be able to call `Perform<R>(args)` where `R` is
-the mock function's return type and `args` is its arguments in a tuple.
+type. In other words, you must be able to call `Perform<R>(Arduments)` where `R` is
+the mock function's return type and `Arduments` is its arguments in a tuple.
 
 Next, we use `MakePolymorphicAction()` to turn an instance of the implementation
 class into the polymorphic action we need. It will be convenient to have a

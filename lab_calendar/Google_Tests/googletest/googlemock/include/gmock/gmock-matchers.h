@@ -2126,8 +2126,8 @@ class PropertyMatcher {
   const std::string whose_property_;
 };
 
-// Type traits specifying various features of different functors for ResultOf.
-// The default template specifies features for functor objects.
+// Type traits specifying various Features of different functors for ResultOf.
+// The default template specifies Features for functor objects.
 template <typename Functor>
 struct CallableTraits {
   typedef Functor StorageType;

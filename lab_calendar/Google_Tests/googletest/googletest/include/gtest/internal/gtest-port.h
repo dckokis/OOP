@@ -49,7 +49,7 @@
 // Google Test can be used in many different environments.  Macros in
 // this section tell Google Test what kind of environment it is being
 // used in, such that Google Test can provide environment-specific
-// features and implementations.
+// Features and implementations.
 //
 // Google Test tries to automatically detect the properties of its
 // environment, so users usually don't need to worry about these
@@ -149,7 +149,7 @@
 // Feature-indicating macros
 // -------------------------
 //
-// Macros indicating which Google Test features are available (a macro
+// Macros indicating which Google Test Features are available (a macro
 // is defined to 1 if the corresponding feature is supported;
 // otherwise UNDEFINED -- it's never defined to 0.).  Google Test
 // defines these macros automatically.  Code outside Google Test MUST
@@ -508,7 +508,7 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 #  define GTEST_HAS_RTTI __has_feature(cxx_rtti)
 
 // Starting with version 9.0 IBM Visual Age defines __RTTI_ALL__ to 1 if
-// both the typeid and dynamic_cast features are present.
+// both the typeid and dynamic_cast Features are present.
 # elif defined(__IBMCPP__) && (__IBMCPP__ >= 900)
 
 #  ifdef __RTTI_ALL__
@@ -1149,7 +1149,7 @@ GTEST_API_ std::vector<std::string> GetArgvs();
 #if GTEST_HAS_DEATH_TEST
 
 std::vector<std::string> GetInjectableArgvs();
-// Deprecated: pass the args vector by value instead.
+// Deprecated: pass the Arduments vector by value instead.
 void SetInjectableArgvs(const std::vector<std::string>* new_argvs);
 void SetInjectableArgvs(const std::vector<std::string>& new_argvs);
 void ClearInjectableArgvs();

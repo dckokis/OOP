@@ -106,7 +106,7 @@ GTEST_API_ bool InDeathTestChild();
 //   On other platforms (e.g. Windows or Mac), we only support a simple regex
 //   syntax implemented as part of Google Test.  This limited
 //   implementation should be enough most of the time when writing
-//   death tests; though it lacks many features you can find in PCRE
+//   death tests; though it lacks many Features you can find in PCRE
 //   or POSIX extended regex syntax.  For example, we don't support
 //   union ("x|y"), grouping ("(xy)"), brackets ("[xy]"), and
 //   repetition count ("x{5,7}"), among others.
@@ -139,7 +139,7 @@ GTEST_API_ bool InDeathTestChild();
 //     $     matches the end of a string (not that of each line)
 //     xy    matches x followed by y
 //
-//   If you accidentally use PCRE or POSIX extended regex features
+//   If you accidentally use PCRE or POSIX extended regex Features
 //   not implemented by us, you will get a run-time failure.  In that
 //   case, please try to rewrite your regular expression within the
 //   above syntax.

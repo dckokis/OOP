@@ -4,7 +4,6 @@
 #include <string>
 #include <iostream>
 
-using namespace std;
 
 class Date {
 public:
@@ -14,13 +13,8 @@ public:
     int getMonth(); //get the current month
     int getDay(); //get the current day
 
-    void setDate(int _day, int _month, int _year);
-
-    void IncreaseMonth();
-
-    void DecreaseMonth();
-
-    string ToString() const;
+    std::string getMonthString();
+    std::string getDayString();
 
 private:
     int year;

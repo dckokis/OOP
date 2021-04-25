@@ -1,370 +1,333 @@
 #include "calendar.hpp"
-#include "myexception.hpp"
-#include "parser.hpp"
+
 #include <string>
 #include <iostream>
-#include <fstream>
+#include <algorithm>
+#include <iomanip>
 
-using namespace std;
+std::string Calendar::DrawCalendar() noexcept {
+    if (Args.vert)
+        return verticalPrint(Args.monthBegin, Args.yearBegin, Args.monthEnd, Args.yearEnd, Args.year_for_every_month,
+                             Args.year_once);
+    else if (Args.horiz)
+        return horizontalPrint(Args.monthBegin, Args.yearBegin, Args.monthEnd, Args.yearEnd, Args.year_for_every_month,
+                               Args.year_once);
+    return std::string();
+}
 
-Calendar::Calendar() {}
+const std::string Days = "Mn Tu Wd Th Fr St Sn";
+std::string dayName(int n) {
+    const static std::string daysOfWeek[] = {"Mn", "Tu", "Wd", "Th", "Fr", "St", "Sn"};
+    return (daysOfWeek[n]);
+}
 
-void Calendar::Run() {
+int dayNumber(int day, int month, int year) {
+    const static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+    year -= month < 3;
+    return (year + year / 4 - year / 100 + year / 400 + t[month - 1] + day - 1) % 7;
+}
 
-    bool run = true;
+std::string getMonthName(int monthNumber) {
+    const static std::string months[] = {"January", "February", "March",
+                                         "April", "May", "June",
+                                         "July", "August", "September",
+                                         "October", "November", "December"
+    };
+    return (months[monthNumber]);
+}
 
-    /********************************/
-    ///*        Menu system       *///
-    /********************************/
-
-    while (run) {
-
-        char UserCmd;
-        char FileName[256];
-        string File;
-        string Format;
-        cout
-                << "\nD: Draw Calendar" << endl
-                << "Q: Quit" << endl
-                << "\nInput your command " << endl;
-        cin >> UserCmd;
-        if (UserCmd >= 'a' && UserCmd <= 'z')
-            UserCmd += ('A' - 'a');
-
-        switch (UserCmd) {
-            case 'D':
-                char UserCmd1;
-                cout << "Choose format input stream:" << endl
-                     << "F: File\nC: Console" << endl;
-                cin >> UserCmd1;
-                if (UserCmd1 >= 'a' && UserCmd1 <= 'z')
-                    UserCmd1 += ('A' - 'a');
-                switch (UserCmd1) {
-                    case 'F':
-                        cout << "Input format file\n";
-                        cin >> FileName;
-                        Draw(FileName);
-                        break;
-                    case 'C':
-                        cin >> Format;
-                        Draw(Format);
-                        break;
-                }
-            case 'Q':
-                run = false;
-                break;
-            default:
-                cout << "Invalid input." << endl;
-                break;
-        }
+int numberOfDays(int monthNumber, int year) {
+    switch (monthNumber) {
+        case 0 :
+        case 2 :
+        case 4 :
+        case 6 :
+        case 7 :
+        case 9 :
+        case 11:
+            return (31);
+        case 1 :
+            if (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0))
+                return (29);
+            else
+                return (28);
+        case 3 :
+        case 5 :
+        case 8 :
+        case 10 :
+            return (30);
+        default:
+            return -1;
     }
 }
 
-const std::string DayNames[1] = {"Sat Sun Mon Tue Wen Thu Fri"};
-
-const std::string MonthNames[2] = {
-        "         January                       February                        March                         April                          May                           June",
-        "            July                         August                       September                      October                         November                   December"};
-
-//const int MonthDays[12] = {
-//        31, 28, 31, 30, 31, 30,
-//        31, 31, 30, 31, 30, 31,
-//};
-
-enum Days {
-    Sat = 0,
-    Sun = 1,
-    Mon = 2,
-    Tue = 3,
-    Wen = 4,
-    Thu = 5,
-    Fri = 6,
-    Undefined = -1
-};
-
-enum MonthCode {
-    January = 1,
-    October = 1,
-    May = 2,
-    August = 3,
-    February = 4,
-    March = 4,
-    November = 4,
-    June = 5,
-    December = 6,
-    September = 6,
-    April = 0,
-    July = 0
-};
-
-enum YearIndent {
-    c4 = 6,
-    c3 = 0,
-    c2 = 2,
-    c1 = 4,
-};
-
-Days DefineDateDay(int Day, MonthCode Month, int Year, int Century) {
-    int yearCode;
-    switch (Century) {
-        case c1:
-            yearCode = (c1 + Year % 100 + (Year % 100) / 4);
-            break;
-        case c2:
-            yearCode = (c2 + Year % 100 + (Year % 100) / 4);
-            break;
-        case c3:
-            yearCode = (c3 + Year % 100 + (Year % 100) / 4);
-            break;
-        case c4:
-            yearCode = (c4 + Year % 100 + (Year % 100) / 4);
-            break;
-        default:
-            yearCode = 0;
-            break;
-    }
-    int DefinedDayCode = (Day + Month + yearCode) % 7;
-    Days DefinedDay;
-    switch (DefinedDayCode) {
-        case Sat:
-            DefinedDay = Sat;
-            break;
-        case Sun:
-            DefinedDay = Sun;
-            break;
-        case Mon:
-            DefinedDay = Mon;
-            break;
-        case Tue:
-            DefinedDay = Tue;
-            break;
-        case Wen:
-            DefinedDay = Wen;
-            break;
-        case Thu:
-            DefinedDay = Thu;
-            break;
-        case Fri:
-            DefinedDay = Fri;
-            break;
-        default:
-            DefinedDay = Undefined;
-            break;
-    }
-    return DefinedDay;
+void filler(std::string &str, size_t n) {
+    if (n == 0) return;
+    str += std::string(n, ' ');
 }
 
-string StrRepeat(const string &String, int n, const char *FillChar = " ") {
-    string temp;
-    for (int i = 0; i < n - 1; i++)
-        temp.append(String + FillChar);
-    temp.append(String);
+std::string inMiddle(const std::string &str, size_t width) {
+    std::string temp;
+    size_t mid = (width - str.length()) / 2;
+    filler(temp, mid);
+    temp += str;
+    filler(temp, width - temp.length());
     return temp;
 }
 
-void PrintYearHoriz(int Year, int StartMont = 1, int EndMonth = 12) {
-    vector<Days> MonthStartDay = {DefineDateDay(1, January, Year, Year / 100),
-                                  DefineDateDay(1, February, Year, Year / 100),
-                                  DefineDateDay(1, March, Year, Year / 100),
-                                  DefineDateDay(1, April, Year, Year / 100),
-                                  DefineDateDay(1, May, Year, Year / 100),
-                                  DefineDateDay(1, June, Year, Year / 100),
-                                  DefineDateDay(1, July, Year, Year / 100),
-                                  DefineDateDay(1, August, Year, Year / 100),
-                                  DefineDateDay(1, September, Year, Year / 100),
-                                  DefineDateDay(1, October, Year, Year / 100),
-                                  DefineDateDay(1, November, Year, Year / 100),
-                                  DefineDateDay(1, December, Year, Year / 100)};
-    int MonthDays[12] = {
-            31, 28, 31, 30, 31, 30,
-            31, 31, 30, 31, 30, 31,
-    };
-    if (Year % 400 == 0 || (Year % 4 == 0 && Year % 100 != 0)) {
-        MonthDays[1] = 29;
-    }
-    // print year in the middle
-    string Indent = StrRepeat(" ", 84, "");
-    cout << Indent << Year << Indent << endl;
-    // print first 6 moths
-    cout << MonthNames[0] << endl;
-    // print first line of week days
-    string DaysLine = StrRepeat(*DayNames, 6, "   ");
-    cout << DaysLine << endl;
-    //print first line of each month
-    vector<int> StopDate;
-    for (int i = 0; i < 6; i++) {
-        Days Start = MonthStartDay[i];
-        int DaysLeft;
-        switch (Start) {
-            case Sat:
-                Indent = StrRepeat(" ", 0, "");
-                DaysLeft = 7;
-                break;
-            case Sun:
-                Indent = StrRepeat(" ", 4, "");
-                DaysLeft = 6;
-                break;
-            case Mon:
-                Indent = StrRepeat(" ", 8, "");
-                DaysLeft = 5;
-                break;
-            case Tue:
-                Indent = StrRepeat(" ", 12, "");
-                DaysLeft = 4;
-                break;
-            case Wen:
-                Indent = StrRepeat(" ", 16, "");
-                DaysLeft = 3;
-                break;
-            case Thu:
-                Indent = StrRepeat(" ", 20, "");
-                DaysLeft = 2;
-                break;
-            case Fri:
-                Indent = StrRepeat(" ", 24, "");
-                DaysLeft = 1;
-                break;
-            case Undefined:
-                Indent = "UNDEFINED";
-                DaysLeft = 0;
-                break;
+std::string strRepeater(const std::string &str, int n, const char *filler) {
+    std::string temp;
+    for (int i = 0; i < n - 1; i++) temp += str + filler;
+    temp += str;
+    return temp;
+}
+
+std::string templateOfNHorizMonth(int month, int year, bool everyYear, int n) {
+    std::string out;
+    std::string weeks = strRepeater(Days, n, "  ");
+    if (!everyYear)
+        out += inMiddle(std::to_string(year), 4 * Days.length()) + '\n';
+    for (int i = 0; i < n; i++) {
+        std::string monthWithYear = getMonthName(month + i);
+        if (everyYear) {
+            monthWithYear += " " + std::to_string(year);
         }
-        cout << Indent;
-        int Date = 1;
-        while (DaysLeft > 0) {
-            cout << Date;
-            Date += 1;
-            DaysLeft -= 1;
-        }
-        cout << "     ";
-        StopDate.push_back(Date);
+        out += inMiddle(monthWithYear, Days.length() + 2);
     }
-    cout << endl;
-    //print next days till 28
-    for (int k = 0; k < 3; k++) {
-        for (int i = 0; i < 6; i++) {
-            for (int j = 1; j < 7; j++) {
-                string IndentDays;
-                if ((StopDate[i] + j) % 10 > 0)
-                    IndentDays = " ";
-                cout << StopDate[i] + j << IndentDays << "  ";
+    out += '\n' + weeks;
+    return out;
+}
+
+int WeeksAmount(int month, int year) {
+    int count = 0;
+    int current = dayNumber(1, month + 1, year);
+    int daysInMonth = numberOfDays(month, year);
+    int k = current - 1;
+    for (int i = 1; i <= daysInMonth; i++)
+        if (++k > 6) {
+            k = 0;
+            count++;
+        }
+    return count + 1;
+}
+
+std::string horizMonth(int month, int year) {
+    std::ostringstream out;
+    int current = dayNumber(1, month + 1, year);
+    int daysInMonth = numberOfDays(month, year);
+    int k = current;
+    out << std::string(current * 3, ' ');
+    for (int i = 1; i <= daysInMonth; i++) {
+        out << std::right << std::setw(2) << i << " ";
+        if (++k > 6) {
+            k = 0;
+            out << std::endl;
+        }
+    }
+    std::string final = out.str();
+    final.pop_back(); // delete /n
+    int currentOfNext = dayNumber(1, month + 2, year);
+    int tabsAmount = 6 - currentOfNext;
+    if (currentOfNext != 0)
+        filler(final, (tabsAmount + 1) * 3);
+    else if (month != 11)
+        final.pop_back();
+    return final;
+}
+
+std::string getNWeek(int month, int year, int n) {
+    if (n > WeeksAmount(month, year)) {
+        return std::string(20, ' ');
+    }
+    std::string monthData = horizMonth(month, year);
+    std::string temp;
+    int counter = 0;
+    for (auto elem: monthData) {
+        if (elem == '\n') {
+            counter++;
+            if (counter == n)
+                break;
+            temp.clear();
+            continue;
+        }
+        temp += elem;
+    }
+    if (n != WeeksAmount(month, year)) temp.pop_back();
+    return temp;
+}
+
+std::string printNHorizMonth(int month, int n, int year, bool everyYear) {
+    std::string out;
+    out += templateOfNHorizMonth(month, year, everyYear, n) + '\n';
+    std::vector<int> weeksInfo;
+    for (int i = 0; i < n; i++) weeksInfo.push_back(WeeksAmount(month + i, year));
+    long int lenWeekMax = weeksInfo[std::distance(weeksInfo.begin(),
+                                                  std::max_element(weeksInfo.begin(), weeksInfo.end()))];
+    for (int j = 1; j <= lenWeekMax; j++) {
+        for (int i = 0; i < n - 1; i++) {
+            out += getNWeek(month + i, year, j) + "  ";
+        }
+        out += getNWeek(month + n - 1, year, j) + '\n';
+    }
+    out.pop_back();
+    return out;
+}
+
+std::string vertMonth(int month, int year) {
+    std::ostringstream out;
+    int daysInMonth = numberOfDays(month, year);
+    std::vector<std::vector<int>> daysOfWeek(7);
+    for (int i = 1; i <= daysInMonth; i++) {
+        int current = dayNumber(i, month + 1, year);
+        daysOfWeek[current].push_back(i);
+    }
+    bool wasFirstDay = false;
+    for (auto &dayOfWeek: daysOfWeek) {
+        if (!wasFirstDay) {
+            bool firstDay = dayOfWeek[0] == 1;
+            if (!firstDay)
+                out << "   ";
+            if (firstDay)
+                wasFirstDay = true;
+        }
+
+        for (int day: dayOfWeek) {
+            out << std::right << std::setw(2) << day << " ";
+        }
+        out << std::endl;
+    }
+    std::string final = out.str();
+    final.pop_back(); // delete "\n"
+    return final;
+}
+
+std::string getNDayOfWeek(int month, int year, int n) {
+    std::string monthInfo = vertMonth(month, year);
+    std::string temp;
+    int counter = 0;
+    for (auto elem: monthInfo) {
+        if (elem == '\n') {
+            counter++;
+            if (counter == n)
+                break;
+            temp.clear();
+            continue;
+        }
+        temp += elem;
+    }
+    temp.pop_back();
+
+    if (temp.length() >= 16) // минимальная длина строки в vert положении
+        return temp;
+    filler(temp, 17 - temp.length());
+    return temp;
+
+}
+
+std::string templateOfNVertMonth(int month, int year, bool everyYear, int n) {
+    std::string out;
+    std::string months;
+    for (int i = 0; i < n; i++) {
+        std::string monthName = getMonthName(month + i);
+        if (everyYear) {
+            monthName += " " + std::to_string(year);
+        }
+        months += inMiddle(monthName, 19);
+    }
+    if (!everyYear) out += inMiddle(std::to_string(year), 75) + '\n';
+    out += months;
+    return out;
+}
+
+std::string printNVertMonth(int month, int n, int year, bool everyYear) {
+    std::string out;
+    out += templateOfNVertMonth(month, year, everyYear, n) + '\n';
+    for (int j = 1; j <= 7; j++) {
+        out += dayName(j - 1) + " ";
+        for (int k = 0; k < n - 1; k++)
+            out += getNDayOfWeek(month + k, year, j) + "  ";
+
+        out += getNDayOfWeek(month + n - 1, year, j) + '\n';
+    }
+    out.pop_back();
+    return out;
+}
+
+std::string horizontalPrint(int monthBeg, int yearBeg, int monthEnd, int yearEnd, bool yearEveryMonth, bool yearOnce) noexcept {
+    std::ostringstream out;
+    if (monthBeg == monthEnd && yearBeg == yearEnd) {
+        out << printNHorizMonth(monthBeg - 1, 1, yearBeg, yearEveryMonth);
+    } else if (monthBeg < monthEnd && yearBeg == yearEnd) {
+        int monthAmount = monthEnd - monthBeg + 1;
+        if (monthAmount < 4) {
+            int year = yearBeg;
+            out << printNHorizMonth(monthBeg - 1, monthAmount, year, yearEveryMonth) << std::endl;
+        } else if ((monthAmount) % 4 == 0) {
+            int year = yearBeg;
+            int k = monthAmount / 4;
+            for (int i = 0; i < k; i++) {
+                out << printNHorizMonth(monthBeg + 4 * i - 1, 4, year, yearEveryMonth) << std::endl;
             }
-            cout << "     ";
-            StopDate[i] = StopDate[i] + 7;
+        } else if (monthAmount == 5 || monthAmount == 6 || monthAmount == 7) {
+            int year = yearBeg;
+            out << printNHorizMonth(monthBeg - 1, 4, year, yearEveryMonth) << std::endl;
+            out << printNHorizMonth(monthBeg + 3, monthAmount - 4, year, yearEveryMonth);
+        } else if (monthAmount == 9 || monthAmount == 10 || monthAmount == 11) {
+            int year = yearBeg;
+            out << printNHorizMonth(monthBeg - 1, 4, year, yearEveryMonth) << std::endl;
+            out << printNHorizMonth(monthBeg + 3, 4, year, yearEveryMonth) << std::endl;
+            out << printNHorizMonth(monthBeg + 3 + 4, monthAmount - 4 - 4, year, yearEveryMonth);
         }
-        cout << endl;
-    }
-    //print last days
-    for (int i = 0; i < 6; i++) {
-        int j = 1;
-        while (StopDate[i] <= MonthDays[i]) {
-            cout << StopDate[i] + j << " " << "  ";
-            j++;
+    } else if (yearBeg < yearEnd) {
+        int k = yearEnd - yearBeg - 1;
+        std::string part1 = horizontalPrint(monthBeg, yearBeg, 12, yearBeg, yearEveryMonth, yearOnce);
+        out << part1 << std::endl;
+        if (k >= 1) {
+            for (int i = yearBeg + 1; i < yearEnd; i++)
+                out << horizontalPrint(1, i, 12, i, yearEveryMonth, yearOnce) << std::endl;
         }
+        std::string part2 = horizontalPrint(1, yearEnd, monthEnd, yearEnd, yearEveryMonth, yearOnce);
+        out << part2 << std::endl;
     }
-    cout << endl;
+    return out.str();
 }
 
-void DrawVert() {
-
-}
-
-void DrawHoriz(Calendar CalendarFirst, Calendar CalendarSecond) {
-    if (CalendarFirst.IsFull() && CalendarSecond.IsFull()) {
-        int yearFirst = CalendarFirst.GetYear();
-        int yearSecond = CalendarSecond.GetYear();
-        int monthBegin = CalendarFirst.GetStartMonth();
-        int monthEnd = CalendarSecond.GetEndMonth();;
-        if (yearFirst != yearSecond) {
-            PrintYearHoriz(yearFirst, monthBegin, 12);
-            for (int i = yearFirst + 1; i < yearSecond; i++) {
-                PrintYearHoriz(i);
+std::string verticalPrint(int monthBeg, int yearBeg, int monthEnd, int yearEnd, bool yearEveryMonth, bool yearOnce) noexcept {
+    std::ostringstream out;
+    if (monthBeg == monthEnd && yearBeg == yearEnd) {
+        out << printNVertMonth(monthBeg - 1, 1, yearBeg, yearOnce);
+    } else if (monthBeg < monthEnd && yearBeg == yearEnd) {
+        int monthAmount = monthEnd - monthBeg + 1;
+        if (monthAmount < 4) {
+            int year = yearBeg;
+            out << printNVertMonth(monthBeg - 1, monthAmount, year, yearOnce) << std::endl;
+        } else if ((monthAmount) % 4 == 0) {
+            int year = yearBeg;
+            int k = monthAmount / 4;
+            for (int i = 0; i < k; i ++) {
+                out << printNVertMonth(monthBeg + 4 * i - 1, 4, year, yearOnce) << std::endl;
             }
-            PrintYearHoriz(yearSecond, 1, monthEnd);
+        } else if (monthAmount == 5 || monthAmount == 6 || monthAmount == 7) {
+            int year = yearBeg;
+            out << printNVertMonth(monthBeg - 1, 4, year, yearOnce) << std::endl;
+            out << printNVertMonth(monthBeg + 3, monthAmount - 4, year, yearOnce);
+        } else if (monthAmount == 9 || monthAmount == 10 || monthAmount == 11) {
+            int year = yearBeg;
+            out << printNVertMonth(monthBeg - 1, 4, year, yearOnce) << std::endl;
+            out << printNVertMonth(monthBeg + 3, 4, year, yearOnce) << std::endl;
+
+            out << printNVertMonth(monthBeg + 3 + 4, monthAmount - 4 - 4, year, yearOnce);
         }
-    } else if(CalendarFirst.IsFull() && !CalendarSecond.IsFull()) {
-        int yearFirst = CalendarFirst.GetYear();
-        int yearSecond = yearFirst;
-        int monthBegin = CalendarFirst.GetStartMonth();
-        int monthEnd = CalendarFirst.GetEndMonth();
-        PrintYearHoriz(yearFirst, monthBegin, monthEnd);
-    }
-}
-
-void Calendar::Draw(const char FormatFileName[]) {
-    try {
-        auto[Format, Range] = Parser(ifstream(FormatFileName));
-        OutputFormat Orient = Format[0];
-
-        Calendar CalendarFirst, CalendarSecond;
-        if (Range.size() == 4) {
-            CalendarFirst.SetYear(Range[1]);
-            CalendarFirst.SetStartMonth(Range[0]);
-            CalendarSecond.SetYear(Range[3]);
-            CalendarSecond.SetStartMonth(Range[2]);
-        } else if (Range.size() == 1) {
-            CalendarFirst.SetYear(Range[0]);
+    } else if (yearBeg < yearEnd) {
+        int k = yearEnd - yearBeg - 1;
+        std::string firstPart = verticalPrint(monthBeg, yearBeg, 12, yearBeg, yearEveryMonth, yearOnce);
+        out << firstPart << std::endl;
+        if (k >= 1) {
+            for (int i = yearBeg + 1; i < yearEnd; i++)
+                out << verticalPrint(1, i, 12, i, yearEveryMonth, yearOnce) << std::endl;
         }
-
-        if (Orient == Vert) {
-            DrawVert();
-        } else if (Orient == Horiz) {
-            DrawHoriz(CalendarFirst, CalendarSecond);
-        }
+        std::string secondPart = verticalPrint(1, yearEnd, monthEnd, yearEnd, yearEveryMonth, yearOnce);
+        out << secondPart << std::endl;
     }
-    catch (MyExceptionFile &myException) {
-        myException.Msg();
-    }
-    catch (MyExceptionFormat &myException) {
-        myException.Msg();
-    }
-}
-
-void Calendar::Draw(string Format) {
-
-}
-
-void Calendar::NextMonth() {
-
-}
-
-void Calendar::PreviousMonth() {
-
-}
-
-void Calendar::SetYear(int _year) {
-    year = _year;
-    SetFull();
-}
-
-void Calendar::SetFull() {
-    isFull = true;
-}
-
-void Calendar::SetEmpty() {
-    isFull = false;
-}
-
-bool Calendar::IsFull() {
-    return isFull;
-}
-
-void Calendar::SetStartMonth(int Month) {
-    startMonth = Month;
-}
-
-void Calendar::SetEndMonth(int Month) {
-    endMonth = Month;
-}
-
-int Calendar::GetYear() {
-    return year;
-}
-
-int Calendar::GetStartMonth() {
-    return startMonth;
-}
-
-int Calendar::GetEndMonth() {
-    return endMonth;
+    return out.str();
 }

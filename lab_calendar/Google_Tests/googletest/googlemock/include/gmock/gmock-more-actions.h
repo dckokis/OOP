@@ -70,7 +70,7 @@
 //   ACTION_TEMPLATE(DuplicateArg,
 //                   HAS_2_TEMPLATE_PARAMS(int, k, typename, T),
 //                   AND_1_VALUE_PARAMS(output)) {
-//     *output = T(::std::get<k>(args));
+//     *output = T(::std::get<k>(Arduments));
 //   }
 //   ...
 //     int n;

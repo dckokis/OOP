@@ -469,7 +469,7 @@ If a fatal failure happens the subsequent steps will be skipped.
 > return the value of `RUN_ALL_TESTS()`.
 >
 > Also, you should call `RUN_ALL_TESTS()` only **once**. Calling it more than
-> once conflicts with some advanced googletest features (e.g., thread-safe
+> once conflicts with some advanced googletest Features (e.g., thread-safe
 > [death tests](advanced.md#death-tests)) and thus is not supported.
 
 **Availability**: Linux, Windows, Mac.

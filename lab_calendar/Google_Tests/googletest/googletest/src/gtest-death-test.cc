@@ -994,10 +994,10 @@ DeathTest::TestRole FuchsiaDeathTest::AssumeRole() {
       + file_ + "|"
       + StreamableToString(line_) + "|"
       + StreamableToString(death_test_index);
-  Arguments args;
-  args.AddArguments(GetInjectableArgvs());
-  args.AddArgument(filter_flag.c_str());
-  args.AddArgument(internal_flag.c_str());
+  Arguments Arduments;
+  Arduments.AddArguments(GetInjectableArgvs());
+  Arduments.AddArgument(filter_flag.c_str());
+  Arduments.AddArgument(internal_flag.c_str());
 
   // Build the pipe for communication with the child.
   zx_status_t status;
@@ -1052,7 +1052,7 @@ DeathTest::TestRole FuchsiaDeathTest::AssumeRole() {
 
   // Spawn the child process.
   status = fdio_spawn_etc(
-      child_job, FDIO_SPAWN_CLONE_ALL, args.Argv()[0], args.Argv(), nullptr,
+      child_job, FDIO_SPAWN_CLONE_ALL, Arduments.Argv()[0], Arduments.Argv(), nullptr,
       2, spawn_actions, child_process_.reset_and_get_address(), nullptr);
   GTEST_DEATH_TEST_CHECK_(status == ZX_OK);
 
@@ -1172,13 +1172,13 @@ class ExecDeathTest : public ForkingDeathTest {
 
  private:
   static ::std::vector<std::string> GetArgvsForDeathTestChildProcess() {
-    ::std::vector<std::string> args = GetInjectableArgvs();
+    ::std::vector<std::string> Arduments = GetInjectableArgvs();
 #  if defined(GTEST_EXTRA_DEATH_TEST_COMMAND_LINE_ARGS_)
     ::std::vector<std::string> extra_args =
         GTEST_EXTRA_DEATH_TEST_COMMAND_LINE_ARGS_();
-    args.insert(args.end(), extra_args.begin(), extra_args.end());
+    Arduments.insert(Arduments.end(), extra_args.begin(), extra_args.end());
 #  endif  // defined(GTEST_EXTRA_DEATH_TEST_COMMAND_LINE_ARGS_)
-    return args;
+    return Arduments;
   }
   // The name of the file in which the death test is located.
   const char* const file_;
@@ -1231,8 +1231,8 @@ extern "C" char** environ;
 // This function is called in a clone()-ed process and thus must avoid
 // any potentially unsafe operations like malloc or libc functions.
 static int ExecDeathTestChildMain(void* child_arg) {
-  ExecDeathTestArgs* const args = static_cast<ExecDeathTestArgs*>(child_arg);
-  GTEST_DEATH_TEST_CHECK_SYSCALL_(close(args->close_fd));
+  ExecDeathTestArgs* const Arduments = static_cast<ExecDeathTestArgs*>(child_arg);
+  GTEST_DEATH_TEST_CHECK_SYSCALL_(close(Arduments->close_fd));
 
   // We need to execute the test program in the same environment where
   // it was originally invoked.  Therefore we change to the original
@@ -1251,8 +1251,8 @@ static int ExecDeathTestChildMain(void* child_arg) {
   // unsafe.  Since execv() doesn't search the PATH, the user must
   // invoke the test program via a valid path that contains at least
   // one path separator.
-  execv(args->argv[0], args->argv);
-  DeathTestAbort(std::string("execv(") + args->argv[0] + ", ...) in " +
+  execv(Arduments->argv[0], Arduments->argv);
+  DeathTestAbort(std::string("execv(") + Arduments->argv[0] + ", ...) in " +
                  original_dir + " failed: " +
                  GetLastErrnoDescription());
   return EXIT_FAILURE;
@@ -1303,7 +1303,7 @@ static bool StackGrowsDown() {
 // spawn(2) there instead.  The function dies with an error message if
 // anything goes wrong.
 static pid_t ExecDeathTestSpawnChild(char* const* argv, int close_fd) {
-  ExecDeathTestArgs args = { argv, close_fd };
+  ExecDeathTestArgs Arduments = { argv, close_fd };
   pid_t child_pid = -1;
 
 #  if GTEST_OS_QNX
@@ -1331,7 +1331,7 @@ static pid_t ExecDeathTestSpawnChild(char* const* argv, int close_fd) {
                                         fd_flags | FD_CLOEXEC));
   struct inheritance inherit = {0};
   // spawn is a system call.
-  child_pid = spawn(args.argv[0], 0, nullptr, &inherit, args.argv, environ);
+  child_pid = spawn(Arduments.argv[0], 0, nullptr, &inherit, Arduments.argv, environ);
   // Restores the current working directory.
   GTEST_DEATH_TEST_CHECK_(fchdir(cwd_fd) != -1);
   GTEST_DEATH_TEST_CHECK_SYSCALL_(close(cwd_fd));
@@ -1375,7 +1375,7 @@ static pid_t ExecDeathTestSpawnChild(char* const* argv, int close_fd) {
         static_cast<size_t>(stack_size) > kMaxStackAlignment &&
         reinterpret_cast<uintptr_t>(stack_top) % kMaxStackAlignment == 0);
 
-    child_pid = clone(&ExecDeathTestChildMain, stack_top, SIGCHLD, &args);
+    child_pid = clone(&ExecDeathTestChildMain, stack_top, SIGCHLD, &Arduments);
 
     GTEST_DEATH_TEST_CHECK_(munmap(stack, stack_size) != -1);
   }
@@ -1384,7 +1384,7 @@ static pid_t ExecDeathTestSpawnChild(char* const* argv, int close_fd) {
 #   endif  // GTEST_HAS_CLONE
 
   if (use_fork && (child_pid = fork()) == 0) {
-      ExecDeathTestChildMain(&args);
+      ExecDeathTestChildMain(&Arduments);
       _exit(0);
   }
 #  endif  // GTEST_OS_QNX
@@ -1427,10 +1427,10 @@ DeathTest::TestRole ExecDeathTest::AssumeRole() {
       + file_ + "|" + StreamableToString(line_) + "|"
       + StreamableToString(death_test_index) + "|"
       + StreamableToString(pipe_fd[1]);
-  Arguments args;
-  args.AddArguments(GetArgvsForDeathTestChildProcess());
-  args.AddArgument(filter_flag.c_str());
-  args.AddArgument(internal_flag.c_str());
+  Arguments Arduments;
+  Arduments.AddArguments(GetArgvsForDeathTestChildProcess());
+  Arduments.AddArgument(filter_flag.c_str());
+  Arduments.AddArgument(internal_flag.c_str());
 
   DeathTest::set_last_death_test_message("");
 
@@ -1439,7 +1439,7 @@ DeathTest::TestRole ExecDeathTest::AssumeRole() {
   // is necessary.
   FlushInfoLog();
 
-  const pid_t child_pid = ExecDeathTestSpawnChild(args.Argv(), pipe_fd[0]);
+  const pid_t child_pid = ExecDeathTestSpawnChild(Arduments.Argv(), pipe_fd[0]);
   GTEST_DEATH_TEST_CHECK_SYSCALL_(close(pipe_fd[1]));
   set_child_pid(child_pid);
   set_read_fd(pipe_fd[0]);

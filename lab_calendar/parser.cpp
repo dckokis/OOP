@@ -1,80 +1,199 @@
 #include "parser.hpp"
-#include <iostream>
-#include <fstream>
 #include <vector>
-#include "myexception.hpp"
+#include <string>
 
 using namespace std;
 
-vector<OutputFormat> DefineFormat(const string &RangeType, const string &Orient, const string &YearFormat) {
-    vector<OutputFormat> Format;
+enum periods {
+    month,
+    year,
+    range
+};
 
-    if (Orient == "vert") {
-        Format.push_back(Vert);
-    } else if (Orient == "horiz") {
-        Format.push_back(Horiz);
-    } else throw MyExceptionFormat(Orient);
+enum features {
+    vert = 0,
+    horiz,
+    year_for_every_month,
+    year_once
+};
 
-    if (YearFormat == "year_for_every_month") {
-        Format.push_back(YearForEveryMonth);
-    } else if (YearFormat == "year_once") {
-        Format.push_back(YearOnce);
-    } else throw MyExceptionFormat(YearFormat);
+vector<string> Periods = {"month", "year", "range"};
+vector<string> Features = {"vert", "horiz", "year_for_every_month", "year_once"};
 
-    if (RangeType == "range") {
-        Format.push_back(Range);
-    } else if (RangeType == "year") {
-        Format.push_back(Year);
-    } else throw MyExceptionFormat(RangeType);
-
-    return Format;
+bool isPeriod(string &s) {
+    return find(Periods.begin(), Periods.end(), s) != Periods.end();
 }
 
-tuple<vector<OutputFormat>, vector<int>> Parser(ifstream FormatFile) {
-    string RangeType;
-    vector<int> Range;
-    string Orient;
-    string YearFormat;
-    string Parsing;
-    vector<string> Parsed;
-//    if (!FormatFile) {
-//        throw MyExceptionFile(FormatFileName);
+bool isFeature(string &s) {
+    return find(Features.begin(), Features.end(), s) != Features.end();
+}
+
+bool isNumber(const string &str) {
+    for (char const &c : str) {
+        if (isdigit(c) == 0) return false;
+    }
+    return true;
+}
+
+long int getMode(string &s) {
+    auto it = find(Periods.begin(), Periods.end(), s);
+    long int idx = distance(Periods.begin(), it);
+    return idx;
+}
+
+long int getFeature(string &s) {
+    auto it = find(Features.begin(), Features.end(), s);
+    long int idx = distance(Features.begin(), it);
+    return idx;
+}
+
+
+void readMonth(stringstream &file, Arguments *arg) {
+    string temp;
+    getline(file, temp, ' ');
+    if (!isNumber(temp) || temp.empty()) {
+        throw CalendarExceptionFormat("Month must be a number.");
+    }
+    int month = stoi(temp);
+    if (month < 1 || month > 12) {
+        throw CalendarExceptionFormat("Month must range from 1 to 12.");
+    }
+    arg->monthBegin = month;
+    arg->monthEnd = month;
+    getline(file, temp, ' ');
+    if (!isNumber(temp) || temp.empty()) {
+        throw CalendarExceptionFormat("Year must be a number.");
+    }
+    int year = stoi(temp);
+    if (year <= 0) {
+        throw CalendarExceptionFormat("Year must be greater than zero.");
+    }
+    arg->yearBegin = year;
+    arg->yearEnd = year;
+}
+
+void readYear(stringstream &file, Arguments *arg) {
+    string temp;
+    getline(file, temp, ' ');
+    if (!isNumber(temp) || temp.empty()) {
+        throw CalendarExceptionFormat("Year must be a number.");
+    }
+    int year = stoi(temp);
+    if (year <= 0) {
+        throw CalendarExceptionFormat("Year must be greater than zero.");
+    }
+    arg->yearBegin = year;
+    arg->yearEnd = year;
+    arg->monthBegin = 1;
+    arg->monthEnd = 12;
+}
+
+void readRange(stringstream &file, Arguments *arg) {
+    string temp;
+    getline(file, temp, ' ');
+    if (!isNumber(temp) || temp.empty()) {
+        throw CalendarExceptionFormat("Range must be a sequence of numbers.");
+    }
+    int monthBegin = stoi(temp);
+    if (monthBegin < 1 || monthBegin > 12) {
+        throw CalendarExceptionFormat("First month must range from 1 to 12.");
+    }
+    arg->monthBegin = monthBegin;
+    getline(file, temp, ' ');
+    if (!isNumber(temp) || temp.empty()) {
+        throw CalendarExceptionFormat("Years in range must be numbers.");
+    }
+    int yearBegin = stoi(temp);
+    if (yearBegin <= 0) {
+        throw CalendarExceptionFormat("Year must be greater than zero.");
+    }
+    arg->yearBegin = yearBegin;
+    getline(file, temp, ' ');
+    if (!isNumber(temp) || temp.empty()) {
+        throw CalendarExceptionFormat("Range must be a sequence of numbers.");
+    }
+    int monthEnd = stoi(temp);
+    if (monthEnd < 1 || monthEnd > 12) {
+        throw CalendarExceptionFormat("Second month must range from 1 to 12.");
+    }
+    arg->monthEnd = monthEnd;
+    getline(file, temp, ' ');
+    if (!isNumber(temp) || temp.empty()) {
+        throw CalendarExceptionFormat("Years in range must be numbers.");
+    }
+    int yearEnd = stoi(temp);
+    if (yearEnd < 1 || yearEnd < yearBegin) {
+        throw CalendarExceptionFormat("Years in range must go in order.");
+    }
+    if (yearBegin == yearEnd && monthBegin > monthEnd) {
+        throw CalendarExceptionFormat("Months in year must go in order.");
+    }
+    arg->yearEnd = yearEnd;
+}
+
+void readFeature(stringstream &file, Arguments *arg) {
+    string temp;
+    getline(file, temp, ' ');
+    if (!(temp == "|")) {
+        throw CalendarExceptionFormat("Period and Features must be separated by |");
+    }
+    getline(file, temp, ' ');
+    if (!isFeature(temp) || (getFeature(temp) != vert && getFeature(temp) != horiz)) {
+        throw CalendarExceptionFormat("You cannot use unknown features.");
+    }
+    if (getFeature(temp) == vert) {
+        arg->vert = true;
+        arg->horiz = false;
+    }
+    if (getFeature(temp) == horiz) {
+        arg->vert = false;
+        arg->horiz = true;
+    }
+    getline(file, temp, ' ');
+    if (!isFeature(temp) || (getFeature(temp) != year_once && getFeature(temp) != year_for_every_month)) {
+        throw CalendarExceptionFormat("You cannot use unknown features.");
+    }
+    if (getFeature(temp) == year_once) {
+        arg->year_once = true;
+        arg->year_for_every_month = false;
+    }
+    if (getFeature(temp) == year_for_every_month) {
+        arg->year_for_every_month = true;
+        arg->year_once = false;
+    }
+}
+
+Arguments *parseFile(stringstream &file) {
+    if (!file) {
+        throw CalendarExceptionFile();
+    }
+    Arguments *arg = new Arguments;
+    string temp;
+    getline(file, temp, ' ');
+    if(temp.empty() || !isPeriod(temp)){
+        throw CalendarExceptionFormat("First argument must be period.");
+    }
+    switch (getMode(temp)) {
+        case month:
+            readMonth(file, arg);
+            readFeature(file, arg);
+            break;
+        case year:
+            readYear(file, arg);
+            readFeature(file, arg);
+            break;
+        case range:
+            readRange(file, arg);
+            readFeature(file, arg);
+            break;
+        default:
+            throw CalendarExceptionFormat("Unknown range.");
+    }
+    temp.clear();
+//    getline(file, temp);
+//    if(!temp.empty()){
+//        arg->flag_error = true;
+//        return arg;
 //    }
-    for (int n = 1; getline(FormatFile, Parsing); ++n) {
-        for (size_t Pos = 0;;) {
-            Pos = Parsing.find_first_not_of(" \t", Pos);
-            if (Pos == string::npos)
-                break;
-
-            size_t Pos1 = Parsing.find_first_of(" \t", Pos);
-            size_t len = (Pos1 == string::npos) ? string::npos : Pos1 - Pos;
-
-            string Word(Parsing.substr(Pos, len));
-            Parsed.push_back(Word);
-            if (Pos1 == string::npos)
-                break;
-            Pos = Pos1;
-        }
-    }
-    RangeType = Parsed[0];
-    int rangePos;
-    if (RangeType == "year") {
-        Range.push_back(stoi(Parsed[1]));
-        rangePos = 1;
-    } else if (RangeType == "range") {
-        Range.push_back(stoi(Parsed[1]));
-        Range.push_back(stoi(Parsed[2]));
-        Range.push_back(stoi(Parsed[3]));
-        Range.push_back(stoi(Parsed[4]));
-        rangePos = 4;
-    } else throw MyExceptionFormat(RangeType);
-    Orient = Parsed[rangePos + 1];
-    YearFormat = Parsed[rangePos + 2];
-    try {
-        vector<OutputFormat> Format = DefineFormat(RangeType, Orient, YearFormat);
-        return make_tuple(Format, Range);
-    }
-    catch (MyExceptionFormat myException) {
-        myException.Msg();
-    }
+    return arg;
 }

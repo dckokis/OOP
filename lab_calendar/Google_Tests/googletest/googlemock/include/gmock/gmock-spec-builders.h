@@ -1078,7 +1078,7 @@ class TypedExpectation : public ExpectationBase {
   // describes it to the ostream.
   void MaybeDescribeExtraMatcherTo(::std::ostream* os) override {
     if (extra_matcher_specified_) {
-      *os << "    Expected args: ";
+      *os << "    Expected Arduments: ";
       extra_matcher_.DescribeTo(os);
       *os << "\n";
     }
@@ -1134,7 +1134,7 @@ class TypedExpectation : public ExpectationBase {
       }
       StringMatchResultListener listener;
       if (!extra_matcher_.MatchAndExplain(args, &listener)) {
-        *os << "    Expected args: ";
+        *os << "    Expected Arduments: ";
         extra_matcher_.DescribeTo(os);
         *os << "\n           Actual: don't match";
 
@@ -1978,7 +1978,7 @@ GTEST_DISABLE_MSC_WARNINGS_POP_()  //  4251
 //   ON_CALL(mock, TwoArgsMethod(_, _)).WillByDefault(...);
 //   ON_CALL(mock, TwoArgsMethod).WillByDefault(...);
 //
-//   // Can also specify args if you want, of course:
+//   // Can also specify Arduments if you want, of course:
 //   ON_CALL(mock, TwoArgsMethod(_, 45)).WillByDefault(...);
 //
 //   // Overloads work as long as you specify parameters:

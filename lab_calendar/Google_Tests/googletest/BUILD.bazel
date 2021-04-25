@@ -93,7 +93,7 @@ cc_library(
         ":has_absl": ["GTEST_HAS_ABSL=1"],
         "//conditions:default": [],
     }),
-    features = select({
+    Features = select({
         ":windows": ["windows_export_all_symbols"],
         "//conditions:default": [],
     }),
@@ -124,7 +124,7 @@ cc_library(
 cc_library(
     name = "gtest_main",
     srcs = ["googlemock/src/gmock_main.cc"],
-    features = select({
+    Features = select({
         ":windows": ["windows_export_all_symbols"],
         "//conditions:default": [],
     }),
@@ -146,7 +146,7 @@ cc_library(
         "googletest/samples/sample3-inl.h",
         "googletest/samples/sample4.h",
     ],
-    features = select({
+    Features = select({
         ":windows": ["windows_export_all_symbols"],
         "//conditions:default": [],
     }),

@@ -121,7 +121,7 @@
   GMOCK_PP_IF(GMOCK_PP_IS_BEGIN_PARENS(__VA_ARGS__), \
               GMOCK_PP_IS_EMPTY(GMOCK_PP_EMPTY __VA_ARGS__), 0)
 
-// Remove the parens, requires GMOCK_PP_IS_ENCLOSED_PARENS(args) => 1.
+// Remove the parens, requires GMOCK_PP_IS_ENCLOSED_PARENS(Arduments) => 1.
 #define GMOCK_PP_REMOVE_PARENS(...) GMOCK_PP_INTERNAL_REMOVE_PARENS __VA_ARGS__
 
 // Expands to _Macro(0, _Data, e1) _Macro(1, _Data, e2) ... _Macro(K -1, _Data,

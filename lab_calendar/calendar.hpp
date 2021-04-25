@@ -9,27 +9,11 @@
 
 class Calendar {
 private:
-    bool isFull = false;
-    int startMonth = 1;
-    int endMonth = 12;
-    Date currentDate;
-    int year;
+    Arguments Args;
 public:
-    Calendar();
-
-    void Run(); //Main Menu system
-    static void Draw(const char FormatFileName[]); //Main calendar draw loop
-    static void Draw(string Format);
-    void SetYear(int _year);
-    int GetYear();
-    void SetStartMonth(int Month);
-    int GetStartMonth();
-    int GetEndMonth();
-    void SetEndMonth(int Month);
-    void SetFull();
-    void SetEmpty();
-    bool IsFull();
-    void NextMonth(); // Print Next month
-    void PreviousMonth(); //Print Previous Month
-
+    explicit Calendar(Arguments _args) : Args(_args) {} ;
+    std::string DrawCalendar() noexcept;
 };
+
+std::string horizontalPrint(int monthBeg, int yearBeg, int monthEnd, int yearEnd, bool yearEveryMonth, bool yearOnce) noexcept;
+std::string verticalPrint(int monthBeg, int yearBeg, int monthEnd, int yearEnd, bool yearEveryMonth, bool yearOnce) noexcept;

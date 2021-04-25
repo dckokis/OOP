@@ -1,17 +1,21 @@
 #pragma once
 
-#include <cstdio>
-#include <string>
+#include <iostream>
 #include <vector>
+#include <string>
+#include <sstream>
+#include "calendar_exception.hpp"
 
-enum OutputFormat {
-    Vert = 0,
-    Horiz,
-    YearForEveryMonth,
-    YearOnce,
-    Range,
-    Year
-};
+typedef struct Arguments {
+    int monthBegin;
+    int yearBegin;
+    int monthEnd;
+    int yearEnd;
 
+    bool vert;
+    bool horiz;
+    bool year_for_every_month;
+    bool year_once;
+} Arguments;
 
-std::tuple<std::vector<OutputFormat>, std::vector<int>> Parser(std::ifstream FormatFile);
+Arguments *parseFile(std::stringstream &file) noexcept(false);

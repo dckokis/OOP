@@ -758,7 +758,7 @@ syntax. To learn about this syntax, you may want to read this
 [Wikipedia entry](http://en.wikipedia.org/wiki/Regular_expression#POSIX_Extended_Regular_Expressions).
 
 On Windows, googletest uses its own simple regular expression implementation. It
-lacks many features. For example, we don't support union (`"x|y"`), grouping
+lacks many Features. For example, we don't support union (`"x|y"`), grouping
 (`"(xy)"`), brackets (`"[xy]"`), and repetition count (`"x{5,7}"`), among
 others. Below is what we do support (`A` denotes a literal character, period
 (`.`), or a single `\\ ` escape sequence; `x` and `y` denote regular
@@ -830,7 +830,7 @@ arrange that kind of environment. For example, statically-initialized modules
 may start threads before main is ever reached. Once threads have been created,
 it may be difficult or impossible to clean them up.
 
-googletest has three features intended to raise awareness of threading issues.
+googletest has three Features intended to raise awareness of threading issues.
 
 1.  A warning is emitted if multiple threads are running when a death test is
     encountered.
