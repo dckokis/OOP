@@ -18,4 +18,4 @@ typedef struct Arguments {
     bool year_once;
 } Arguments;
 
-Arguments *parseFile(std::stringstream &file) noexcept(false);
+Arguments *parseFile(std::istream &file) noexcept(false);

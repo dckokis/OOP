@@ -48,7 +48,7 @@ long int getFeature(string &s) {
 }
 
 
-void readMonth(stringstream &file, Arguments *arg) {
+void readMonth(istream &file, Arguments *arg) {
     string temp;
     getline(file, temp, ' ');
     if (!isNumber(temp) || temp.empty()) {
@@ -72,7 +72,7 @@ void readMonth(stringstream &file, Arguments *arg) {
     arg->yearEnd = year;
 }
 
-void readYear(stringstream &file, Arguments *arg) {
+void readYear(istream &file, Arguments *arg) {
     string temp;
     getline(file, temp, ' ');
     if (!isNumber(temp) || temp.empty()) {
@@ -88,7 +88,7 @@ void readYear(stringstream &file, Arguments *arg) {
     arg->monthEnd = 12;
 }
 
-void readRange(stringstream &file, Arguments *arg) {
+void readRange(istream &file, Arguments *arg) {
     string temp;
     getline(file, temp, ' ');
     if (!isNumber(temp) || temp.empty()) {
@@ -131,7 +131,7 @@ void readRange(stringstream &file, Arguments *arg) {
     arg->yearEnd = yearEnd;
 }
 
-void readFeature(stringstream &file, Arguments *arg) {
+void readFeature(istream &file, Arguments *arg) {
     string temp;
     getline(file, temp, ' ');
     if (!(temp == "|")) {
@@ -163,7 +163,7 @@ void readFeature(stringstream &file, Arguments *arg) {
     }
 }
 
-Arguments *parseFile(stringstream &file) {
+Arguments *parseFile(istream &file) {
     if (!file) {
         throw CalendarExceptionFile();
     }
@@ -190,10 +190,5 @@ Arguments *parseFile(stringstream &file) {
             throw CalendarExceptionFormat("Unknown range.");
     }
     temp.clear();
-//    getline(file, temp);
-//    if(!temp.empty()){
-//        arg->flag_error = true;
-//        return arg;
-//    }
     return arg;
 }

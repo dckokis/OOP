@@ -3,11 +3,10 @@
 #include "calendar.hpp"
 
 int run(const char FileName[]) {
-    std::stringstream ss;
     std::ifstream inp(FileName);
-    ss << inp.rdbuf();
+    std::istream &input = inp;
     try {
-        Calendar test = Calendar(*parseFile(ss));
+        Calendar test = Calendar(*parseFile(input));
         std::cout << test.DrawCalendar();
     }
     catch (CalendarExceptionFormat &calendarExceptionFormat) {
