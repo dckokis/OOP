@@ -12,7 +12,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2c949eca-d94d-4442-8fb0-d0f88cf7a3e2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/line.c" beforeDir="false" afterPath="$PROJECT_DIR$/line.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/line.h" beforeDir="false" afterPath="$PROJECT_DIR$/line.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rect.c" beforeDir="false" afterPath="$PROJECT_DIR$/rect.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rect.h" beforeDir="false" afterPath="$PROJECT_DIR$/rect.h" afterDir="false" />
     </list>
@@ -51,9 +53,9 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
     <configuration name="lab_fabric" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="lab_fabric" TARGET_NAME="lab_fabric" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="lab_fabric" RUN_TARGET_NAME="lab_fabric">
@@ -85,6 +87,7 @@
       <workItem from="1617020002781" duration="19000" />
       <workItem from="1617449246481" duration="2961000" />
       <workItem from="1619357038725" duration="935000" />
+      <workItem from="1619416654996" duration="398000" />
     </task>
     <task id="LOCAL-00001" summary="Started.">
       <created>1615739189083</created>
