@@ -1,20 +1,22 @@
 #include <iostream>
 #include <fstream>
-#include "calendar.hpp"
+#include "rangeCreate.hpp"
+#include "guiCalendar.hpp"
+#include "date.hpp"
+#include "parser.hpp"
 
 int run(const char FileName[]) {
     std::ifstream inp(FileName);
     std::istream &input = inp;
-    try {
-        Calendar test = Calendar(*parseFile(input));
-        std::cout << test.DrawCalendar();
+    Range testRange = CreateRange(parser(inp));
+    if (testRange.type == UNDEFINED) {
+        std::cout << "Wrong input!!!" << std::endl;
+        return 0;
     }
-    catch (CalendarExceptionFormat &calendarExceptionFormat) {
-        calendarExceptionFormat.Msg();
-    }
-    catch (CalendarExceptionFile &calendarExceptionFile) {
-        calendarExceptionFile.Msg();
-    }
+    date begin = date(testRange.begin[0], testRange.begin[1], testRange.begin[2]);
+    date end = date(testRange.end[0], testRange.end[1], testRange.end[2]);
+    guiCalendar testCal = guiCalendar(begin, end, testRange.orient);
+    std::cout << testCal.Draw(testRange.yearEveryMonth, testRange.yearOnce);
     return 0;
 }
 

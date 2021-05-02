@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/calendar.cpp" />
+    <file url="file://$PROJECT_DIR$/calendar.hpp" />
+    <file url="file://$PROJECT_DIR$/parser.cpp" />
+    <file url="file://$PROJECT_DIR$/parser.hpp" />
+  </component>
 </project>
