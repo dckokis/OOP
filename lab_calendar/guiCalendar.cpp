@@ -5,17 +5,12 @@
 #include <algorithm>
 #include "guiCalendar.hpp"
 #include "numberOfDays.hpp"
+#include "defineDay.hpp"
 
 const std::string Days = "Mn Tu Wd Th Fr St Sn";
 std::string dayName(int n) {
     const static std::string daysOfWeek[] = {"Mn", "Tu", "Wd", "Th", "Fr", "St", "Sn"};
     return (daysOfWeek[n]);
-}
-
-int dayNumber(int day, int month, int year) {
-    const static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
-    year -= month < 3;
-    return (year + year / 4 - year / 100 + year / 400 + t[month - 1] + day - 1) % 7;
 }
 
 std::string getMonthName(int monthNumber) {
@@ -66,7 +61,7 @@ std::string templateOfNHorizMonth(int month, int year, bool everyYear, int n) {
 
 int WeeksAmount(int month, int year) {
     int count = 0;
-    int current = dayNumber(1, month + 1, year);
+    int current = defineDay(1, month + 1, year);
     int daysInMonth = numberOfDays(month, year);
     int k = current - 1;
     for (int i = 1; i <= daysInMonth; i++)
@@ -79,7 +74,7 @@ int WeeksAmount(int month, int year) {
 
 std::string horizMonth(int month, int year) {
     std::ostringstream out;
-    int current = dayNumber(1, month + 1, year);
+    int current = defineDay(1, month + 1, year);
     int daysInMonth = numberOfDays(month, year);
     int k = current;
     out << std::string(current * 3, ' ');
@@ -92,7 +87,7 @@ std::string horizMonth(int month, int year) {
     }
     std::string final = out.str();
     final.pop_back(); // delete /n
-    int currentOfNext = dayNumber(1, month + 2, year);
+    int currentOfNext = defineDay(1, month + 2, year);
     int tabsAmount = 6 - currentOfNext;
     if (currentOfNext != 0)
         filler(final, (tabsAmount + 1) * 3);
@@ -144,7 +139,7 @@ std::string vertMonth(int month, int year) {
     int daysInMonth = numberOfDays(month, year);
     std::vector<std::vector<int>> daysOfWeek(7);
     for (int i = 1; i <= daysInMonth; i++) {
-        int current = dayNumber(i, month + 1, year);
+        int current = defineDay(i, month + 1, year);
         daysOfWeek[current].push_back(i);
     }
     bool wasFirstDay = false;

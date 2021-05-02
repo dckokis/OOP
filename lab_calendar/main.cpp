@@ -4,6 +4,7 @@
 #include "guiCalendar.hpp"
 #include "date.hpp"
 #include "parser.hpp"
+#include "daysCount.hpp"
 
 int run(const char FileName[]) {
     std::ifstream inp(FileName);
@@ -17,6 +18,12 @@ int run(const char FileName[]) {
     date end = date(testRange.end[0], testRange.end[1], testRange.end[2]);
     guiCalendar testCal = guiCalendar(begin, end, testRange.orient);
     std::cout << testCal.Draw(testRange.yearEveryMonth, testRange.yearOnce);
+    std::cout << std::endl;
+    auto testDays = daysCounter(begin, end);
+    for (auto days : testDays) {
+        std:: cout << days << " ";
+    }
+
     return 0;
 }
 
@@ -25,4 +32,5 @@ int main(int argc, char* argv[]) {
         run(argv[1]);
     else
         run("input.txt");
+
 }
