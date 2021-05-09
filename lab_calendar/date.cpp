@@ -1,61 +1,41 @@
 #include "date.hpp"
+#include "defineDay.hpp"
 
-const std::string date::DayNames[7] = {
-        "Sun",
-        "Mon",
-        "Tue",
-        "Wen",
-        "Thu",
-        "Fri",
-        "Sat"
-};
+namespace {
+    std::vector<std::string> DaysNames {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    std::vector<std::string> MonthsNames {"January", "February", "March" , "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+}
 
-const std::string date::MonthNames[12] = {
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-};
-
-const int date::MonthDays[12] = {
-        31, 28, 31, 30, 31, 30,
-        31, 31, 30, 31, 30, 31,
-};
-
-int date::getDay() {
+int Date::getDay() {
     return day;
 }
 
-int date::getMonth() {
+int Date::getMonth() {
     return month;
 }
 
-int date::getYear() {
+int Date::getYear() {
     return year;
 }
 
-void date::IncreaseMonth() {
-    if (month < 12)
-        ++month;
-    else {
-        month = 1;
-        ++year;
+Date::Date(int day, int month, int year) {
+    if (day > 31 || month > 12 || year < 0) {
+        return;
     }
+    this->day = day;
+    this->month = month;
+    this->year = year;
 }
 
-void date::DecreaseMonth() {
-    if (month > 1)
-        --month;
-    else {
-        month = 12;
-        --year;
-    }
+bool Date::operator==(const Date &that) {
+    return (day == that.day && month == that.month && year == that.year);
 }
+
+std::string Date::getDayAsString() {
+    return DaysNames[defineDay(day, month, year)];
+}
+
+std::string Date::getMonthAsString() {
+    return MonthsNames[month - 1];
+}
+

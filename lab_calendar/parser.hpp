@@ -3,5 +3,24 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include "date.hpp"
 
-std::vector<std::string> parser(std::istream &input);
+enum class RangeType {
+    RANGE,
+    YEAR,
+    MONTH,
+    UNDEFINED
+};
+
+struct Range final {
+    RangeType type;
+    Date dateBegin;
+    Date dateEnd;
+    bool orient; //true - orient, false - horizontal
+    bool yearEveryMonth = false;
+    bool yearOnce = false;
+};
+
+Range CreateRange(std::vector<std::string> source);
+
+std::vector<std::string> streamReader(std::istream &input);

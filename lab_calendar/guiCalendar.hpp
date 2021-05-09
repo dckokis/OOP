@@ -1,11 +1,12 @@
 #pragma once
+
 #include "date.hpp"
-class guiCalendar final{
+
+class guiCalendar final {
 private:
-    date begin;
-    date end;
-    bool vertical;
+    bool orient; //true - vert, false-horiz
 public:
-    guiCalendar(date b, date e, bool orient = true): begin(b), end(e), vertical(orient) {};
-    std::string Draw(bool yearEveryMonth, bool yearOnce);
+    guiCalendar(bool orient = true) : orient(orient) {};
+
+    std::string Draw(bool yearEveryMonth, bool yearOnce, Date beginDate, Date endDate);
 };
