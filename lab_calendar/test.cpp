@@ -1,4 +1,5 @@
 #include "parser.hpp"
+#include "defineDay.hpp"
 #include <gtest/gtest.h>
 #include <fstream>
 
@@ -24,5 +25,26 @@ TEST(INPUT, RANGES) {
     ASSERT_TRUE(testRange.dateBegin == controlRange.dateBegin);
     ASSERT_TRUE(testRange.yearOnce == controlRange.yearOnce);
     ASSERT_TRUE(testRange.yearEveryMonth == controlRange.yearEveryMonth);
+
+    ASSERT_TRUE("rage 1 2021 12 2022 | horiz year_once" == testInput[1]);
 }
 
+TEST(DATE, TEST) {
+    vector<string> DaysNames {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    vector<string> MonthsNames {"January", "February", "March" , "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+    Date testDate = Date(1, 1, 1);
+    Date invalidDate1 = Date(-1, 1, 1);
+    Date invalidDate2 = Date(1, -1, 1);
+    Date invalidDate3 = Date(1, 1, -1);
+    Date invalidDate4 = Date(-1, -1, -1);
+
+    ASSERT_EQ(testDate.getDay(), 1);
+    ASSERT_EQ(testDate.getYear(), 1);
+    ASSERT_EQ(testDate.getMonth(), 1);
+    ASSERT_TRUE(invalidDate1 == invalidDate2);
+    ASSERT_TRUE(invalidDate2 == invalidDate3);
+    ASSERT_TRUE(invalidDate3 == invalidDate4);
+    ASSERT_TRUE(testDate.getMonthAsString() == MonthsNames[testDate.getMonth() - 1]);
+    ASSERT_TRUE(testDate.getDayAsString() == DaysNames[defineDay(1, 1, 1)]);
+    ASSERT_TRUE(invalidDate1.getMonthAsString() == "");
+}
