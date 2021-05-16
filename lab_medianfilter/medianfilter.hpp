@@ -1,8 +1,17 @@
-//
-// Created by константин on 19.04.2021.
-//
+#pragma once
 
-#ifndef LAB_MEDIANFILTER_MEDIANFILTER_HPP
-#define LAB_MEDIANFILTER_MEDIANFILTER_HPP
+#include "BitmapPlusPlus.hpp"
+#include "neighbourhood.hpp"
 
-#endif //LAB_MEDIANFILTER_MEDIANFILTER_HPP
+class RGBPixelMedianFilter{
+private:
+
+public:
+    //explicit RGBPixelMedianFilter(const Neighbourhood & _neighbourhood) : notFiltered(notFiltered){};
+    static bmp::Pixel filter(Neighbourhood& notFiltered, size_t filtrationThreshold);
+};
+
+//class PixelMedianFilter {
+//public:
+//    void *filter(void *data, size_t filtrationThreshold);
+//};
