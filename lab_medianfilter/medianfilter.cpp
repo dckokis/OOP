@@ -13,8 +13,8 @@ namespace {
         auto centralPixelIdx = getIndexInVector(processing, filteringPixel);
         auto centralPixel = processing[centralPixelIdx];
         auto medianIdx = (processing.size() - 1) / 2;
-        auto medianIterator = find_if(processing.begin(), processing.end(),
-                                      compareWithControlPixel(processing[medianIdx]));
+        auto medianIterator = processing.begin();
+        advance(medianIterator, medianIdx);
         auto median = processing[medianIdx];
         int maxRedBrightness = 0;
         int minRedBrightness = 255;
@@ -41,8 +41,8 @@ namespace {
         auto centralPixelIdx = getIndexInVector(processing, filteringPixel);
         auto centralPixel = processing[centralPixelIdx];
         auto medianIdx = (processing.size() - 1) / 2;
-        auto medianIterator = find_if(processing.begin(), processing.end(),
-                                      compareWithControlPixel(processing[medianIdx]));
+        auto medianIterator = processing.begin();
+        advance(medianIterator, medianIdx);
         auto median = processing[medianIdx];
         int maxGreenBrightness = 0;
         int minGreenBrightness = 255;
@@ -69,8 +69,8 @@ namespace {
         auto centralPixelIdx = getIndexInVector(processing, filteringPixel);
         auto centralPixel = processing[centralPixelIdx];
         auto medianIdx = (processing.size() - 1) / 2;
-        auto medianIterator = find_if(processing.begin(), processing.end(),
-                                      compareWithControlPixel(processing[medianIdx]));
+        auto medianIterator = processing.begin();
+        advance(medianIterator, medianIdx);
         auto median = processing[medianIdx];
         int maxBlueBrightness = 0;
         int minBlueBrightness = 255;
@@ -105,4 +105,12 @@ Pixel RGBPixelMedianFilter::filter(Neighbourhood& notFiltered, size_t filtration
                                    notFiltered.getCentralPixel());
 
     return Pixel(redFiltered[centralPixelIdx].r, greenFiltered[centralPixelIdx].g, blueFiltered[centralPixelIdx].b);
+}
+
+Pixel BlackWhitePixelMedianFilter::filter(Neighbourhood &notFiltered, size_t filtrationThreshold) {
+    auto centralPixelIdx = getIndexInVector(notFiltered.getNeighbouringPixels(), notFiltered.getCentralPixel());
+
+    auto redFiltered = redFilter(notFiltered.getNeighbouringPixels(), filtrationThreshold,
+                                 notFiltered.getCentralPixel());
+    return Pixel(redFiltered[centralPixelIdx].r, redFiltered[centralPixelIdx].r, redFiltered[centralPixelIdx].r);
 }

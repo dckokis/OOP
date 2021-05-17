@@ -24,13 +24,13 @@ public:
     }
 };
 
-class PixelExceptions : MedianFilterExceptions {
-public:
-    explicit PixelExceptions(const bmp::Pixel & _badPixel) : badPixel(_badPixel) {};
-    inline void  Message() override {};
-    inline bmp::Pixel returnBadPixel(){
-        return badPixel;
-    }
-private:
-    bmp::Pixel badPixel;
-};
+//class PixelExceptions : MedianFilterExceptions {
+//public:
+//    explicit PixelExceptions(const bmp::Pixel & _badPixel) : badPixel(_badPixel) {};
+//    inline void  Message() override {};
+//    inline bmp::Pixel returnBadPixel(){
+//        return badPixel;
+//    }
+//private:
+//    bmp::Pixel badPixel;
+//};

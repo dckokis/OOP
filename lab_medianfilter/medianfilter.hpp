@@ -3,15 +3,17 @@
 #include "BitmapPlusPlus.hpp"
 #include "neighbourhood.hpp"
 
-class RGBPixelMedianFilter{
-private:
-
+class PixelMedianFilter {
 public:
-    //explicit RGBPixelMedianFilter(const Neighbourhood & _neighbourhood) : notFiltered(notFiltered){};
-    static bmp::Pixel filter(Neighbourhood& notFiltered, size_t filtrationThreshold);
+    virtual bmp::Pixel filter(Neighbourhood& notFiltered, size_t filtrationThreshold) = 0;
 };
 
-//class PixelMedianFilter {
-//public:
-//    void *filter(void *data, size_t filtrationThreshold);
-//};
+class RGBPixelMedianFilter : PixelMedianFilter{
+public:
+    bmp::Pixel filter(Neighbourhood& notFiltered, size_t filtrationThreshold) override;
+};
+
+class BlackWhitePixelMedianFilter : PixelMedianFilter{
+public:
+    bmp::Pixel filter(Neighbourhood& notFiltered, size_t filtrationThreshold) override;
+};
