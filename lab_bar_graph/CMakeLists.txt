@@ -3,4 +3,4 @@ project(lab_bar_graph)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(lab_bar_graph main.cpp BarGraph.cpp BarGraph.hpp Bin.cpp Bin.hpp)
+add_executable(lab_bar_graph main.cpp Histogram.cpp Histogram.hpp)
