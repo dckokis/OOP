@@ -13,7 +13,7 @@ private:
     int min;
 public:
     BarGraph(std::vector<int> & input);
-    BarGraph(std::istream & input);
+    //BarGraph(std::istream & input);
     bool operator==(const BarGraph & that) const;
     BarGraph operator+(const BarGraph & that) const;
     BarGraph operator-(const BarGraph & that) const;
