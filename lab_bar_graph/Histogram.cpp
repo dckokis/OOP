@@ -71,7 +71,3 @@ Histogram::iterator Histogram::begin() {
 Histogram::iterator Histogram::end() {
     return Bins.end();
 }
-
-std::map<int, int> &Histogram::getBins() {
-    return Bins;
-}

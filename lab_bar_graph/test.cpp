@@ -21,9 +21,8 @@ TEST(Constructor, CorrectData) {
                        {2, 2}};
     vector<int> input{1, 2, 3, 3};
     auto testHist = Histogram(input, 4, 0);
-    ASSERT_TRUE(test[0] == testHist.getBins()[0]);
-    ASSERT_TRUE(test[1] == testHist.getBins()[1]);
-    ASSERT_TRUE(test[2] == testHist.getBins()[2]);
+    ASSERT_TRUE(test.begin()->first == testHist.begin()->first);
+    ASSERT_TRUE(test.begin()->second == testHist.begin()->second);
 }
 
 TEST(Operators, Addition) {
@@ -36,7 +35,7 @@ TEST(Operators, Addition) {
     auto testHist1 = Histogram(input1, 4, 0);
     auto testHist2 = Histogram(input2, 4, 0);
     auto testHist3 = Histogram(input3, 4, 1);
-    ASSERT_TRUE(test == (testHist1 + testHist2).getBins());
+    ASSERT_TRUE(test.begin()->first == (testHist1 + testHist2).begin()->first);
     ASSERT_THROW(testHist1 + testHist3, ArithmeticException);
 }
 
@@ -49,7 +48,7 @@ TEST(Operators, Substraction) {
     auto testHist1 = Histogram(input1, 4, 0);
     auto testHist2 = Histogram(input2, 4, 0);
     auto testHist3 = Histogram(input3, 4, 1);
-    ASSERT_TRUE(test == (testHist2 - testHist1).getBins());
+    ASSERT_TRUE(test.begin()->first == (testHist2 - testHist1).begin()->first);
     ASSERT_THROW(testHist1 - testHist3, ArithmeticException);
 }
 

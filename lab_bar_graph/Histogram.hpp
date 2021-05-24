@@ -20,8 +20,6 @@ public:
 
     bool operator==(const Histogram &that) const;
 
-    std::map<int, int> &getBins();
-
     Histogram operator+(const Histogram &that) const;
 
     Histogram operator-(const Histogram &that) const;
