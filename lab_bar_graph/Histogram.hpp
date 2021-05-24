@@ -20,19 +20,15 @@ public:
 
     bool operator==(const Histogram &that) const;
 
+    std::map<int, int> &getBins();
+
     Histogram operator+(const Histogram &that) const;
 
     Histogram operator-(const Histogram &that) const;
 
     using iterator = std::map<int, int>::iterator;
-    using constIterator = std::map<int, int>::const_iterator;
 
     iterator begin();
 
     iterator end();
-
-    [[nodiscard]] constIterator cbegin() const;
-
-    [[nodiscard]] constIterator cend() const;
 };
-
