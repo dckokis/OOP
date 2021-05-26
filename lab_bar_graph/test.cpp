@@ -37,19 +37,25 @@ TEST(Operators, Addition) {
     auto testHist3 = Histogram(input3, 4, 1);
     ASSERT_TRUE(test.begin()->first == (testHist1 + testHist2).begin()->first);
     ASSERT_THROW(testHist1 + testHist3, ArithmeticException);
+
+    auto emptyHist = Histogram();
+    ASSERT_TRUE(testHist1 + emptyHist == testHist1);
+    ASSERT_TRUE(emptyHist + testHist1 == testHist1);
 }
 
 TEST(Operators, Substraction) {
-    map<int, int> test{{0, 0},
-                       {1, 1},};
+    map<int, int> test{{1, 1},};
     vector<int> input1{1, 2, 3, 3};
     vector<int> input2{1, 2, 2, 3};
     vector<int> input3{1, 1, 1, 1, 1};
     auto testHist1 = Histogram(input1, 4, 0);
     auto testHist2 = Histogram(input2, 4, 0);
     auto testHist3 = Histogram(input3, 4, 1);
+    auto emptyHist = Histogram();
     ASSERT_TRUE(test.begin()->first == (testHist2 - testHist1).begin()->first);
     ASSERT_THROW(testHist1 - testHist3, ArithmeticException);
+    ASSERT_TRUE(testHist1 - testHist1 == emptyHist);
+    ASSERT_TRUE(testHist1 - emptyHist == testHist1);
 }
 
 TEST(Operators, Equality) {
@@ -62,3 +68,4 @@ TEST(Operators, Equality) {
     ASSERT_TRUE(testHist1 == testHist2);
     ASSERT_FALSE(testHist3 == testHist1);
 }
+

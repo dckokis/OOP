@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Histogram::Histogram(std::vector<int> &input, int upperBoarder, int lowerBorder) {
+Histogram::Histogram(const std::vector<int> &input, int upperBoarder, int lowerBorder) {
     if (upperBoarder < lowerBorder or input.empty())
         throw CreationException();
     max = 0;
@@ -43,6 +43,10 @@ bool Histogram::operator==(const Histogram &that) const {
 }
 
 Histogram Histogram::operator+(const Histogram &that) const {
+    if (that == Histogram())
+        return *this;
+    if (*this == Histogram())
+        return that;
     if (this->max != that.max or this->min != that.min or this->binCount != that.binCount)
         throw ArithmeticException();
     Histogram newHist = Histogram(*this);
@@ -53,13 +57,30 @@ Histogram Histogram::operator+(const Histogram &that) const {
 }
 
 Histogram Histogram::operator-(const Histogram &that) const {
+    if (that == Histogram())
+        return *this;
+    if (*this == Histogram())
+        return that;
     if (this->max != that.max or this->min != that.min or this->binCount != that.binCount)
         throw ArithmeticException();
     Histogram newHist = Histogram(*this);
     for (const auto &elem : that.Bins) {
         newHist.Bins[elem.first] -= elem.second;
-        if (newHist.Bins[elem.first] < 0)
+        if (newHist.Bins[elem.first] <= 0) {
             newHist.Bins.erase(elem.first);
+            newHist.binCount--;
+        }
+    }
+    if (newHist.begin() != newHist.end()) {
+        auto newMin = newHist.begin()->second;
+        map<int, int>::reverse_iterator newMaxIt;
+        newMaxIt = newHist.Bins.rbegin();
+        auto newMax = newMaxIt->second;
+        newHist.max = newMax;
+        newHist.min = newMin;
+    } else {
+        newHist.min = 0;
+        newHist.max = 0;
     }
     return newHist;
 }
@@ -70,4 +91,19 @@ Histogram::iterator Histogram::begin() {
 
 Histogram::iterator Histogram::end() {
     return Bins.end();
+}
+
+Histogram::const_iterator Histogram::cbegin() {
+    return Bins.cbegin();
+}
+
+Histogram::const_iterator Histogram::cend() {
+    return Bins.cend();
+}
+
+Histogram::Histogram() {
+    binCount = 0;
+    max = 0;
+    min = 0;
+    Bins = map<int, int>();
 }
