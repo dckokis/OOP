@@ -7,12 +7,12 @@
 using namespace std;
 
 namespace {
-    map<string, RangeType> Ranges = {{"range", RangeType::RANGE},
+    const map<string, RangeType> Ranges = {{"range", RangeType::RANGE},
                                      {"year",  RangeType::YEAR},
                                      {"month", RangeType::MONTH}};
-    map<string, bool> Orientations{{"vert",  true},
+    const map<string, bool> Orientations{{"vert",  true},
                                    {"horiz", false}};
-    set<string> YearTypes = {"year_once", "year_for_every_month"};
+    const set<string> YearTypes = {"year_once", "year_for_every_month"};
 
     bool IsNumber(std::string word) {
         try {
