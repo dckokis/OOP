@@ -1,444 +1,300 @@
-#include "set.h"
 #include <stdlib.h>
+#include <stdbool.h>
 #include <vcruntime_string.h>
 
-static const size_t MIN_SIZE = 0;
+#include "set.h"
 
-typedef struct SET {
-    size_t itemSize;
-    size_t setSize;
-    void **items;
+
+enum bucket_state {
+    FREE,
+    FULL,
+    DELETED
+};
+
+typedef struct {
+    void *items;
     int *conditions;
+    size_t capacity;
+    size_t itemSize;
+    size_t itemsAmount;
 
     size_t (*hash)(const void *);
 
     bool (*equals)(const void *, const void *);
-} SET;
+} pSet;
 
-static void *set_resize(void *set, size_t new_setSize) {
-    SET *pSet = set;
-    void **new_items = calloc(new_setSize, new_setSize * sizeof(size_t));
-    if (new_items == NULL) {
+
+/////////////////////*Utilities*/////////////////////////
+static pSet *createSetCopy(pSet *originSet) {
+    pSet *setCopy = (pSet *) malloc(sizeof(pSet));
+    if (setCopy == NULL)
         return NULL;
-    }
-    int *new_conditions = calloc(new_setSize, new_setSize * sizeof(int));
-    if (new_conditions == NULL) {
-        return NULL;
-    }
-    if (new_setSize == 0) {
-        pSet->setSize = 0;
-        set_destroy(pSet, NULL);
-        free(pSet->items);
-        free(pSet->conditions);
-        pSet->items = new_items;
-        pSet->conditions = new_conditions;
-        return pSet;
-    }
-    int i;
-    size_t clone_id;
-    for (i = 0; i < pSet->setSize; i++) {
-        clone_id = pSet->hash(pSet->items[i]) % new_setSize;
-        if (new_conditions[clone_id] == 0) {
-            new_items[clone_id] = pSet->items[i];
-            if (pSet->conditions[i] == 1) {
-                new_conditions[clone_id] = 1;
-            }
-        } else if (new_conditions[clone_id] == 1) {
-            if (pSet->equals(pSet->items[i], new_items[clone_id]) == false) {
-                size_t j;
-                for (j = clone_id + 1; j < new_setSize; j++) {
-                    if (new_conditions[j] == 0) {
-                        new_items[j] = pSet->items[i];
-                        if (pSet->conditions[i] == 1) {
-                            new_conditions[j] = 1;
-                        }
-                        break;
-                    } else if (new_conditions[j] == 1) {
-                        continue;
-                    }
-                }
-                for (j = 0; j < clone_id; j++) {
-                    if (new_conditions[j] == 0) {
-                        new_items[j] = pSet->items[i];
-                        if (pSet->conditions[i] == 1) {
-                            new_conditions[j] = 1;
-                        }
-                        break;
-                    } else if (new_conditions[j] == 1) {
-                        continue;
-                    }
-                }
-            }
-        }
-    }
-    void* items_ptr = pSet->items;
-    free(items_ptr);
-    pSet->items = new_items;
-    void* conditions_ptr = pSet->conditions;
-    free(conditions_ptr);
-    pSet->conditions = new_conditions;
-    pSet->setSize = new_setSize;
-    pSet->items = new_items;
-    return pSet;
+    setCopy->items = originSet->items;
+    setCopy->conditions = originSet->conditions;
+    setCopy->capacity = originSet->capacity;
+    setCopy->itemSize = originSet->itemSize;
+    setCopy->itemsAmount = originSet->itemsAmount;
+    setCopy->hash = originSet->hash;
+    setCopy->equals = originSet->equals;
+    return setCopy;
 }
 
-static void *set_item_create(size_t itemSize) {
-    if (itemSize == 0) {
+static bool setResize(pSet *originSet, size_t itemsAmount, size_t newSize) {
+    pSet *newSet = createSetCopy(originSet);
+    int *newConditions = (int *) malloc(sizeof(int) * newSize);
+    if (newConditions == NULL)
         return NULL;
+    for (size_t i = 0; i < newSize; i++) {
+        newConditions[i] = FREE;
     }
-    void *new_item = calloc(1, itemSize);
-    if (new_item == NULL) {
-        return NULL;
+    void *newItems = (void *) malloc(newSize * originSet->itemSize);
+    if (newItems == NULL || newConditions == NULL || newSet == NULL) {
+        free(newSet);
+        free(newItems);
+        free(newConditions);
+        return false;
     }
-    return new_item;
+    originSet->items = newItems;
+    originSet->conditions = newConditions;
+    originSet->capacity = newSize;
+    originSet->itemsAmount = 0;
+    const void *current;
+    for (size_t i = 0; i < itemsAmount; i++) {
+        current = set_current(newSet, i);
+        set_insert(originSet, current);
+    }
+    free(newSet->conditions);
+    free(newSet->items);
+    free(newSet);
+    return true;
+
 }
 
-static void set_destroy_each_item(void *set, void (*destroy)(void *)) {
-    SET *pSet = set;
-    int i;
-    for (i = 0; i < pSet->setSize; i++) {
-        if (pSet->conditions[i] == 1) {
-            if (destroy) {
-                destroy(pSet->items[i]);
-            }
-            free(pSet->items[i]);
-            pSet->conditions[i] = 0;
-        }
-    }
+static bool copyItem(const void *source, void *copy, size_t itemSize) {
+    if (source == NULL || copy == NULL)
+        return false;
+    memcpy(copy, source, itemSize);
+    return true;
 }
 
-static const size_t find_place(const void *set, const void *item) {
-    const SET *pSet = set;
-    size_t item_id = pSet->hash(item) % pSet->setSize;
-    size_t i;
-    for (i = item_id; i < pSet->setSize; i++) {
-        if (pSet->conditions[i] == 1) {
-            if (pSet->equals(pSet->items[i], item) == true) {
-                return INVALID;
-            } else {
-                continue;
-            }
-        } else if (pSet->conditions[i] == 0) {
-            return i;
-        }
+static size_t getIndex(pSet *set, size_t itemId) {
+    if (itemId + 1 == 0)
+        return set->capacity - 1;
+    return itemId % set->capacity;
+}
+/////////////////////*Utilities*/////////////////////////
+
+void *set_create(size_t itemSize, size_t hash(const void *), bool(*equals)(const void *, const void *)) {
+    if (hash == NULL || equals == NULL || itemSize == 0) {
+        return NULL;
     }
-    for (i = 0; i < item_id; i++) {
-        if (pSet->conditions[i] == 1) {
-            if (pSet->equals(pSet->items[i], item) == true) {
-                return INVALID;
-            } else {
-                continue;
-            }
-        } else if (pSet->conditions[i] == 0) {
-            return i;
-        }
+    pSet *setPtr = (pSet *) malloc(sizeof(pSet));
+    if (setPtr == NULL) {
+        free(setPtr);
+        return NULL;
     }
-    return set_stop(pSet);
+    setPtr->capacity = 5;
+    int *newConditions = (int *) malloc(sizeof(int) * setPtr->capacity);
+    if (newConditions == NULL)
+        return NULL;
+    for (size_t i = 0; i < setPtr->capacity; i++) {
+        newConditions[i] = FREE;
+    }
+    setPtr->conditions = newConditions;
+    setPtr->items = NULL;
+    setPtr = set_init(setPtr, itemSize, hash, equals, NULL);
+    if (setPtr->items == NULL || setPtr->conditions == NULL) {
+        set_destroy(setPtr, NULL);
+        return NULL;
+    }
+    return setPtr;
 }
 
-///*Создать новое пустое множество.
-///*Размер элемента -- itemSize, для обработки элементов использовать функцию хеширования hash,
-///*и функцию проверки на равенство equals.*
-void *set_create(size_t itemSize, size_t hash(const void *), bool (*equals)(const void *, const void *)) {
-    if (itemSize == 0 || hash == NULL || equals == NULL) {
-        return NULL;
-    }
-    SET *pSet;
-    pSet = malloc(sizeof(SET));
-    if (pSet == NULL) {
-        return NULL;
-    }
-    pSet->itemSize = itemSize;
-    pSet->setSize = MIN_SIZE;
-    pSet->hash = hash;
-    pSet->equals = equals;
-    pSet->items = calloc(pSet->setSize, sizeof(size_t));
-    if (pSet->items == NULL) {
-        return NULL;
-    }
-    pSet->conditions = calloc(pSet->setSize, sizeof(int));
-    if (pSet->conditions == NULL) {
-        return NULL;
-    }
-    return pSet;
-}
-
-///*Удалить существующее множество.
-///*Если указана функция destroy,
-///*то вызвать её для каждого удаляемого элемента множества.*///
-void set_destroy(void *set, void (*destroy)(void *)) {
-    if (set == NULL) {
+void set_destroy(void *set, void(*destroy)(void *)) {
+    if (set == NULL)
         return;
-    }
-    SET *pSet = set;
-    set_destroy_each_item(pSet, destroy);
-    pSet->equals = NULL;
-    pSet->hash = NULL;
-    pSet->itemSize = INVALID;
-    pSet->setSize = INVALID;
-    free(pSet->items);
-    free(pSet->conditions);
-    free(pSet);
+    pSet *setPtr = (pSet *) set;
+    set_clear(set, destroy);
+    free(setPtr->items);
+    free(setPtr->conditions);
+    free(set);
 }
 
-///*Инициализировать множество новыми параметрами.
-///*Если set содержит элементы, то сначала удалить все элементы,
-///*потом инициализировать множество с учетом новых параметров.
-///*Размер элемента -- itemSize, для обработки элементов использовать функцию хеширования hash,
-///*и функцию проверки на равенство equals. Если указана функция destroy, то вызвать её для каждого удаляемого элемента.///
-void *set_init(void *set, size_t itemSize, size_t hash(const void *), bool (*equals)(const void *, const void *),
-               void (*destroy)(void *)) {
-    if (set == NULL || itemSize == 0 || hash == NULL || equals == NULL) {
+void *set_init(void *set, size_t itemSize, size_t hash(const void *), bool(*equals)(const void *, const void *),
+               void(*destroy)(void *)) {
+    if (set == NULL || hash == NULL || equals == NULL || itemSize == 0)
+        return NULL;
+    set_clear(set, destroy);
+    pSet *setPtr = (pSet *) set;
+    if (setPtr->items != NULL)
+        free(setPtr->items);
+    setPtr->items = (void *) malloc(setPtr->capacity * itemSize);
+    if (setPtr->items == NULL) {
+        set_destroy(set, destroy);
         return NULL;
     }
-    SET *pSet = set;
-    set_destroy_each_item(pSet, destroy);
-    free(pSet->items);
-    free(pSet->conditions);
-    free(pSet);
-    pSet = set_create(itemSize, hash, equals);
-    return pSet;
+    setPtr->itemSize = itemSize;
+    setPtr->hash = hash;
+    setPtr->equals = equals;
+    setPtr->itemsAmount = 0;
+    return set;
 }
 
-///*Удалить все элементы из множества.
-///*Если указана функция destroy,
-///*то вызвать её для каждого удаляемого элемента множества.///
-void set_clear(void *set, void (*destroy)(void *)) {
-    if (set == NULL) {
+void set_clear(void *set, void(*destroy)(void *)) {
+    if (set == NULL)
         return;
-    }
-    SET *pSet = set;
-    set_destroy_each_item(pSet, destroy);
-    for (int i = 0; i < pSet->setSize; i++) {
-        pSet->conditions[i] = 0;
+    pSet *setPtr = (pSet *) (set);
+    for (size_t i = 0; i < setPtr->capacity; i++) {
+        set_erase(set, i, destroy);
     }
 }
 
-///*Количество элементов во множестве.
-///*В случае, если set равен NULL, возвращает INVALID константу.///
 size_t set_count(const void *set) {
-    if (set == NULL) {
+    if (set == NULL)
         return INVALID;
-    }
-    SET const *pSet = set;
-    int i;
-    int amount = 0;
-    for (i = 0; i < pSet->setSize; i++) {
-        if (pSet->conditions[i] == 1) {
-            amount++;
-        } else if (pSet->conditions[i] == 0) {
-            continue;
-        }
-    }
-    return amount;
+    pSet *setPtr = (pSet *) set;
+    return setPtr->itemsAmount;
 }
 
-///*Проверить наличие во множестве заданного элемента.///
 bool set_contains(const void *set, const void *item) {
-    if (set == NULL || item == NULL) {
+    if (set == NULL || item == NULL)
         return false;
-    }
-    SET const *pSet = set;
-    if (pSet->setSize == 0) {
-        return false;
-    }
-    size_t contain_id = pSet->hash(item) % pSet->setSize;
-    if (contain_id >= pSet->setSize) {
-        return false;
-    }
-    int i;
-    for (i = contain_id; i < pSet->setSize; i++) {
-        if (pSet->conditions[i] == 1) {
-            if (pSet->equals(pSet->items[i], item) == true) {
-                return true;
-            }
-        }
-    }
-    for (i = 0; i < contain_id; i++) {
-        if (pSet->conditions[i] == 1) {
-            if (pSet->equals(pSet->items[i], item) == true) {
-                return true;
-            }
-        }
+    pSet *setPtr = (pSet *) set;
+    size_t index = getIndex(setPtr, setPtr->hash(item));
+    for (size_t i = index; i != getIndex(setPtr, index - 1); i = getIndex(setPtr, i + 1)) {
+        if (setPtr->conditions[i] == FREE)
+            return false;
+        if (setPtr->conditions[i] == FULL && setPtr->equals(item, set_current(set, i)))
+            return true;
     }
     return false;
 }
 
-///*Добавить новый элемент.
-///*В случае успеха, функция возвращает true,
-///*если такой элемент уже существует -- false.
 bool set_insert(void *set, const void *item) {
-    if (set == NULL || item == NULL) {
-        return false;
+    if (set == NULL || item == NULL) { return false; }
+    pSet *setPtr = (pSet *) set;
+    if (setPtr->itemsAmount + 1 == setPtr->capacity) {
+        bool isResized = setResize(set, setPtr->capacity, setPtr->capacity * 2);
+        if (!isResized)
+            return false;
     }
-    SET *pSet = set;
-    if (pSet->setSize == 0) {
-        set_resize(set, 2);
-    }
-    size_t insert_id = find_place(pSet, item);
-    if (insert_id == set_stop(pSet)) {
-        pSet = set_resize(set, pSet->setSize * 2);
-        return set_insert(pSet, item);
-    }
-    if (insert_id == INVALID) {
-        return false;
-    }
-    if (pSet->conditions[insert_id] == 0) {
-        pSet->items[insert_id] = set_item_create(pSet->itemSize);
-        if (pSet->items[insert_id] != NULL) {
-            memcpy(pSet->items[insert_id], item, pSet->itemSize);
-        } else {
+    size_t index = getIndex(setPtr, setPtr->hash(item));
+    const void *current;
+    for (size_t i = index; i != getIndex(setPtr, index - 1); i = getIndex(setPtr, i + 1)) {
+        current = set_current(set, i);
+        if (current != NULL && setPtr->conditions[i] == FULL && setPtr->equals(item, current)) {
             return false;
         }
-        pSet->conditions[insert_id] = 1;
-        return true;
-    }
-}
-
-///*Найти элемент и удалить из множества.
-///*Если указана функция destroy, то вызвать её для удаляемого элемента setItem.///
-void set_remove(void *set, const void *item, void (*destroy)(void *)) {
-    if (set == NULL || item == NULL) {
-        return;
-    }
-    SET *pSet = set;
-    if (pSet->setSize == 0) {
-        return;
-    }
-    size_t remove_id = pSet->hash(item) % pSet->setSize;
-    if (pSet->conditions[remove_id] == 1) {
-        if (destroy) {
-            destroy(pSet->items[remove_id]);
+        if (setPtr->conditions[i] == FREE || setPtr->conditions[i] == DELETED) {
+            bool isCopied = copyItem(item, (char *) setPtr->items + i * setPtr->itemSize, setPtr->itemSize);
+            if (!isCopied)
+                return false;
+            setPtr->conditions[i] = FULL;
+            setPtr->itemsAmount++;
+            return true;
         }
-        free(pSet->items[remove_id]);
-        pSet->conditions[remove_id] = 0;
     }
+    return false;
 
-    if (set_count(pSet) < pSet->setSize / 2 && set_count(pSet) != 0) {
-        set = set_resize(pSet, pSet->setSize / 2);
+}
+
+void set_remove(void *set, const void *item, void(*destroy)(void *)) {
+    if (set == NULL || item == NULL) { return; }
+    pSet *setPtr = (pSet *) set;
+    size_t index = getIndex(setPtr, setPtr->hash(item));
+    const void *current;
+    for (size_t i = index; i != getIndex(setPtr, index - 1); i = getIndex(setPtr, i + 1)) {
+        current = set_current(set, i);
+        if (current != NULL && setPtr->equals(item, current)) {
+            set_erase(set, i, destroy);
+            return;
+        }
+        if (setPtr->conditions[i] == FREE)
+            return;
     }
 }
 
-///*Идентификатор для первого элемента множества.
-///*Идентификатор может стать невалидным при модификации множества.*///
 size_t set_first(const void *set) {
-    if (set == NULL) {
+    if (set == NULL)
         return set_stop(set);
+    pSet *setPtr = (pSet *) set;
+    if (setPtr->itemsAmount == 0)
+        return set_stop(set);
+    for (size_t i = 0; i < setPtr->capacity; i++) {
+        if (setPtr->conditions[i] == FULL)
+            return i;
     }
-    SET const *pSet = set;
-    size_t item_id;
-    for (item_id = 0; item_id < pSet->setSize; item_id++) {
-        if (pSet->conditions[item_id] == 1) {
-            return item_id;
-        } else {
-            continue;
-        }
-    }
-    return set_stop(pSet);
+    return set_stop(set);
 }
 
-///*Идентификатор для последнего элемента множества.
-///*Идентификатор может стать невалидным при модификации множества.*///
 size_t set_last(const void *set) {
-    if (set == NULL) {
+    if (set == NULL)
         return set_stop(set);
+    pSet *setPtr = (pSet *) set;
+    if (setPtr->itemsAmount == 0)
+        return set_stop(set);
+    for (size_t i = setPtr->capacity - 1; i >= 0; i--) {
+        if (setPtr->conditions[i] == FULL)
+            return i;
     }
-    SET const *pSet = set;
-    if (pSet->setSize == 0) {
-        return set_stop(pSet);
-    }
-    size_t item_id;
-    for (item_id = pSet->setSize - 1; item_id > 0; item_id--) {
-        if (pSet->conditions[item_id] == 1) {
-            return item_id;
-        } else {
-            continue;
-        }
-    }
-    return set_stop(pSet);
+    return set_stop(set);
 }
 
-///*По идентификатору текущего элемента получить
-///*идентификатор следующего элемента множества.*///
 size_t set_next(const void *set, size_t item_id) {
-    if (set == NULL) {
+    if (set == NULL)
         return set_stop(set);
+    pSet *setPtr = (pSet *) set;
+    if (item_id + 1 >= setPtr->capacity || setPtr->conditions[item_id] != FULL ||
+        setPtr->itemsAmount == 0)
+        return set_stop(set);
+    for (size_t i = item_id + 1; i < setPtr->capacity; i++) {
+        if (setPtr->conditions[i] == FULL)
+            return i;
     }
-    SET const *pSet = set;
-    if (pSet->setSize == 0) {
-        return set_stop(pSet);
-    }
-    size_t current_id = item_id % pSet->setSize;
-    if (current_id == pSet->setSize - 1) { //No place after
-        return set_stop(pSet);
-    }
-    for (int i = 1; i < pSet->setSize - current_id; i++) {
-        if (pSet->conditions[item_id + i] == 1) {
-            return current_id + i;
-        } else continue;
-    }
-    return set_stop(pSet);
+    return set_stop(set);
 }
 
-///*По идентификатору текущего элемента получить
-///*идентификатор предыдущего элемента множества.*///
 size_t set_prev(const void *set, size_t item_id) {
-    if (set == NULL) {
+    if (set == NULL)
         return set_stop(set);
+    pSet *setPtr = (pSet *) set;
+    if (item_id >= setPtr->capacity || setPtr->conditions[item_id] != FULL || setPtr->itemsAmount == 0 ||
+        item_id == 0)
+        return set_stop(set);
+    for (size_t i = item_id - 1;; i--) {
+        if (setPtr->conditions[i] == FULL)
+            return i;
+        if (i == 0)
+            break;
     }
-    SET const *pSet = set;
-    if (pSet->setSize == 0) {
-        return set_stop(pSet);
-    }
-    size_t current_id = item_id % pSet->setSize;
-    if (current_id == 0) { //No place before
-        return set_stop(pSet);
-    }
-    for (int i = 0; i < current_id; i++) {
-        if (pSet->conditions[current_id - i] == 1) {
-            return current_id - i;
-        } else continue;
-    }
-    return set_stop(pSet);
+    return set_stop(set);
 }
 
-///*Идентификатор, получаемый при попытке
-///*обратиться к элементу за пределами множества.*///
 size_t set_stop(const void *set) {
     return INVALID - 1;
 }
 
-///*Получить указатель на элемент по его идентификатору.*///
 const void *set_current(const void *set, size_t item_id) {
-    SET const *pSet = set;
-    if (pSet == NULL || item_id >= pSet->setSize || pSet->setSize == 0 || pSet->conditions[item_id] == 0) {
+    if (set == NULL)
         return NULL;
-    }
-    size_t current_id = item_id % pSet->setSize;
-    return (pSet->items[current_id]);
+    pSet *setPtr = (pSet *) set;
+    if (item_id >= setPtr->capacity)
+        return NULL;
+    if (setPtr->conditions[item_id] != FULL)
+        return NULL;
+    return (char *) setPtr->items + setPtr->itemSize * item_id;
 }
 
-///*Удаление элемента множества по его идентификатору.
-///*Если указана функция destroy, то вызвать её для удаляемого элемента множества.
-///*После удаления элемента,
-///*идентификаторы любых элементов из этого множества могут стать невалидным.///
-void set_erase(void *set, size_t item_id, void (*destroy)(void *)) {
-    if (set == NULL) {
+void set_erase(void *set, size_t item_id, void(*destroy)(void *)) {
+    if (set == NULL)
         return;
-    }
-    SET const *pSet = set;
-    if (pSet->setSize == 0) {
+    pSet *setPtr = (pSet *) set;
+    if (item_id >= setPtr->capacity)
         return;
-    }
-    size_t erase_id = item_id % pSet->setSize;
-    if (erase_id > pSet->setSize - 1) {
-        return;
-    }
-    if (pSet->conditions[erase_id] == 1) {
-        if (destroy != NULL) {
-            destroy(pSet->items[erase_id]);
-        }
-        free(pSet->items[erase_id]);
-        pSet->conditions[erase_id] = 0;
+    if (setPtr->conditions[item_id] == FULL) {
+        if(destroy != NULL)
+            destroy((char *) setPtr->items + item_id * setPtr->itemSize);
+        setPtr->conditions[item_id] = DELETED;
+        setPtr->itemsAmount -= 1;
     }
 }
