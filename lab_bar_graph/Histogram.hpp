@@ -31,7 +31,7 @@ public:
 
     iterator end();
 
-    const_iterator cbegin();
+    [[nodiscard]] const_iterator cbegin() const;
 
-    const_iterator cend();
+    [[nodiscard]] const_iterator cend() const;
 };

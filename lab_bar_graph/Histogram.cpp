@@ -93,17 +93,25 @@ Histogram::iterator Histogram::end() {
     return Bins.end();
 }
 
-Histogram::const_iterator Histogram::cbegin() {
-    return Bins.cbegin();
-}
-
-Histogram::const_iterator Histogram::cend() {
-    return Bins.cend();
-}
+//Histogram::const_iterator Histogram::cbegin() {
+//    return Bins.cbegin();
+//}
+//
+//Histogram::const_iterator Histogram::cend() {
+//    return Bins.cend();
+//}
 
 Histogram::Histogram() {
     binCount = 0;
     max = 0;
     min = 0;
     Bins = map<int, int>();
+}
+
+Histogram::const_iterator Histogram::cbegin() const {
+    return Bins.cbegin();
+}
+
+Histogram::const_iterator Histogram::cend() const {
+    return Bins.cend();
 }
