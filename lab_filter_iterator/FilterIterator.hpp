@@ -1,4 +1,5 @@
 #pragma once
+#include "FilterIteratorException.hpp"
 
 namespace FilterIterator {
     template<class Predicate, class Iterator>
@@ -12,11 +13,11 @@ namespace FilterIterator {
 
         FilterIterator() = delete;
 
-        FilterIterator(Predicate predicate, Iterator begin, Iterator end = Iterator()) : m_predicate(predicate), m_iter(begin), m_end(end) {
-            while (!m_predicate(*m_iter) && m_iter != m_end) {
+        FilterIterator(Predicate predicate, Iterator begin, Iterator end = Iterator()) : m_predicate(predicate), m_iter(begin), m_end(end) {////!!!Iterator() работает не так как надо
+            while (m_iter != m_end && !m_predicate(*m_iter)) {
                 m_iter++;
             }
-            return m_iter;
+
         }
 
         explicit FilterIterator(Iterator begin, Iterator end = Iterator()) : m_iter(begin), m_predicate(), m_end(end) {};
@@ -31,11 +32,17 @@ namespace FilterIterator {
 
         Iterator const &base() const {return m_iter;};
 
-        reference operator*() const {return *m_iter;};
+        reference operator*() const {
+            ////?????????????????????????
+//            if (m_iter == m_end) {
+//                throw EndIteratorDifference();
+//            }
+            return *m_iter;
+        };
 
         FilterIterator &operator++() {
             m_iter++;
-            while(!m_predicate(*m_iter) && m_iter != m_end) {
+            while(m_iter != m_end && !m_predicate(*m_iter)) {
                 m_iter++;
             }
             return *this;
