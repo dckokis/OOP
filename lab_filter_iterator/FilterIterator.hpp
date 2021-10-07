@@ -1,9 +1,8 @@
 #pragma once
-#include "FilterIteratorException.hpp"
 
 namespace FilterIterator {
     template<class Predicate, class Iterator>
-    class FilterIterator {
+    class FilterIterator final {
     public:
         typedef typename std::iterator_traits<Iterator>::value_type value_type;
         typedef typename std::iterator_traits<Iterator>::reference reference;
@@ -13,18 +12,17 @@ namespace FilterIterator {
 
         FilterIterator() = delete;
 
-        FilterIterator(Predicate predicate, Iterator begin, Iterator end = Iterator()) : m_predicate(predicate), m_iter(begin), m_end(end) {////!!!Iterator() работает не так как надо
+        FilterIterator(Predicate predicate, Iterator begin, Iterator end) : m_predicate(predicate), m_iter(begin), m_end(end) {
             while (m_iter != m_end && !m_predicate(*m_iter)) {
-                m_iter++;
+                ++m_iter;
             }
-
         }
 
-        explicit FilterIterator(Iterator begin, Iterator end = Iterator()) : m_iter(begin), m_predicate(), m_end(end) {};
+        explicit FilterIterator(Iterator begin, Iterator end) : m_iter(begin), m_predicate(), m_end(end) {};
 
         template<class OtherIterator>
         explicit FilterIterator(FilterIterator<Predicate, OtherIterator> const &t,
-                                typename std::enable_if<std::is_same_v<OtherIterator, Iterator>>) : m_iter(t.base()), m_predicate(t.predicate()), m_end(t.end()) {}
+                                typename std::enable_if_t<std::is_same_v<OtherIterator, Iterator>>) : m_iter(t.base()), m_predicate(t.predicate()), m_end(t.end()) {}
 
         Predicate predicate() const {return m_predicate;};
 
@@ -32,18 +30,22 @@ namespace FilterIterator {
 
         Iterator const &base() const {return m_iter;};
 
+        bool operator ==(const FilterIterator &that) const{
+            return this->m_iter == that.m_iter;
+        };
+
+        bool operator !=(const FilterIterator &that) const{
+            return this->m_iter != that.m_iter;
+        };
+
         reference operator*() const {
-            ////?????????????????????????
-//            if (m_iter == m_end) {
-//                throw EndIteratorDifference();
-//            }
             return *m_iter;
         };
 
         FilterIterator &operator++() {
             m_iter++;
             while(m_iter != m_end && !m_predicate(*m_iter)) {
-                m_iter++;
+                ++m_iter;
             }
             return *this;
         };
@@ -56,13 +58,14 @@ namespace FilterIterator {
 
     template <class Predicate, class Iterator>
     FilterIterator<Predicate,Iterator>
-    makeFilterIterator(Predicate predicate, Iterator begin, Iterator end = Iterator()) {
+    makeFilterIterator(Predicate predicate, Iterator begin, Iterator end) {
         return FilterIterator<Predicate, Iterator>(predicate, begin, end);
     }
 
-    template <class Predicate, class Iterator, class = std::enable_if<std::is_class_v<Predicate>, Iterator>>
+    template <class Predicate, class Iterator, class = std::enable_if<std::is_class_v<Predicate>>,
+            class = std::enable_if<std::is_default_constructible_v<Predicate>>>
     FilterIterator<Predicate,Iterator>
-    makeFilterIterator(Iterator iterator, Iterator end = Iterator()) {
+    makeFilterIterator(Iterator iterator, Iterator end) {
         return FilterIterator<Predicate, Iterator>(iterator, end);
     }
 }
