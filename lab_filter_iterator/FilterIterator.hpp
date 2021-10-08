@@ -1,6 +1,19 @@
 #pragma once
 
 namespace FilterIterator {
+
+    class FilterIteratorExceptions : std::exception{
+    public:
+        virtual void Message() {};
+    };
+
+    class OutOfRangeException : FilterIteratorExceptions {
+    public:
+        inline void Message() override {
+            std::cerr << "Can't dereference out of range filter iterator" << std::endl;
+        }
+    };
+
     template<class Predicate, class Iterator>
     class FilterIterator final {
     public:
@@ -39,10 +52,20 @@ namespace FilterIterator {
         };
 
         reference operator*() const {
+            if (m_iter == m_end) {
+                throw OutOfRangeException();
+            }
             return *m_iter;
         };
 
         FilterIterator &operator++() {
+            m_iter++;
+            while(m_iter != m_end && !m_predicate(*m_iter)) {
+                ++m_iter;
+            }
+            return *this;
+        };
+        FilterIterator operator++(int unused) {
             m_iter++;
             while(m_iter != m_end && !m_predicate(*m_iter)) {
                 ++m_iter;
