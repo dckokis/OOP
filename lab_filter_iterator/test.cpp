@@ -55,6 +55,6 @@ TEST(FilterIterator, FilterFromFilter) {
     ++anEnd;
     ++anEnd;
     auto ff = makeFilterIterator<is_four, decltype(f)>(isFour, f, anEnd);
-    ASSERT_TRUE(*(f++) == *ff);
+    ASSERT_TRUE(*(++f) == *ff);
 }
 

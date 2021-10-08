@@ -59,18 +59,16 @@ namespace FilterIterator {
         };
 
         FilterIterator &operator++() {
-            m_iter++;
+            ++m_iter;
             while(m_iter != m_end && !m_predicate(*m_iter)) {
                 ++m_iter;
             }
             return *this;
         };
-        FilterIterator operator++(int unused) {
-            m_iter++;
-            while(m_iter != m_end && !m_predicate(*m_iter)) {
-                ++m_iter;
-            }
-            return *this;
+        FilterIterator operator++(int) {
+            auto result = *this;
+            ++(*this);
+            return result;
         };
 
     private:
