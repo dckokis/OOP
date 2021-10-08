@@ -1,12 +1,16 @@
 #pragma once
+#include <iostream>
 #include <algorithm>
 
 template<class T>
 inline constexpr bool IsRandomAccessIter = std::is_same_v<typename std::iterator_traits<T>::iterator_category, std::random_access_iterator_tag>;
 
+template<class T>
+inline constexpr bool IsNotRandomAccessIter = !std::is_same_v<typename std::iterator_traits<T>::iterator_category, std::random_access_iterator_tag>;
+
 template<class RandomAccessIterator, class Compare,
         class = std::enable_if<IsRandomAccessIter<RandomAccessIterator>>>
-void merge_sort(RandomAccessIterator first, RandomAccessIterator last, Compare comp) {
+typename std::enable_if<IsRandomAccessIter<RandomAccessIterator>>::type merge_sort(RandomAccessIterator first, RandomAccessIterator last, Compare comp) {
     auto size = std::distance(first, last);
     if (size <= 1)
         return;
@@ -20,8 +24,12 @@ void merge_sort(RandomAccessIterator first, RandomAccessIterator last, Compare c
     std::inplace_merge(first, middle, last, comp);
 }
 
-template<class RandomAccessIterator,
-        class = std::enable_if<IsRandomAccessIter<RandomAccessIterator>>>
-void merge_sort(RandomAccessIterator first, RandomAccessIterator last) {
+template<class RandomAccessIterator>
+typename std::enable_if<IsRandomAccessIter<RandomAccessIterator>>::type merge_sort(RandomAccessIterator first, RandomAccessIterator last) {
     merge_sort(first, last, std::less<typename std::iterator_traits<RandomAccessIterator>::value_type>());
+}
+
+template<class Iterator>
+typename std::enable_if<!IsRandomAccessIter<Iterator>>::type merge_sort(Iterator first, Iterator last){
+    std::cout << "OK" << std::endl;
 }
