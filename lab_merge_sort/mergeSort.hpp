@@ -2,13 +2,22 @@
 #include <iostream>
 #include <algorithm>
 
+template<class RandomAccessIterator, class Compare>
+class A{
+private:
+    template<typename T>
+    static bool IsRandomAccessIter;
+public:
+    typename std::enable_if<IsRandomAccessIter<RandomAccessIterator>>::type merge_sort(RandomAccessIterator first, RandomAccessIterator last, Compare comp);
+};
+
 template<class T>
-constexpr bool IsRandomAccessIter = std::is_same_v<typename std::iterator_traits<T>::iterator_category, std::random_access_iterator_tag>;
+bool A<T>::IsRandomAccessIter = std::is_same_v<typename std::iterator_traits<T>::iterator_category, std::random_access_iterator_tag>;
 //не специализация, можно опустить inline
 //когда полная специализация-необходим inline
 
-template<class T>
-constexpr bool IsNotRandomAccessIter = !std::is_same_v<typename std::iterator_traits<T>::iterator_category, std::random_access_iterator_tag>;
+//template<class T>
+//bool IsNotRandomAccessIter = !std::is_same_v<typename std::iterator_traits<T>::iterator_category, std::random_access_iterator_tag>;
 
 template<class RandomAccessIterator, class Compare,
         class = std::enable_if<IsRandomAccessIter<RandomAccessIterator>>>
