@@ -58,3 +58,62 @@ TEST(FilterIterator, FilterFromFilter) {
     ASSERT_TRUE(*(++f) == *ff);
 }
 
+TEST(Operators, Equality) {
+    is_even pred;
+    auto v = std::vector{1, 2, 3, 4};
+    auto f1 = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
+    auto f2 = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
+    ASSERT_TRUE(f1 == f2);
+    f1++; f2++;
+    ASSERT_TRUE(f1 == f2);
+}
+
+TEST(Operators, NotEquality) {
+    is_even pred;
+    auto v = std::vector{1, 2, 3, 4};
+    auto f1 = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
+    auto f2 = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
+    f1++;
+    ASSERT_TRUE(f1 != f2);
+}
+
+TEST(Operators, Dereference) {
+    is_even pred;
+    auto v = std::vector{1, 2, 3, 4};
+    auto f1 = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
+    ASSERT_EQ(2, *f1);
+    ++f1;
+    ASSERT_EQ(4, *f1);
+    f1++;
+    ASSERT_THROW(*f1, OutOfRangeException);
+}
+
+TEST(Operators, Prefix) {
+    is_even pred;
+    auto v = std::vector{1, 2, 3, 4};
+    auto f1 = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
+    ASSERT_EQ(4, *(++f1));
+}
+
+TEST(Operators, Postfix) {
+    is_even pred;
+    auto v = std::vector{1, 2, 3, 4};
+    auto f1 = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
+    ASSERT_EQ(2, *(f1++));
+}
+
+TEST(Methods, base) {
+    is_even pred;
+    auto v = std::vector{1, 2, 3, 4};
+    auto f1 = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
+    auto begin = v.begin();
+    ASSERT_EQ(f1.base(), ++begin);
+}
+
+TEST(Methods, end) {
+    is_even pred;
+    auto v = std::vector{1, 2, 3, 4};
+    auto f1 = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
+    auto end = v.end();
+    ASSERT_EQ(f1.end(), end);
+}
