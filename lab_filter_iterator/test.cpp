@@ -43,7 +43,7 @@ TEST(FilterIterator, NoSuitableElems) {
     is_even pred;
     auto v = std::vector{1, 3, 5, 7};
     auto f = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
-    ASSERT_THROW(*f, OutOfRangeException);
+    ASSERT_THROW(*f, FilterIteratorExceptions);
 }
 
 TEST(FilterIterator, FilterFromFilter) {
@@ -85,7 +85,7 @@ TEST(Operators, Dereference) {
     ++f1;
     ASSERT_EQ(4, *f1);
     f1++;
-    ASSERT_THROW(*f1, OutOfRangeException);
+    ASSERT_THROW(*f1, FilterIteratorExceptions);
 }
 
 TEST(Operators, Prefix) {

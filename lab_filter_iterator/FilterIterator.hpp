@@ -3,14 +3,12 @@
 namespace FilterIterator {
 
     class FilterIteratorExceptions : std::exception{
+    private:
+        std::string m_error;
     public:
-        virtual void Message() {};
-    };
-
-    class OutOfRangeException : FilterIteratorExceptions {
-    public:
-        inline void Message() override {
-            std::cerr << "Can't dereference out of range filter iterator" << std::endl;
+        FilterIteratorExceptions(std::string error) : m_error(error){}
+        const char* what() const noexcept override {
+            return m_error.c_str();
         }
     };
 
@@ -25,7 +23,7 @@ namespace FilterIterator {
 
         FilterIterator() = delete;
 
-        FilterIterator(Predicate predicate, Iterator begin, Iterator end) : m_predicate(predicate), m_iter(begin), m_end(end) {
+        explicit FilterIterator(Predicate predicate, Iterator begin, Iterator end) : m_predicate(predicate), m_iter(begin), m_end(end) {
             while (m_iter != m_end && !m_predicate(*m_iter)) {
                 ++m_iter;
             }
@@ -53,7 +51,7 @@ namespace FilterIterator {
 
         reference operator*() const {
             if (m_iter == m_end) {
-                throw OutOfRangeException();
+                throw FilterIteratorExceptions("Can't dereference out of range filter iterator");
             }
             return *m_iter;
         };
@@ -80,6 +78,8 @@ namespace FilterIterator {
     template <class Predicate, class Iterator>
     FilterIterator<Predicate,Iterator>
     makeFilterIterator(Predicate predicate, Iterator begin, Iterator end) {
+        FilterIterator<Predicate, Iterator> f = {predicate, begin, end};//////////////////////////////////////////////////
+
         return FilterIterator<Predicate, Iterator>(predicate, begin, end);
     }
 
