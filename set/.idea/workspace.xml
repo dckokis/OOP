@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="list" targetName="list" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="808d62af-7c91-4acf-93ca-453d1dae730f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/set.c" beforeDir="false" afterPath="$PROJECT_DIR$/set.c" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="ProjectId" id="1pR9mph75lfrBK1ERnevIxgFwFO" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../list/CMakeLists.txt" />
+    <property name="settings.editor.selected.configurable" value="CPPToolchains" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="list" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="list" TARGET_NAME="list" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="list" RUN_TARGET_NAME="list">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="808d62af-7c91-4acf-93ca-453d1dae730f" name="Default Changelist" comment="" />
+      <created>1615135200233</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1615135200233</updated>
+      <workItem from="1615135209008" duration="1276000" />
+      <workItem from="1615217673761" duration="3410000" />
+      <workItem from="1615223925193" duration="2186000" />
+      <workItem from="1615307430347" duration="3551000" />
+      <workItem from="1615363982716" duration="4668000" />
+      <workItem from="1615514361436" duration="3179000" />
+      <workItem from="1615609180991" duration="15600000" />
+      <workItem from="1615718810581" duration="4038000" />
+      <workItem from="1615803278013" duration="1312000" />
+    </task>
+    <task id="LOCAL-00001" summary="Гит хуета, сломалось все 10 раз.">
+      <created>1615135406633</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1615135406633</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Failure on set_destroy.">
+      <created>1615136239673</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1615136239674</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Need to realize create throw init.">
+      <created>1615221037331</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1615221037331</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Need to realize create throw init.">
+      <created>1615309611196</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1615309611196</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Init works throw calling create.">
+      <created>1615309944178</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1615309944178</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Need to write tests.">
+      <created>1615387699022</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1615387699023</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Tests added, works properly.">
+      <created>1615517560913</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1615517560914</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Memory leak 24 bytes detected.">
+      <created>1615696719898</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1615696719899</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Memory leak fixed.">
+      <created>1615699162870</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1615699162870</updated>
+    </task>
+    <task id="LOCAL-00010" summary="...">
+      <created>1615721348995</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1615721348995</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Гит хуета, сломалось все 10 раз." />
+    <MESSAGE value="Failure on set_destroy." />
+    <MESSAGE value="Need to realize create throw init." />
+    <MESSAGE value="Init works throw calling create." />
+    <MESSAGE value="Need to write tests." />
+    <MESSAGE value="Tests added, works properly." />
+    <MESSAGE value="Memory leak 24 bytes detected." />
+    <MESSAGE value="Memory leak fixed." />
+    <MESSAGE value="..." />
+    <option name="LAST_COMMIT_MESSAGE" value="..." />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="CMakeRunConfiguration">
+        <watch expression="pSet-&gt;items-&gt;*items" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>
