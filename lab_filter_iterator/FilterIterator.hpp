@@ -2,7 +2,7 @@
 
 #pragma once
 
-namespace filteriter {
+namespace filteriterator {
 
     class FilterIteratorExceptions : std::exception {
     private:
@@ -38,17 +38,6 @@ namespace filteriter {
                 ++m_iter;
             }
         };
-
-        template<class OtherIterator>
-        explicit FilterIterator(FilterIterator<Predicate, OtherIterator> const &t,
-                                typename std::enable_if_t<std::is_same_v<OtherIterator, Iterator>>) : m_iter(t.base()),
-                                                                                                      m_predicate(
-                                                                                                              t.predicate()),
-                                                                                                      m_end(t.end()) {
-            while (m_iter != m_end && !m_predicate(*m_iter)) {
-                ++m_iter;
-            }
-        }
 
         Predicate predicate() const { return m_predicate; };
 

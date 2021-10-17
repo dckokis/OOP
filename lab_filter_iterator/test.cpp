@@ -2,7 +2,7 @@
 #include "FilterIterator.hpp"
 
 using namespace std;
-using namespace filteriter;
+using namespace filteriterator;
 
 struct is_even {
     bool operator()(int x) { return x % 2 == 0; }
@@ -19,7 +19,7 @@ public:
     bool operator()(int x) { return x == m_num; }
 };
 
-TEST(filteriter, VectorInt) {
+TEST(filteriterator, VectorInt) {
     is_even pred;
     auto v = std::vector{1, 2, 3, 4};
     auto f = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
@@ -64,13 +64,6 @@ TEST(FilterIterator, FilterFromFilter) {
     auto ff = makeFilterIterator<is_four, decltype(f)>(isFour, f, anEnd);
     ASSERT_TRUE(*(++f) == *ff);
 }
-
-//TEST(FilterIterator, OtherIterator) {
-//    auto v = std::vector{1, 2, 3, 4};
-//    is_even isEven;
-//    auto f1 = makeFilterIterator<is_even, vector<int>::iterator>(isEven, v.begin(), v.end());
-//    auto f2 = FilterIterator(f1);
-//}
 
 TEST(FilterIterator, PredicateClass) {
     ASSERT_TRUE(is_default_constructible_v<IsEqualToMyNumber>);
@@ -141,5 +134,3 @@ TEST(Methods, end) {
     auto end = v.end();
     ASSERT_EQ(f1.end(), end);
 }
-
-
