@@ -2,7 +2,7 @@
 #include "FilterIterator.hpp"
 
 using namespace std;
-using namespace FilterIterator;
+using namespace filteriter;
 
 struct is_even {
     bool operator()(int x) { return x % 2 == 0; }
@@ -12,7 +12,14 @@ struct is_four {
     bool operator()(int x) { return x == 4; }
 };
 
-TEST(FilterIterator, VectorInt) {
+class IsEqualToMyNumber final {
+private:
+    int m_num = 20052;
+public:
+    bool operator()(int x) { return x == m_num; }
+};
+
+TEST(filteriter, VectorInt) {
     is_even pred;
     auto v = std::vector{1, 2, 3, 4};
     auto f = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
@@ -58,13 +65,30 @@ TEST(FilterIterator, FilterFromFilter) {
     ASSERT_TRUE(*(++f) == *ff);
 }
 
+//TEST(FilterIterator, OtherIterator) {
+//    auto v = std::vector{1, 2, 3, 4};
+//    is_even isEven;
+//    auto f1 = makeFilterIterator<is_even, vector<int>::iterator>(isEven, v.begin(), v.end());
+//    auto f2 = FilterIterator(f1);
+//}
+
+TEST(FilterIterator, PredicateClass) {
+    ASSERT_TRUE(is_default_constructible_v<IsEqualToMyNumber>);
+    auto v = vector<int>{1, 3, 20052, 33, 0, 20052};
+    auto f = makeFilterIterator<IsEqualToMyNumber>(v.begin(), v.end());
+    ASSERT_EQ(*f, 20052);
+    f++;
+    ASSERT_EQ(*f, 20052);
+}
+
 TEST(Operators, Equality) {
     is_even pred;
     auto v = std::vector{1, 2, 3, 4};
     auto f1 = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
     auto f2 = makeFilterIterator<is_even, vector<int>::iterator>(pred, v.begin(), v.end());
     ASSERT_TRUE(f1 == f2);
-    f1++; f2++;
+    f1++;
+    f2++;
     ASSERT_TRUE(f1 == f2);
 }
 
@@ -117,3 +141,5 @@ TEST(Methods, end) {
     auto end = v.end();
     ASSERT_EQ(f1.end(), end);
 }
+
+
