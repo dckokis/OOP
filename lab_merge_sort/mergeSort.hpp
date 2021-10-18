@@ -29,7 +29,7 @@ public:
         merge_sort(first, last, std::less<typename std::iterator_traits<RandomAccessIterator>::value_type>());
     }
 
-    template<class Iterator, class = std::enable_if_t<!IsRandomAccessIter<Iterator>>>
+    template<class Iterator>
     static typename std::enable_if_t<!IsRandomAccessIter<Iterator>> merge_sort(Iterator first, Iterator last) {
         std::cout << "OK" << std::endl;
     }
