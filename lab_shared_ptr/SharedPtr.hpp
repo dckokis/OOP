@@ -50,7 +50,7 @@ namespace sharedptr {
 
         void _cleanup_() {
             (*m_counter)--;
-            if (m_counter->get() == 0) {
+            if (!m_counter->get()) {
                 delete m_ptr;
                 delete m_counter;
                 delete deleter;
@@ -84,7 +84,7 @@ namespace sharedptr {
         ~SharedPtr() { _cleanup_(); }
 
     public:
-        t_SharedPTR &operator=(t_SharedPTR &&sharedPtr)  noexcept {
+        t_SharedPTR &operator=(t_SharedPTR &&sharedPtr) noexcept {
             if (m_ptr != sharedPtr.m_ptr && m_counter->get() != sharedPtr.m_counter->get()) {
                 _cleanup_();
                 m_counter = sharedPtr.m_counter;
@@ -117,15 +117,58 @@ namespace sharedptr {
         }
 
     public: // Observers.
-        T &operator*() const; // Dereference the stored pointer.
-        T *operator->() const; // Return the stored pointer.
-        T *get() const; // Return the stored pointer.
-        Deleter &get_deleter(); // Return a reference to the stored deleter.
-        operator bool() const; // Return false if the stored pointer is null.
+        T &operator*() const {
+            return this->m_ptr;
+        }
+
+        T *operator->() const {
+            return this->m_ptr;
+        }
+
+        T *get() const {
+            return this->m_ptr;
+        }
+
+        Deleter &get_deleter() {
+            return this->deleter;
+        }
+
+        operator bool() const {
+            if (m_ptr) return true;
+            else return false;
+        }
+
     public: // Modifiers.
-        void release(); // Release ownership of any stored pointer.
-        void reset(T *pObject = nullptr); // Replace the stored pointer.
-        void swap(t_SharedPTR &sharedPTR); // Exchange the pointer with another object.
+        void release() {
+            --(*m_counter);
+            if (!m_counter->get()) {
+                delete m_ptr;
+                delete deleter;
+                delete m_counter;
+            }
+            m_ptr = nullptr;
+            m_counter = nullptr;
+        }
+
+        void reset(T *pObject = nullptr) {
+            --(*m_counter);
+            if (!m_counter->get()) {
+                delete m_ptr;
+            }
+            m_counter = {};
+            if (!pObject) {
+                m_ptr = nullptr;
+                return;
+            }
+            m_ptr = pObject;
+            (*m_counter)++;
+        }
+
+        void swap(t_SharedPTR &sharedPTR) {
+            t_SharedPTR tmp{std::move(sharedPTR)};
+            sharedPTR.m_ptr = std::move(m_ptr);
+            m_ptr = std::move(tmp);
+        }
     };
 }
 #endif //LAB_SHARED_PTR_SHAREDPTR_HPP
