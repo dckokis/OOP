@@ -2,6 +2,7 @@
 #define LAB_SHARED_PTR_SHAREDPTR_HPP
 
 #include <utility>
+#include <functional>
 
 namespace sharedptr {
     class RefCount {
@@ -40,37 +41,36 @@ namespace sharedptr {
     };
 
 ///////////////////////////////////////////////////////////////////////////////////////
-    template<class T, class Deleter>
+    template<class T, class Deleter = std::default_delete<T>>
     class SharedPtr {
         typedef SharedPtr<T, Deleter> t_SharedPTR;
+        using dlt_type = Deleter;
+
     private:
         RefCount *m_counter{};
         T *m_ptr;
-        Deleter deleter;
+        dlt_type deleter = Deleter();
 
         void _cleanup_() {
             (*m_counter)--;
             if (!m_counter->get()) {
-                delete m_ptr;
+                deleter(m_ptr);
                 delete m_counter;
-                delete deleter;
             }
         }
 
     public:
         SharedPtr() = default;
 
-        explicit SharedPtr(T *pObj) : m_ptr(pObj), m_counter(new RefCount), deleter(new Deleter) {
+        explicit SharedPtr(T *pObj) : m_ptr(pObj), m_counter(new RefCount) {
             (*m_counter)++;
         }
 
         SharedPtr(t_SharedPTR &&uniquePTR) noexcept {
             m_ptr = uniquePTR.m_ptr;
             m_counter = uniquePTR.m_counter;
-            deleter = uniquePTR.deleter;
             uniquePTR.m_ptr = nullptr;
             uniquePTR.m_counter = nullptr;
-            uniquePTR.deleter = deleter;
         };
 
         SharedPtr(const t_SharedPTR &sharedPtr) {
@@ -139,21 +139,12 @@ namespace sharedptr {
         }
 
     public: // Modifiers.
-        void release() {
-            --(*m_counter);
-            if (!m_counter->get()) {
-                delete m_ptr;
-                delete deleter;
-                delete m_counter;
-            }
-            m_ptr = nullptr;
-            m_counter = nullptr;
-        }
+        void release() { _cleanup_(); }
 
         void reset(T *pObject = nullptr) {
             --(*m_counter);
             if (!m_counter->get()) {
-                delete m_ptr;
+                deleter(m_ptr);
             }
             m_counter = {};
             if (!pObject) {
