@@ -1,7 +1,6 @@
 #ifndef LAB_SHARED_PTR_SHAREDPTR_HPP
 #define LAB_SHARED_PTR_SHAREDPTR_HPP
 
-//#include <utility>
 #include <functional>
 
 template<class T, class Deleter = std::default_delete<T>>
