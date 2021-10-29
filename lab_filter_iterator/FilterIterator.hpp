@@ -8,8 +8,7 @@ namespace filteriterator {
     private:
         std::string m_error;
     public:
-        explicit FilterIteratorExceptions(std::string&& error) : m_error(error) {}
-        explicit FilterIteratorExceptions(const std::string& error) : m_error(error) {}
+        explicit FilterIteratorExceptions(std::string error) : m_error(std::move(error)) {}
 
         const char *what() const noexcept override {
             return m_error.c_str();
@@ -56,7 +55,7 @@ namespace filteriterator {
 
         reference operator*() const {
             if (m_iter == m_end) {
-                throw FilterIteratorExceptions("Can't dereference out of range filter iterator");
+                throw FilterIteratorExceptions( "Can't dereference out of range filter iterator");
             }
             return *m_iter;
         };
