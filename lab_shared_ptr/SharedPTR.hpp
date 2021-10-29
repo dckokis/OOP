@@ -3,6 +3,7 @@
 
 #include <functional>
 
+
 template<class T, class Deleter = std::default_delete<T>>
 class SharedPTR final {
     using t_SharedPTR = SharedPTR<T, Deleter>;
@@ -11,7 +12,7 @@ class SharedPTR final {
 private:
     long *m_counter = nullptr;
     T *m_ptr = nullptr;
-    dlt_type deleter = Deleter();
+    dlt_type deleter = std::conditional<std::is_array_v<T>, std::default_delete<T[]>, std::default_delete<T>>();
 
     void _cleanup_() {
         if (m_counter) {
@@ -24,7 +25,7 @@ private:
     }
 
 public:
-    SharedPTR() = default;
+   SharedPTR() = default;
 
     explicit SharedPTR(T *pObj) {
         m_ptr = pObj;
