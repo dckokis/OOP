@@ -1,5 +1,4 @@
-#ifndef LAB_SHARED_PTR_SHAREDPTR_HPP
-#define LAB_SHARED_PTR_SHAREDPTR_HPP
+#pragma once
 
 #include <functional>
 
@@ -7,11 +6,14 @@
 template<class T, class Deleter = std::default_delete<T>>
 class SharedPTR final {
     using t_SharedPTR = SharedPTR<T, Deleter>;
+    using val_type = std::conditional_t<std::is_array_v<T>, typename std::remove_extent_t<T>, T>;
+    //remove_extent allows casting T[] to T and then to take T* in constructor anyway//
+    //val_type is T without anything independent of type is array or not//
     using dlt_type = Deleter;
 
 private:
     long *m_counter = nullptr;
-    T *m_ptr = nullptr;
+    val_type *m_ptr = nullptr;
     dlt_type deleter = Deleter();
 
     void _cleanup_() {
@@ -25,10 +27,9 @@ private:
     }
 
 public:
-    bool val = std::is_array_v<T>;
     SharedPTR() = default;
 
-    SharedPTR(T* pObj) {
+    explicit SharedPTR(val_type* pObj) {
         m_ptr = pObj;
         m_counter = new long(0);
         if (m_ptr)
@@ -129,5 +130,3 @@ public: // Modifiers
         std::swap(m_counter, sharedPTR.m_counter);
     }
 };
-
-#endif //LAB_SHARED_PTR_SHAREDPTR_HPP
