@@ -12,7 +12,7 @@ class SharedPTR final {
 private:
     long *m_counter = nullptr;
     T *m_ptr = nullptr;
-    dlt_type deleter = std::conditional<std::is_array_v<T>, std::default_delete<T[]>, std::default_delete<T>>();
+    dlt_type deleter = Deleter();
 
     void _cleanup_() {
         if (m_counter) {
@@ -25,9 +25,10 @@ private:
     }
 
 public:
-   SharedPTR() = default;
+    bool val = std::is_array_v<T>;
+    SharedPTR() = default;
 
-    explicit SharedPTR(T *pObj) {
+    SharedPTR(T* pObj) {
         m_ptr = pObj;
         m_counter = new long(0);
         if (m_ptr)
