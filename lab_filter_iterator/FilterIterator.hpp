@@ -1,10 +1,10 @@
-#include <utility>
-
 #pragma once
+
+#include <utility>
 
 namespace filteriterator {
 
-    class FilterIteratorExceptions : std::exception {
+    class FilterIteratorExceptions final : std::exception {
     private:
         std::string m_error;
     public:
@@ -56,7 +56,8 @@ namespace filteriterator {
         reference operator*() const {
             if (m_iter == m_end) {
                 const std::string a = "Can't dereference out of range filter iterator";
-                throw FilterIteratorExceptions(a);// a will be copied to error, then error will be cast to rvalue, then error wil be moved to m_error
+                throw FilterIteratorExceptions(
+                        a);// a will be copied to error, then error will be cast to rvalue, then error wil be moved to m_error
                 //throw FilterIteratorExceptions("Can't dereference out of range filter iterator");
             }
             return *m_iter;
