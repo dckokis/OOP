@@ -55,7 +55,9 @@ namespace filteriterator {
 
         reference operator*() const {
             if (m_iter == m_end) {
-                throw FilterIteratorExceptions( "Can't dereference out of range filter iterator");
+                const std::string a = "Can't dereference out of range filter iterator";
+                throw FilterIteratorExceptions(a);// a will be copied to error, then error will be cast to rvalue, then error wil be moved to m_error
+                //throw FilterIteratorExceptions("Can't dereference out of range filter iterator");
             }
             return *m_iter;
         };
