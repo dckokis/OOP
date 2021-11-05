@@ -29,45 +29,47 @@ class SharedPTR final {
 public:
     SharedPTR() = default;
 
-    explicit SharedPTR(val_type *pObj) {
-        m_ptr = pObj;
-        m_counter = new long(0);
-        if (m_ptr)
-            (*m_counter)++;
+    explicit SharedPTR(val_type *pObj) : m_ptr(pObj) {
+        if (m_ptr) {
+            m_counter = new long(0);
+            if (m_ptr) {
+                (*m_counter)++;
+            }
+        }
     }
 
     SharedPTR(t_SharedPTR &&uniquePTR) noexcept: m_ptr(uniquePTR.m_ptr), m_counter(uniquePTR.m_counter),
                                                  deleter(uniquePTR.deleter) {
-        if (m_ptr)
-            (*m_counter)++;
+        uniquePTR.m_ptr = nullptr;
+        uniquePTR.m_counter = nullptr;
     };
 
     SharedPTR(const t_SharedPTR &sharedPtr) : m_ptr(sharedPtr.m_ptr), m_counter(sharedPtr.m_counter) {
-        if (m_ptr)
+        if (m_ptr) {
             (*m_counter)++;
+        }
     }
 
     ~SharedPTR() { _cleanup_(); }
 
     t_SharedPTR &operator=(t_SharedPTR &&sharedPtr) noexcept {
-        if (m_ptr != sharedPtr.m_ptr & m_counter != sharedPtr.m_counter) {
-            _cleanup_();
-            m_counter = sharedPtr.m_counter;
-            m_ptr = sharedPtr.m_ptr;
-            deleter = sharedPtr.deleter;
-            sharedPtr.m_ptr = nullptr;
-            sharedPtr.m_counter = nullptr;
-        }
+        _cleanup_();
+        m_counter = sharedPtr.m_counter;
+        m_ptr = sharedPtr.m_ptr;
+        deleter = sharedPtr.deleter;
+        sharedPtr.m_ptr = nullptr;
+        sharedPtr.m_counter = nullptr;
         return *this;
     }
 
-    t_SharedPTR &operator=(T *pObj) {
+    t_SharedPTR &operator=(val_type *pObj) {
         release();
         m_ptr = pObj;
         if (m_ptr) {
             m_counter = new long(0);
-            if (m_ptr)
+            if (m_ptr) {
                 (*m_counter)++;
+            }
         }
         return *this;
     };
@@ -78,8 +80,9 @@ public:
             m_counter = sharedPTR.m_counter;
             m_ptr = sharedPTR.m_ptr;
             deleter = sharedPTR.deleter;
-            if (m_ptr)
+            if (m_ptr) {
                 (*m_counter)++;
+            }
         }
         return *this;
     }
@@ -114,12 +117,13 @@ public:
 
     void release() { _cleanup_(); }
 
-    void reset(T *pObj = nullptr) {
+    void reset(val_type *pObj = nullptr) {
         release();
         m_ptr = pObj;
         m_counter = new long(0);
-        if (m_ptr)
+        if (m_ptr) {
             (*m_counter)++;
+        }
     }
 
     void swap(t_SharedPTR &sharedPTR) {
