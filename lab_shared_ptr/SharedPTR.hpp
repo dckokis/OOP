@@ -2,16 +2,14 @@
 
 #include <functional>
 
-
 template<class T, class Deleter = std::default_delete<T>>
 class SharedPTR final {
     using t_SharedPTR = SharedPTR<T, Deleter>;
     using val_type = std::conditional_t<std::is_array_v<T>, typename std::remove_extent_t<T>, T>;
-    //remove_extent allows casting T[] to T and then to take T* in constructor anyway//
-    //val_type is T without anything independent of type is array or not//
+    /*remove_extent allows casting T[] to T and then to take T* in constructor anyway
+    val_type is T without anything independent of type is array or not*/
     using dlt_type = Deleter;
 
-private:
     long *m_counter = nullptr;
     val_type *m_ptr = nullptr;
     dlt_type deleter = Deleter();
@@ -20,7 +18,9 @@ private:
         if (m_counter) {
             if (*m_counter == 1) {
                 deleter(m_ptr);
-                delete m_counter;
+                m_counter = nullptr;
+                m_ptr = nullptr;
+                return;
             }
             (*m_counter)--;
         }
@@ -29,7 +29,7 @@ private:
 public:
     SharedPTR() = default;
 
-    explicit SharedPTR(val_type* pObj) {
+    explicit SharedPTR(val_type *pObj) {
         m_ptr = pObj;
         m_counter = new long(0);
         if (m_ptr)
@@ -49,7 +49,6 @@ public:
 
     ~SharedPTR() { _cleanup_(); }
 
-public:
     t_SharedPTR &operator=(t_SharedPTR &&sharedPtr) noexcept {
         if (m_ptr != sharedPtr.m_ptr & m_counter != sharedPtr.m_counter) {
             _cleanup_();
@@ -85,16 +84,15 @@ public:
         return *this;
     }
 
-public: // Observers.
-    T &operator*() const {
+    val_type &operator*() const {
         return *get();
     }
 
-    T *operator->() const {
+    val_type *operator->() const {
         return get();
     }
 
-    T *get() const {
+    val_type *get() const {
         return m_ptr;
     }
 
@@ -114,7 +112,6 @@ public: // Observers.
         return m_ptr != nullptr;
     }
 
-public: // Modifiers
     void release() { _cleanup_(); }
 
     void reset(T *pObj = nullptr) {
