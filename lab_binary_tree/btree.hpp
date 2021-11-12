@@ -17,6 +17,10 @@ class btree final {
 
         explicit Node(const value_type &data) : m_value(data) {};
 
+        bool operator==(Node<key_type, value_type> const &another) {
+            return ((m_value == another.m_value) & (right == another.right) & (left == another.left));
+        }
+
         value_type m_value = nullptr;
         Node *left = nullptr;
         Node *right = nullptr;
@@ -31,25 +35,45 @@ class btree final {
 
         TreeIterator() = default;
 
-        explicit TreeIterator(value_type &node) : m_value(node) {};
+        explicit TreeIterator(reference node) : m_node(node) {};
 
-        TreeIterator &operator++() {
-            
+        TreeIterator operator++() {
+//            m_node = m_node.right;
+//            return *this;
+        }
+
+        TreeIterator operator--() {
+//            m_node = m_node.left;
+//            return *this;
+        }
+
+        reference operator*() {
+            return m_node.m_value;
+        }
+
+        bool operator==(TreeIterator const &another) {
+            return m_node == another.m_node;
+        }
+
+        bool operator!=(TreeIterator const &another) {
+            return !(this == another);
         }
 
     private:
-        value_type m_value;
+        value_type m_node;
     };
 
 public:
     using value_type = std::pair<const Key, Value>;
     using key_type = Key;
+    using node_type = Node<key_type, value_type>;
     using btree_type = Value;
+    using size_type = size_t;
     using key_compare = Compare;
     using reference = value_type &;
     using const_reference = const value_type &;
-//    using iterator =  ;
-//    using const_iterator =  ...;
+    using iterator = TreeIterator<false>;
+    using const_iterator = TreeIterator<true>;
 
     btree() {
         root = nullptr;
@@ -59,21 +83,55 @@ public:
         root = nullptr;
     };
 
-    btree(const btree &another);
+    btree(const btree &another) {
+        if (another.empty()) {
+            root = new node_type();
+            return;
+        }
+        root = another.root;
+    }
 
-    btree &operator=(const btree &another);
+    btree &operator=(const btree &another) {
+        if (this != another) {
+            this->clear();
+            if(another.empty()) {
+                root = new node_type();
+                return *this;
+            }
+            root = another.root;
+        }
+        return *this;
+    }
 
-//    iterator begin();
-//
-//    const_iterator begin() const;
-//
-//    iterator end();
-//
-//    const_iterator end() const;
+    iterator begin() {
+        return iterator(root);
+    }
 
-    bool empty() const;
+    const_iterator cbegin() const {
+        return const_iterator(root);
+    }
 
-    size_t size() const;
+    iterator end() {
+        return {};
+    }
+
+    const_iterator cend() const {
+        return {};
+    }
+
+    bool empty() const {
+        return root == nullptr;
+    }
+
+    size_t size() const {
+        size_t size = 0;
+        for(auto cur = this->cbegin(); cur != this->cend(); cur++) {
+            if(*cur != nullptr) {
+                size++;
+            }
+        }
+        return size;
+    }
 
     Value &operator[](const Key &key);
 
@@ -81,23 +139,35 @@ public:
 
     const Value &at(const Key &key) const;
 
-//    std::pair<iterator, bool> insert(const value_type &);
-//
-//    void erase(iterator position);
-//
-//    size_type erase(const Key &key);
-//
-//    void erase(iterator first, iterator last);
-//
-//    void swap(btree &another);
-//
-//    void clear();
-//
-//    iterator find(const Key &key);
-//
-//    const_iterator find(const Key &key) const;
+    std::pair<iterator, bool> insert(const value_type &);
+
+    void erase(iterator position) {
+        for(auto cur = this->cbegin(); cur != this->cend(); cur++) {
+            if(cur == position) {
+                //delete_node(*cur);
+            }
+        }
+    }
+
+    size_type erase(const Key &key);
+
+    void erase(iterator first, iterator last);
+
+    void swap(btree &another);
+
+    void clear();
+
+    iterator find(const Key &key);
+
+    const_iterator find(const Key &key) const;
+
 private:
-    Node<key_type, value_type> *root;
+    void delete_node(node_type &node) {
+        if((node.right == nullptr) & (node.left == nullptr)) {
+
+        }
+    }
+    node_type *root;
     key_compare comparator = Compare();
     Alloc allocator = Alloc();
 };
