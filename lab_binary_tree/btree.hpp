@@ -15,31 +15,44 @@ class btree final {
 
         Node() = default;
 
-        explicit Node(const value_type &data) : m_value(data) {};
+        explicit Node(const value_type &data, const Node &parent = nullptr) : m_value(data), m_parent(parent) {};
 
         bool operator==(Node<key_type, value_type> const &another) {
-            return ((m_value == another.m_value) & (right == another.right) & (left == another.left));
+            return ((m_value == another.m_value) & (right == another.right) & (left == another.left) &
+                    (m_parent == another.m_parent));
         }
 
         value_type m_value = nullptr;
+        Node *m_parent = nullptr;
         Node *left = nullptr;
         Node *right = nullptr;
     };
 
-    template<bool is_const>
+    template<bool is_const, typename compare = std::less<Key>>
     class TreeIterator {
         using iterator_category = std::bidirectional_iterator_tag;
         using value_type = std::conditional_t<is_const, const Node<Key, std::pair<const Key, Value>>, Node<Key, std::pair<const Key, Value>>>;
         using reference = value_type &;
         using pointer = value_type *;
-
+        compare cmp = compare();
         TreeIterator() = default;
 
         explicit TreeIterator(reference node) : m_node(node) {};
 
         TreeIterator operator++() {
-//            m_node = m_node.right;
-//            return *this;
+            if(m_node.right) {
+                m_node = m_node.right;
+                while(m_node.left) {
+                    m_node = m_node.left;
+                }
+                return *this;
+            }
+            if(cmp(m_node.m_value.first, m_node.m_parent->m_value.first)) {
+                m_node = m_node.m_parent;
+            } else {
+                m_node = m_node.m_parent->m_parent;
+            }
+            return *this;
         }
 
         TreeIterator operator--() {
@@ -94,7 +107,7 @@ public:
     btree &operator=(const btree &another) {
         if (this != another) {
             this->clear();
-            if(another.empty()) {
+            if (another.empty()) {
                 root = new node_type();
                 return *this;
             }
@@ -120,13 +133,13 @@ public:
     }
 
     bool empty() const {
-        return root == nullptr;
+        return root->m_value == nullptr;
     }
 
     size_t size() const {
         size_t size = 0;
-        for(auto cur = this->cbegin(); cur != this->cend(); cur++) {
-            if(*cur != nullptr) {
+        for (auto cur = this->cbegin(); cur != this->cend(); cur++) {
+            if (*cur != nullptr) {
                 size++;
             }
         }
@@ -142,8 +155,8 @@ public:
     std::pair<iterator, bool> insert(const value_type &);
 
     void erase(iterator position) {
-        for(auto cur = this->cbegin(); cur != this->cend(); cur++) {
-            if(cur == position) {
+        for (auto cur = this->cbegin(); cur != this->cend(); cur++) {
+            if (cur == position) {
                 //delete_node(*cur);
             }
         }
@@ -157,16 +170,23 @@ public:
 
     void clear();
 
-    iterator find(const Key &key);
+    iterator find(const Key &key) {
+        if (this->empty()) { return end(); }
+        auto cur = this->begin();
+
+    };
 
     const_iterator find(const Key &key) const;
 
 private:
-    void delete_node(node_type &node) {
-        if((node.right == nullptr) & (node.left == nullptr)) {
+//    void delete_node(node_type &node) {
+//        if((node.right == nullptr) & (node.left == nullptr)) {
+//
+//        }
+//    }
+    template<typename>
+    friend class TreeIterator;
 
-        }
-    }
     node_type *root;
     key_compare comparator = Compare();
     Alloc allocator = Alloc();
