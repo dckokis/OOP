@@ -54,7 +54,7 @@ public:
     ~SharedPTR() { _cleanup_(); }
 
     t_SharedPTR &operator=(t_SharedPTR &&sharedPtr) noexcept {
-        if (this != sharedPtr) {
+        if (this != &sharedPtr) {
             _cleanup_();
             m_counter = sharedPtr.m_counter;
             m_ptr = sharedPtr.m_ptr;
@@ -66,7 +66,7 @@ public:
     }
 
     t_SharedPTR &operator=(val_type *pObj) {
-        if(this != pObj) {
+        if(this->m_ptr != pObj) {
             release();
             m_ptr = pObj;
             if (m_ptr) {
@@ -80,7 +80,7 @@ public:
     };
 
     t_SharedPTR &operator=(const t_SharedPTR &sharedPTR) {
-        if (this == sharedPTR) {
+        if (this != &sharedPTR) {
             _cleanup_();
             m_counter = sharedPTR.m_counter;
             m_ptr = sharedPTR.m_ptr;

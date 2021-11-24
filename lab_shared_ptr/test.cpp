@@ -142,3 +142,40 @@ TEST(SharedPTR, empty) {
     EXPECT_TRUE(testPtr.use_count() == 0);
     EXPECT_TRUE(testPtr.get() == nullptr);
 }
+
+TEST(SharedPTR, assigment) {
+    {
+        SharedPTR<TstStruct> testPtr(new TstStruct(10));
+        EXPECT_TRUE(testPtr);
+        EXPECT_TRUE(testPtr.use_count() == 1);
+        EXPECT_TRUE(testPtr.unique());
+        EXPECT_FALSE(testPtr.get() == nullptr);
+        testPtr = testPtr;
+        EXPECT_TRUE(testPtr.use_count() == 1);
+        EXPECT_TRUE(testPtr.unique());
+        EXPECT_FALSE(testPtr.get() == nullptr);
+    }
+    {
+        auto ptr = new TstStruct(10);
+        SharedPTR<TstStruct> testPtr(ptr);
+        EXPECT_TRUE(testPtr);
+        EXPECT_TRUE(testPtr.use_count() == 1);
+        EXPECT_TRUE(testPtr.unique());
+        EXPECT_FALSE(testPtr.get() == nullptr);
+        testPtr = ptr;
+        EXPECT_TRUE(testPtr.use_count() == 1);
+        EXPECT_TRUE(testPtr.unique());
+        EXPECT_FALSE(testPtr.get() == nullptr);
+    }
+    {
+        SharedPTR<TstStruct> testPtr(new TstStruct(10));
+        EXPECT_TRUE(testPtr);
+        EXPECT_TRUE(testPtr.use_count() == 1);
+        EXPECT_TRUE(testPtr.unique());
+        EXPECT_FALSE(testPtr.get() == nullptr);
+        testPtr = std::move(testPtr);
+        EXPECT_TRUE(testPtr.use_count() == 1);
+        EXPECT_TRUE(testPtr.unique());
+        EXPECT_FALSE(testPtr.get() == nullptr);
+    }
+}
