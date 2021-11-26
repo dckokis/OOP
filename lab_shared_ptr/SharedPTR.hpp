@@ -60,14 +60,7 @@ public:
     }
 
     t_SharedPTR &operator=(val_type *pObj) {
-        if (this->m_ptr != pObj) {
-            release();
-            m_ptr = pObj;
-            if(m_ptr) {
-                m_counter = new long(0);
-                incrementCount();
-            }
-        }
+        *this = t_SharedPTR(pObj);
         return *this;
     };
 
@@ -120,7 +113,7 @@ public:
     }
 
     void reset(val_type *pObj = nullptr) {
-        *this = pObj;
+        *this = t_SharedPTR(pObj);
     }
 
     void swap(t_SharedPTR &sharedPTR) {
@@ -128,3 +121,8 @@ public:
         std::swap(m_counter, sharedPTR.m_counter);
     }
 };
+
+template<class T, class ... Args>
+SharedPTR<T> makeShared(Args &&... args) {
+    return SharedPTR<T>(new T(std::forward<Args>(args) ...));
+}

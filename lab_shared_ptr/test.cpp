@@ -157,12 +157,9 @@ TEST(SharedPTR, assigment) {
     }
     {
         auto ptr = new TstStruct(10);
-        SharedPTR<TstStruct> testPtr(ptr);
-        EXPECT_TRUE(testPtr);
-        EXPECT_TRUE(testPtr.use_count() == 1);
-        EXPECT_TRUE(testPtr.unique());
-        EXPECT_FALSE(testPtr.get() == nullptr);
+        SharedPTR<TstStruct> testPtr;
         testPtr = ptr;
+        EXPECT_TRUE(testPtr);
         EXPECT_TRUE(testPtr.use_count() == 1);
         EXPECT_TRUE(testPtr.unique());
         EXPECT_FALSE(testPtr.get() == nullptr);
@@ -178,4 +175,12 @@ TEST(SharedPTR, assigment) {
         EXPECT_TRUE(testPtr.unique());
         EXPECT_FALSE(testPtr.get() == nullptr);
     }
+}
+
+TEST(SharedPTR, MakeShared) {
+    auto testPtr = makeShared<TstStruct>(10);
+    EXPECT_TRUE(testPtr);
+    EXPECT_TRUE(testPtr.use_count() == 1);
+    EXPECT_TRUE(testPtr.unique());
+    EXPECT_FALSE(testPtr.get() == nullptr);
 }
