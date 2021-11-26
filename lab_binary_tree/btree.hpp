@@ -182,7 +182,10 @@ public:
 
     void swap(btree &another);
 
-    void clear();
+    void clear() {
+        _clear_subtree_(root->left);
+        _clear_subtree_(root->right);
+    }
 
     iterator find(const Key &key) {
         if (this->empty()) { return end(); }
@@ -194,9 +197,31 @@ public:
         }
     };
 
-    const_iterator find(const Key &key) const;
+    const_iterator find(const Key &key) const {
+        if (this->empty()) { return cend(); }
+        auto cur = findKey(key);
+        if (cur) {
+            return const_iterator(cur);
+        } else {
+            return cend();
+        }
+    }
 
 private:
+    void _clear_subtree_(node_type *node) {
+        if (node) {
+            if (node->left) {
+                _clear_subtree_(node->left);
+            }
+            if (node->right) {
+                _clear_subtree_(node->right);
+            }
+            if (!node->left and !node->right) {
+                delete (node);
+            }
+        }
+    }
+
     node_type *findKey(const Key &key) {
         auto cur = root;
         while (key != cur->getKey()) {
@@ -228,5 +253,5 @@ inline bool operator==(const btree<K, V, C, A> &x, const btree<K, V, C, A> &y) {
 
 template<typename K, typename V, typename C, typename A>
 inline bool operator!=(const btree<K, V, C, A> &x, const btree<K, V, C, A> &y) {
-    // ....
+    return !(x == y);
 }
