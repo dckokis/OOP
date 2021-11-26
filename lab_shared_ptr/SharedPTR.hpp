@@ -12,17 +12,15 @@ class SharedPTR final {
     val_type *m_ptr = nullptr;
     dlt_type deleter = Deleter();
 
-    void _cleanup_() {
-        if (m_counter) {
-            if (*m_counter == 1) {
-                deleter(m_ptr);
-                delete (m_counter);
-                m_counter = nullptr;
-                m_ptr = nullptr;
-                return;
-            }
-            (*m_counter)--;
+    bool _assign_(const t_SharedPTR &another) {
+        if (this != &another) {
+            release();
+            m_counter = another.m_counter;
+            m_ptr = another.m_ptr;
+            deleter = another.deleter;
+            return true;
         }
+        return false;
     }
 
 public:
@@ -50,14 +48,10 @@ public:
         }
     }
 
-    ~SharedPTR() { _cleanup_(); }
+    ~SharedPTR() { release(); }
 
     t_SharedPTR &operator=(t_SharedPTR &&sharedPtr) noexcept {
-        if (this != &sharedPtr) {
-            _cleanup_();
-            m_counter = sharedPtr.m_counter;
-            m_ptr = sharedPtr.m_ptr;
-            deleter = sharedPtr.deleter;
+        if (_assign_(sharedPtr)) {
             sharedPtr.m_ptr = nullptr;
             sharedPtr.m_counter = nullptr;
         }
@@ -79,11 +73,7 @@ public:
     };
 
     t_SharedPTR &operator=(const t_SharedPTR &sharedPTR) {
-        if (this != &sharedPTR) {
-            _cleanup_();
-            m_counter = sharedPTR.m_counter;
-            m_ptr = sharedPTR.m_ptr;
-            deleter = sharedPTR.deleter;
+        if(_assign_(sharedPTR)) {
             if (m_ptr) {
                 (*m_counter)++;
             }
@@ -119,7 +109,18 @@ public:
         return m_ptr != nullptr;
     }
 
-    void release() { _cleanup_(); }
+    void release() {
+        if (m_counter) {
+            if (*m_counter == 1) {
+                deleter(m_ptr);
+                delete (m_counter);
+                m_counter = nullptr;
+                m_ptr = nullptr;
+                return;
+            }
+            (*m_counter)--;
+        }
+    }
 
     void reset(val_type *pObj = nullptr) {
         release();
