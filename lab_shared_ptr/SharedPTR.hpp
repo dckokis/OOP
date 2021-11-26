@@ -17,10 +17,15 @@ class SharedPTR final {
             release();
             m_counter = another.m_counter;
             m_ptr = another.m_ptr;
-            deleter = another.deleter;
             return true;
         }
         return false;
+    }
+
+    void incrementCount() {
+        if (m_ptr) {
+            (*m_counter)++;
+        }
     }
 
 public:
@@ -31,9 +36,7 @@ public:
             return;
         }
         m_counter = new long(0);
-        if (m_ptr) {
-            (*m_counter)++;
-        }
+        incrementCount();
     }
 
     SharedPTR(t_SharedPTR &&uniquePTR) noexcept: m_ptr(uniquePTR.m_ptr), m_counter(uniquePTR.m_counter),
@@ -43,9 +46,7 @@ public:
     };
 
     SharedPTR(const t_SharedPTR &sharedPtr) : m_ptr(sharedPtr.m_ptr), m_counter(sharedPtr.m_counter) {
-        if (m_ptr) {
-            (*m_counter)++;
-        }
+        incrementCount();
     }
 
     ~SharedPTR() { release(); }
@@ -62,21 +63,17 @@ public:
         if (this->m_ptr != pObj) {
             release();
             m_ptr = pObj;
-            if (m_ptr) {
+            if(m_ptr) {
                 m_counter = new long(0);
-                if (m_ptr) {
-                    (*m_counter)++;
-                }
+                incrementCount();
             }
         }
         return *this;
     };
 
     t_SharedPTR &operator=(const t_SharedPTR &sharedPTR) {
-        if(_assign_(sharedPTR)) {
-            if (m_ptr) {
-                (*m_counter)++;
-            }
+        if (_assign_(sharedPTR)) {
+            incrementCount();
         }
         return *this;
     }
@@ -123,12 +120,7 @@ public:
     }
 
     void reset(val_type *pObj = nullptr) {
-        release();
-        m_ptr = pObj;
-        if (m_ptr) {
-            m_counter = new long(0);
-            (*m_counter)++;
-        }
+        *this = pObj;
     }
 
     void swap(t_SharedPTR &sharedPTR) {
