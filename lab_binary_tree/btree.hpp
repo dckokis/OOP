@@ -26,6 +26,52 @@ class btree final {
             return m_value.first;
         }
 
+        Node &getLeft() {
+            return left;
+        }
+
+        Node &gerRight() {
+            return right;
+        }
+
+        Node &getParent() {
+            return m_parent;
+        }
+
+        value_type &getValue() {
+            return m_value;
+        }
+
+        const value_type &getConstValue() const {
+            return m_value;
+        }
+
+        void setParent(const Node &new_parent) {
+            if (new_parent != nullptr) {
+                if (comparator(this->getKey(), new_parent.getKey())) {
+                    new_parent.left = this;
+                } else {
+                    new_parent.right = this;
+                }
+            }
+            m_parent = new_parent;
+        }
+
+        void setLeft(const Node &new_left) {
+            if (new_left != nullptr) {
+                new_left.m_parent = this;
+            }
+            left = new_left;
+        }
+
+        void setRight(const Node &new_right) {
+            if (new_right != nullptr) {
+                new_right.m_parent = this;
+            }
+            right = new_right;
+        }
+
+    private:
         value_type m_value = nullptr;
         Node *m_parent = nullptr;
         Node *left = nullptr;
@@ -79,7 +125,7 @@ class btree final {
         }
 
         reference operator*() {
-            return m_node.m_value;
+            return m_node;
         }
 
         bool operator==(TreeIterator const &another) {
@@ -110,7 +156,8 @@ public:
         root = nullptr;
     }
 
-    explicit btree(const Compare &comp, const Alloc &a = Alloc()) : comparator(comp), allocator(a) {
+    explicit btree(const Compare &comp, const Alloc &a = Alloc()) : allocator(a) {
+        comparator = comp;
         root = nullptr;
     };
 
@@ -151,47 +198,103 @@ public:
     }
 
     bool empty() const {
-        return root->m_value == nullptr;
+        return btree_size == 0;
     }
 
     size_t size() const {
-        size_t size = 0;
-        for (auto cur = this->cbegin(); cur != this->cend(); cur++) {
-            if (*cur != nullptr) {
-                size++;
-            }
-        }
-        return size;
+        return btree_size;
     }
 
-    Value &operator[](const Key &key);
+    Value &operator[](const Key &key) {
+        return insert(std::make_pair(key, btree_type())).first.m_node.getValue().second;
+    }
 
-    Value &at(const Key &key);
+    Value &at(const Key &key) {
+        auto curIter = findKey(key);
+        if (curIter.m_node.getKey() != key) {
+            throw std::out_of_range("btree out of range");
+        } else {
+            return curIter.m_node.getValue().second;
+        }
+    }
 
-    const Value &at(const Key &key) const;
+    const Value &at(const Key &key) const {
+        auto curIter = findKey(key);
+        if (curIter.m_node.getKey() != key) {
+            throw std::out_of_range("btree out of range");
+        } else {
+            return curIter.m_node.getConstValue().second;
+        }
+    }
 
-    std::pair<iterator, bool> insert(const value_type &);
+    std::pair<iterator, bool> insert(const value_type &data) {
+        auto key = data.first;
+        auto cur = findKey(key);
+        if (cur.m_node.getKey() == key) {
+            return std::make_pair(iterator(cur), false);
+        }
+        if (comparator(cur.m_node.getKey(), key)) {
+            cur.m_node.setLeft(new Node(data));
+            btree_size++;
+            return std::make_pair(iterator(cur.m_node.getLeft(), true));
+        } else {
+            cur.m_node.getRight(new Node(data));
+            btree_size++;
+            return std::make_pair(iterator(cur.m_node.getRight(), true));
+        }
+    }
 
     void erase(iterator position) {
-
+        erase(position.m_node.getKey());
     }
 
-    size_type erase(const Key &key);
+    size_type erase(const Key &key) {
+        auto delIter = findKey(key);
+        if (delIter.m_node.getKey() == key) {
+            auto delNode = delIter.m_node;
+            if (delNode.gerRight() == nullptr) {
+                auto parent = delNode.getParent();
+                parent.setLeft(delNode.getLeft());
+            } else if (delNode.getLeft() == nullptr) {
+                auto parent = delNode.getParent();
+                parent.setRight(delNode.getRight());
+            } else {
+                delIter++;
+                auto newNode = delIter.m_node;
+                auto oldParent = newNode.getParent();
+                oldParent.setLeft(nullptr);
+                newNode.setRight(delNode.getRight());
+                newNode.setLeft(delNode.getLeft());
+                newNode.setParent(delNode.getParent());
+            }
+            delete (delNode);
+            btree_size--;
+            return 1;
+        }
+        return 0;
+    }
 
-    void erase(iterator first, iterator last);
+    void erase(iterator first, iterator last) {////?????
+        if (first == begin() && last == end()) {
+            clear();
+        }
+    }
 
-    void swap(btree &another);
+    void swap(btree &another) {
+        std::swap(root, another.root);
+    }
 
     void clear() {
         _clear_subtree_(root->left);
         _clear_subtree_(root->right);
+        btree_size = 0;
     }
 
     iterator find(const Key &key) {
         if (this->empty()) { return end(); }
         auto cur = findKey(key);
-        if (cur) {
-            return iterator(cur);
+        if (cur.m_node.getKey() == key) {
+            return cur;
         } else {
             return end();
         }
@@ -200,8 +303,8 @@ public:
     const_iterator find(const Key &key) const {
         if (this->empty()) { return cend(); }
         auto cur = findKey(key);
-        if (cur) {
-            return const_iterator(cur);
+        if (cur.m_node.getKey() == key) {
+            return const_iterator(cur.m_node);
         } else {
             return cend();
         }
@@ -222,33 +325,42 @@ private:
         }
     }
 
-    node_type *findKey(const Key &key) {
+    iterator findKey(const Key &key) {
         auto cur = root;
         while (key != cur->getKey()) {
             if (comparator(cur->getKey(), key)) {
                 if (cur->left) {
                     cur = cur->left;
-                } else { return nullptr; }
+                } else { break; }
             } else {
                 if (cur->right) {
                     cur = cur->right;
-                } else { return nullptr; }
+                } else { break; }
             }
         }
+        return iterator(cur);
     }
 
-    template<typename>
-    friend
-    class TreeIterator;
-
+    size_type btree_size;
     node_type *root;
-    key_compare comparator = Compare();
+    static key_compare comparator = Compare();
     Alloc allocator = Alloc();
 };
 
 template<typename K, typename V, typename C, typename A>
 inline bool operator==(const btree<K, V, C, A> &x, const btree<K, V, C, A> &y) {
-    // ....
+    if (x.size() != y.size()) {
+        return false;
+    }
+    auto xIter = x.cbegin();
+    auto yIter = y.cbegin();
+    xIter--, yIter--;
+    for(xIter, yIter; xIter != x.cend(), yIter != y.cend(); xIter++, yIter++) {
+        if(*xIter != *yIter) {
+            return false;
+        }
+    }
+    return true;
 }
 
 template<typename K, typename V, typename C, typename A>
