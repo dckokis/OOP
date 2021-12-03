@@ -127,8 +127,8 @@ private:
         }
 
         ///////////////при возврате m_node.getValue() все равно *iter имеет тип Node
-        data_type &operator*() {
-            return m_node;
+        value_type &operator*() {
+            return m_node.getValue();
         }
 
         bool operator==(TreeIterator const &another) {
