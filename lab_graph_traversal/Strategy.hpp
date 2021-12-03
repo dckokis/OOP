@@ -1,36 +1,83 @@
 #pragma once
-
-#include <memory>
 #include <stack>
-#include <queue>
-#include <set>
+#include <utility>
 #include "Graph.hpp"
 #include "Traverse.hpp"
 
-template<std::shared_ptr<Traverse> &traverse>
-class Strategy {
+class TraverseStrategy {
 public:
-    Strategy() = delete;
+    using vertex = typename Graph::vertex;
 
-    explicit Strategy(const Graph &graph) : m_graph(graph) {};
+    TraverseStrategy() = delete;
 
-    virtual void bypassGraph(const Graph::vertex &first) = 0;
+    explicit TraverseStrategy(Graph &_graph, std::shared_ptr<Traverse> &traverse_) : graph(_graph), traverse(
+            traverse_) {};
 
-    virtual ~Strategy() = default;
+    virtual void execute(const vertex &begin) = 0;
+
+    virtual ~TraverseStrategy() = default;
 
 protected:
-    void begin(const Graph::vertex &first) const { traverse->begin(first); }
+    Graph &graph;
+    std::shared_ptr<Traverse> traverse;
+    std::map<vertex, vertex> previous;
 
-    void end() const { traverse->end(); }
+    void begin(const vertex &begin) const { this->traverse->begin(begin); };
 
-    void visitVertex(const Graph::vertex &v) const { traverse->visitVertex(v); }
+    void end() const { this->traverse->end(); };
 
-    void visitEdge(const Graph::vertex &source, const Graph::vertex &destination) const {
-        traverse->visitEdge(source, destination);
+    void visitVertex(vertex &vertex) const { this->traverse->visitVertex(vertex); };
+
+    void visitEdge(vertex &begin, vertex &end) const { this->traverse->visitEdge(begin, end); };
+};
+
+class DFS : public TraverseStrategy {
+public:
+    DFS() = delete;
+
+    explicit DFS(Graph &_graph, std::shared_ptr<Traverse> &traverse_) : TraverseStrategy(
+            _graph, traverse_) {};
+
+    void execute(const vertex &begin) override {
+        if (this->graph.getSize() == 0) {
+            return;
+        }
+        this->previous.clear();
+        std::stack<std::pair<vertex, bool>> stack;;
+        this->begin(begin);
+
+        stack.push(std::make_pair(begin, false));
+        this->previous[begin] = begin;
+        while (!stack.empty()) {
+            auto& [cur, attended] = stack.top();
+            if(!attended) {
+                this->visitVertex(cur);
+                this->visitEdge(this->previous.at(cur), cur);
+                attended = true;
+
+                if(this->traverse->IsFinished()) {
+                    break;
+                }
+
+                const auto& neighbours = this->graph.getNeighbours(cur);
+                for (auto i = neighbours.crbegin(); i != neighbours.crend(); ++i) {
+                    if(*i != this->previous[cur]) {
+                        stack.push(std::make_pair(*i, false));
+                        this->previous[*i] = cur;
+                    }
+                }
+             } else {
+                stack.pop();
+            }
+        }
+        this->end();
     }
+};
 
-    const bool is_finished() const { return traverse->isFinished(); }
+class BFS : TraverseStrategy {
+public:
+    BFS() = delete;
 
-    const Graph &m_graph;
-    std::map<Graph::vertex, Graph::vertex> m_prev{};
+    explicit BFS(Graph &_graph, std::shared_ptr<Traverse> &traverse_) : TraverseStrategy(
+            _graph, traverse_) {};
 };

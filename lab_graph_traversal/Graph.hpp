@@ -3,23 +3,20 @@
 #include <map>
 #include <vector>
 
-
-class Graph final {
+class Graph {
 public:
-    Graph() = default;
-
     using vertex = int;
 
-    void addEdge(const vertex &edgeBegin, const vertex &edgeEnd) {
+    virtual void addEdge(const vertex &edgeBegin, const vertex &edgeEnd) {
         graph[edgeBegin].push_back(edgeEnd);
         graph[edgeEnd];
     }
 
-    const std::vector<vertex> &getNeighbours(const vertex &v) const {
+    virtual const std::vector<vertex> &getNeighbours(const vertex &v) {
         return graph.at(v);
     }
 
-    const size_t getSize() const {
+    virtual const size_t getSize() const {
         return graph.size();
     }
 
