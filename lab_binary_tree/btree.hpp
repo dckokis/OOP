@@ -4,37 +4,39 @@
 
 template<typename Key,
         typename Value,
-        typename Compare = std::less<Key>,
-        typename Alloc = std::allocator<std::pair<const Key, Value>>>
+        typename Compare = std::less<Key>>
 class btree final {
-    template<typename key, typename value>
+public:
+    using value_type = std::pair<const Key, Value>;
+    using key_type = Key;
+private:
     class Node final {
     public:
-        using key_type = key;
-        using value_type = value;
-
         Node() = default;
 
-        explicit Node(const value_type &data, const Node &parent = nullptr) : m_value(data), m_parent(parent) {};
+        explicit Node(const Value &data, const Node &parent) : m_value(data), m_parent(parent) {};
 
-        bool operator==(Node<key_type, value_type> const &another) {
-            return ((m_value == another.m_value) & (right == another.right) & (left == another.left) &
-                    (m_parent == another.m_parent));
+        bool operator==(Node const &another) const {
+            if (this != nullptr && another != nullptr) {
+                return ((m_value == another.m_value) && (right == another.right) && (left == another.left) &&
+                        (m_parent == another.m_parent));
+            }
+            return false;
         }
 
-        const key_type &getKey() const {
+        const Key &getKey() const {
             return m_value.first;
         }
 
-        Node &getLeft() {
+        const Node &getLeft() const {
             return left;
         }
 
-        Node &gerRight() {
+        const Node &gerRight() const {
             return right;
         }
 
-        Node &getParent() {
+        const Node &getParent() const {
             return m_parent;
         }
 
@@ -48,7 +50,7 @@ class btree final {
 
         void setParent(const Node &new_parent) {
             if (new_parent != nullptr) {
-                if (comparator(this->getKey(), new_parent.getKey())) {
+                if (comparator(getKey(), new_parent.getKey())) {
                     new_parent.left = this;
                 } else {
                     new_parent.right = this;
@@ -73,18 +75,18 @@ class btree final {
 
     private:
         value_type m_value = nullptr;
-        Node *m_parent = nullptr;
-        Node *left = nullptr;
-        Node *right = nullptr;
+        Node &m_parent = nullptr;
+        Node &left = nullptr;
+        Node &right = nullptr;
     };
 
-    template<bool is_const, typename compare = std::less<Key>>
+    template<bool is_const>
     class TreeIterator {
+    public:
         using iterator_category = std::bidirectional_iterator_tag;
-        using value_type = std::conditional_t<is_const, const Node<Key, std::pair<const Key, Value>>, Node<Key, std::pair<const Key, Value>>>;
-        using reference = value_type &;
-        using pointer = value_type *;
-        compare cmp = compare();
+        using data_type = std::conditional_t<is_const, const Node, Node>;
+        using reference = data_type &;
+        using pointer = data_type *;
 
         TreeIterator() = default;
 
@@ -98,7 +100,7 @@ class btree final {
                 }
                 return *this;
             }
-            if (cmp(m_node.getKey(), m_node.m_parent->getKey())) {
+            if (comparator(m_node.getKey(), m_node.m_parent->getKey())) {
                 m_node = m_node.m_parent;
             } else {
                 m_node = m_node.m_parent->m_parent;
@@ -115,7 +117,7 @@ class btree final {
                 return *this;
             }
             auto key = m_node.getKey();
-            while (m_node.m_parent && cmp(key, m_node.m_parent->getKey())) {
+            while (m_node.m_parent && comparator(key, m_node.m_parent->getKey())) {
                 m_node = m_node.m_parent;
             }
             if (m_node.m_parent) {
@@ -124,7 +126,8 @@ class btree final {
             return *this;
         }
 
-        reference operator*() {
+        ///////////////при возврате m_node.getValue() все равно *iter имеет тип Node
+        data_type &operator*() {
             return m_node;
         }
 
@@ -137,13 +140,11 @@ class btree final {
         }
 
     private:
-        value_type m_node;
+        data_type &m_node;
     };
 
 public:
-    using value_type = std::pair<const Key, Value>;
-    using key_type = Key;
-    using node_type = Node<key_type, value_type>;
+    using node_type = Node;
     using btree_type = Value;
     using size_type = size_t;
     using key_compare = Compare;
@@ -154,9 +155,10 @@ public:
 
     btree() {
         root = nullptr;
+        _size = {};
     }
 
-    explicit btree(const Compare &comp, const Alloc &a = Alloc()) : allocator(a) {
+    explicit btree(const Compare &comp) {
         comparator = comp;
         root = nullptr;
     };
@@ -198,49 +200,50 @@ public:
     }
 
     bool empty() const {
-        return btree_size == 0;
+        return _size == 0;
     }
 
     size_t size() const {
-        return btree_size;
+        return _size;
     }
 
     Value &operator[](const Key &key) {
-        return insert(std::make_pair(key, btree_type())).first.m_node.getValue().second;
+        auto inserted_iter = insert(std::make_pair(key, btree_type()));
+        return (*inserted_iter).getValue();
     }
 
     Value &at(const Key &key) {
         auto curIter = findKey(key);
-        if (curIter.m_node.getKey() != key) {
+        if ((*curIter).getKey() != key) {
             throw std::out_of_range("btree out of range");
         } else {
-            return curIter.m_node.getValue().second;
+            return (*this)[key];
         }
     }
 
     const Value &at(const Key &key) const {
         auto curIter = findKey(key);
-        if (curIter.m_node.getKey() != key) {
+        if ((*curIter).getKey() != key) {
             throw std::out_of_range("btree out of range");
         } else {
-            return curIter.m_node.getConstValue().second;
+            return (*this)[key];
         }
     }
 
     std::pair<iterator, bool> insert(const value_type &data) {
         auto key = data.first;
         auto cur = findKey(key);
-        if (cur.m_node.getKey() == key) {
+        if ((*cur).getKey() == key) {
             return std::make_pair(iterator(cur), false);
         }
-        if (comparator(cur.m_node.getKey(), key)) {
-            cur.m_node.setLeft(new Node(data));
-            btree_size++;
-            return std::make_pair(iterator(cur.m_node.getLeft(), true));
+        if (comparator((*cur).getKey(), key)) {
+            (*cur).setLeft(new Node(data));
+            _size++;
+            return std::make_pair(iterator((*cur).getLeft(), true));
         } else {
-            cur.m_node.getRight(new Node(data));
-            btree_size++;
-            return std::make_pair(iterator(cur.m_node.getRight(), true));
+            (*cur).setRight(new Node(data));
+            _size++;
+            return std::make_pair(iterator((*cur).gerRight(), true));
         }
     }
 
@@ -250,8 +253,8 @@ public:
 
     size_type erase(const Key &key) {
         auto delIter = findKey(key);
-        if (delIter.m_node.getKey() == key) {
-            auto delNode = delIter.m_node;
+        if (*delIter.getKey() == key) {
+            auto delNode = *delIter;
             if (delNode.gerRight() == nullptr) {
                 auto parent = delNode.getParent();
                 parent.setLeft(delNode.getLeft());
@@ -260,7 +263,7 @@ public:
                 parent.setRight(delNode.getRight());
             } else {
                 delIter++;
-                auto newNode = delIter.m_node;
+                auto newNode = *delIter;
                 auto oldParent = newNode.getParent();
                 oldParent.setLeft(nullptr);
                 newNode.setRight(delNode.getRight());
@@ -268,7 +271,7 @@ public:
                 newNode.setParent(delNode.getParent());
             }
             delete (delNode);
-            btree_size--;
+            _size--;
             return 1;
         }
         return 0;
@@ -287,13 +290,13 @@ public:
     void clear() {
         _clear_subtree_(root->left);
         _clear_subtree_(root->right);
-        btree_size = 0;
+        _size = 0;
     }
 
     iterator find(const Key &key) {
         if (this->empty()) { return end(); }
         auto cur = findKey(key);
-        if (cur.m_node.getKey() == key) {
+        if ((*cur).getKey() == key) {
             return cur;
         } else {
             return end();
@@ -303,8 +306,8 @@ public:
     const_iterator find(const Key &key) const {
         if (this->empty()) { return cend(); }
         auto cur = findKey(key);
-        if (cur.m_node.getKey() == key) {
-            return const_iterator(cur.m_node);
+        if ((*cur).getKey() == key) {
+            return const_iterator(*cur);
         } else {
             return cend();
         }
@@ -325,10 +328,10 @@ private:
         }
     }
 
-    iterator findKey(const Key &key) {
+    iterator findKey(const Key &key) const {
         auto cur = root;
-        while (key != cur->getKey()) {
-            if (comparator(cur->getKey(), key)) {
+        while (key != (*cur).getKey()) {
+            if (comparator((*cur).getKey(), key)) {
                 if (cur->left) {
                     cur = cur->left;
                 } else { break; }
@@ -341,29 +344,30 @@ private:
         return iterator(cur);
     }
 
-    size_type btree_size;
+    size_type _size;
     node_type *root;
-    static key_compare comparator = Compare();
-    Alloc allocator = Alloc();
+    inline static key_compare comparator = Compare();
 };
 
 template<typename K, typename V, typename C, typename A>
-inline bool operator==(const btree<K, V, C, A> &x, const btree<K, V, C, A> &y) {
+inline bool operator==(const btree<K, V, C> &x, const btree<K, V, C> &y) {
     if (x.size() != y.size()) {
         return false;
     }
-    auto xIter = x.cbegin();
-    auto yIter = y.cbegin();
-    xIter--, yIter--;
-    for(xIter, yIter; xIter != x.cend(), yIter != y.cend(); xIter++, yIter++) {
-        if(*xIter != *yIter) {
-            return false;
-        }
-    }
-    return true;
+    auto curX = *(x.cbegin());
+    auto curY = *(y.cbegin());
+    return curX == curY;
+//    auto xIter = x.cbegin();
+//    auto yIter = y.cbegin();
+//    xIter--, yIter--;
+//    for (xIter, yIter; xIter != x.cend(), yIter != y.cend(); xIter++, yIter++) {
+//        if (*xIter != *yIter) {
+//            return false;
+//        }
+//    }
 }
 
 template<typename K, typename V, typename C, typename A>
-inline bool operator!=(const btree<K, V, C, A> &x, const btree<K, V, C, A> &y) {
+inline bool operator!=(const btree<K, V, C> &x, const btree<K, V, C> &y) {
     return !(x == y);
 }
