@@ -3,4 +3,7 @@ project(lab_graph_traversal)
 
 set(CMAKE_CXX_STANDARD 23)
 
+add_subdirectory(GoogleTest/googletest)
+include_directories(GoogleTest/googletest/googletest/include)
 add_executable(lab_graph_traversal main.cpp Graph.hpp Strategy.hpp Traverse.hpp)
+target_link_libraries(lab_graph_traversal gtest gtest_main)
