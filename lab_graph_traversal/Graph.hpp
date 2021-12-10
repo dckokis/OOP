@@ -16,7 +16,7 @@ public:
         return graph.at(v);
     }
 
-    virtual const size_t getSize() const {
+    [[nodiscard]] virtual const size_t getSize() const {
         return graph.size();
     }
 

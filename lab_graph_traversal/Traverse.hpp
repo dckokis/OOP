@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Graph.hpp"
+#include <unordered_map>
 
 class Traverse {
 public:
@@ -23,14 +24,14 @@ public:
         return isFinished;
     }
 
-    const std::vector<vertex> getPath() const {
+    [[nodiscard]] const std::deque<vertex> getPath() const {
         return path;
     }
 
 protected:
     bool isFinished = false;
     vertex first{};
-    std::vector<vertex> path{};
+    std::deque<vertex> path{};
 };
 
 class PathFinder : public Traverse {
@@ -51,7 +52,6 @@ public:
             return;
         }
         buildPath();
-        std::reverse(path.begin(), path.end());
     }
 
     void visitVertex(const vertex &vrtx) override {
@@ -63,10 +63,10 @@ public:
         ancestor[dest] = source;
     }
 
-    virtual ~PathFinder() = default;
+    ~PathFinder() override = default;
 
 protected:
-    std::map<vertex, vertex> ancestor{};
+    std::unordered_map<vertex, vertex> ancestor{};
 
     virtual void buildPath() = 0;
 
@@ -97,10 +97,10 @@ private:
     void buildPath() override {
         auto cur = destination;
         while (cur != this->first) {
-            this->path.emplace_back(cur);
+            this->path.emplace_front(cur);
             cur = this->ancestor[cur];
         }
-        this->path.emplace_back(cur);
+        this->path.emplace_front(cur);
     }
 };
 
@@ -118,16 +118,16 @@ private:
         return first == source && second == dest;
     }
 
-    bool comp(const vertex &vertex) {
+    bool comp(const vertex &vertex) override {
         return isFinished;
     }
 
     void buildPath() override {
         auto cur = second;
         while (cur != this->first) {
-            this->path.emplace_back(cur);
+            this->path.emplace_front(cur);
             cur = this->ancestor[cur];
         }
-        this->path.emplace_back(cur);
+        this->path.emplace_front(cur);
     }
 };
