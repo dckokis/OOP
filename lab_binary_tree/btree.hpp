@@ -16,6 +16,15 @@ private:
 
         explicit Node(const value_type &data) : m_value(data) {};
 
+        Node &operator=(const Node &another) {
+            if (*this != another) {
+                m_value = another.m_value;
+                m_parent = another.m_parent;
+                left = another.left;
+                right = another.right;
+            }
+        }
+
         const Key &getKey() const {
             return m_value.first;
         }
@@ -42,10 +51,10 @@ private:
 
         void setParent(std::shared_ptr<Node> new_parent) {
             if (new_parent) {
-                if (comparator(getKey(), new_parent.getKey())) {
-                    new_parent->left = this;
+                if (comparator(getKey(), new_parent->getKey())) {
+                    new_parent->left = std::shared_ptr<Node>(this);
                 } else {
-                    new_parent->right = this;
+                    new_parent->right = std::shared_ptr<Node>(this);
                 }
                 m_parent = new_parent;
             }
@@ -58,9 +67,9 @@ private:
             }
         }
 
-        void setRight(const Node &new_right) {
+        void setRight(std::shared_ptr<Node> new_right) {
             if (new_right) {
-                new_right->m_parent = this;
+                new_right->m_parent = std::shared_ptr<Node>(this);
                 right = new_right;
             }
         }
@@ -223,46 +232,55 @@ public:
 
     std::pair<iterator, bool> insert(const value_type &data) {
         auto key = data.first;
-        auto cur = findNode(key);
-        if (cur->getKey() == key) {
-            auto existing = std::make_shared<Node>(cur->getValue());
-            return std::make_pair(iterator(existing), false);
+        if (root) {
+            auto cur = findNode(key);
+            if (cur->getKey() == key) {
+                auto existing = std::make_shared<Node>(cur->getValue());
+                return std::make_pair(iterator(existing), false);
+            }
+            auto insertable = std::make_shared<Node>(data);
+            if (comparator(cur->getKey(), key)) {
+                cur->setLeft(insertable);
+                _size++;
+                return std::make_pair(iterator(cur->getLeft()), true);
+            } else {
+                cur->setLeft(insertable);
+                _size++;
+                return std::make_pair(iterator(cur->getRight()), true);
+            }
         }
-        auto insertable = std::make_shared<Node>(data);
-        if (comparator(cur->getKey(), key)) {
-            cur->setLeft(insertable);
-            _size++;
-            return std::make_pair(iterator(cur->getLeft()), true);
-        } else {
-            cur->setLeft(insertable);
-            _size++;
-            return std::make_pair(iterator(cur->getRight()), true);
-        }
+        root = std::make_shared<Node>(data);
+        _size++;
+        return std::make_pair(iterator(root), true);
     }
 
     void erase(iterator position) {
-        erase(position.m_node.getKey());
+        erase((*position).first);
     }
 
     size_type erase(const Key &key) {
         auto delNode = findNode(key);
-        if (delNode.getKey() == key) {
-            if (delNode.getRight().isEmpty()) {
-                auto parent = delNode.getParent();
-                parent.setLeft(delNode.getLeft());
-            } else if (delNode.getLeft().isEmpty()) {
-                auto parent = delNode.getParent();
-                parent.setRight(delNode.getRight());
-            } else {
-                Node &replacement = delNode.getRight();
-                while (!replacement.getLeft().isEmpty()) {
-                    replacement = replacement.getLeft();
+        if (delNode->getKey() == key) {
+            if (delNode != root) {
+                if (delNode->getRight() && !delNode->getLeft()) {
+                    auto parent = delNode->getParent();
+                    parent->setRight(delNode->getRight());
+                } else if (delNode->getLeft() && !delNode->getRight()) {
+                    auto parent = delNode->getParent();
+                    parent->setLeft(delNode->getLeft());
+                } else if (delNode->getLeft() && delNode->getRight()) {
+                    auto replacement = delNode->getRight();
+                    while (!replacement->getLeft()) {
+                        replacement = replacement->getLeft();
+                    }
+                    replacement->setLeft(delNode->getLeft());
+                    replacement->setRight(delNode->getRight());
+                    replacement->setParent(delNode->getParent());
                 }
-                replacement.setLeft(delNode.getLeft());
-                replacement.setRight(delNode.getRight());
-                replacement.setParent(delNode.getParent());
+            } else {
+                root = root->getLeft();
             }
-            delete (delNode);
+            delNode.reset();
             _size--;
             return 1;
         }
@@ -328,19 +346,22 @@ private:
     }
 
     std::shared_ptr<Node> findNode(const Key &key) {
-        auto cur = root;
-        while (key != cur->getKey()) {
-            if (comparator(cur->getKey(), key)) {
-                if (cur->getLeft()) {
-                    cur = cur->getLeft();
-                } else { break; }
-            } else {
-                if (cur->getRight()) {
-                    cur = cur->getRight();
-                } else { break; }
+        if (root) {
+            auto cur = root;
+            while (key != cur->getKey()) {
+                if (comparator(cur->getKey(), key)) {
+                    if (cur->getLeft()) {
+                        cur = cur->getLeft();
+                    } else { break; }
+                } else {
+                    if (cur->getRight()) {
+                        cur = cur->getRight();
+                    } else { break; }
+                }
             }
+            return cur;
         }
-        return cur;
+        return root;
     }
 
     size_type _size = {};
