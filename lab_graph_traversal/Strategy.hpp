@@ -6,7 +6,6 @@
 #include "Graph.hpp"
 #include "Traverse.hpp"
 
-
 class TraverseStrategy {
 public:
     using vertex = typename Graph::vertex;

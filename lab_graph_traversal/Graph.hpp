@@ -7,16 +7,16 @@ class Graph {
 public:
     using vertex = int;
 
-    virtual void addEdge(const vertex &edgeBegin, const vertex &edgeEnd) {
+   void addEdge(const vertex &edgeBegin, const vertex &edgeEnd) {
         graph[edgeBegin].push_back(edgeEnd);
         graph[edgeEnd];
     }
 
-    virtual const std::vector<vertex> &getNeighbours(const vertex &v) {
+    const std::vector<vertex> &getNeighbours(const vertex &v) {
         return graph.at(v);
     }
 
-    [[nodiscard]] virtual const size_t getSize() const {
+    [[nodiscard]] const size_t getSize() const {
         return graph.size();
     }
 
