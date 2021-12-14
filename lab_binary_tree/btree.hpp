@@ -8,8 +8,7 @@
 
 template<typename Key,
         typename Value,
-        typename Compare = std::less<Key>,
-        typename Alloc = std::allocator<std::pair<const Key, Value>>>
+        typename Compare = std::less<Key>>
 class btree {
 public:
     using value_type = std::pair<const Key, Value>;
@@ -51,6 +50,10 @@ private:
 
         std::weak_ptr<TreeNode> getParent() {
             return parent;
+        }
+
+        void setParent(std::weak_ptr<TreeNode> new_parent) {
+            parent = new_parent;
         }
 
         value_ptr getData() {
@@ -185,7 +188,7 @@ private:
 
     std::shared_ptr<TreeNode> root{};
     size_type size_{};
-    Compare compare = Compare();
+    inline static constexpr Compare compare = Compare();
 public:
     using iterator = TreeIterator<false>;
     using const_iterator = TreeIterator<true>;
@@ -201,9 +204,7 @@ public:
     }
 
     btree(btree &&another) noexcept {
-        *this = another;
-        another.clear();
-        delete(another);
+        *this = std::move(another);
     }
 
     btree &operator=(const btree &another) {
@@ -216,13 +217,12 @@ public:
     }
 
     btree &operator=(btree &&another) noexcept {
-        root = another.root;
-        size_ = another.size_;
-        compare = another.compare;
-        another.clear();
-        delete(another);
+        swap(root, another.root);
+        swap(size_, another.size_);
+        swap(compare, another.compare);
         return *this;
     }
+
     iterator begin() {
         auto current = root;
         if (!current) {
@@ -246,27 +246,23 @@ public:
     }
 
     iterator end() {
-        return iterator(root, true);
+        return {};
     }
 
     const_iterator end() const {
-        return const_iterator(root, true);
+        return {};
     }
 
-    bool empty() const {
+    [[nodiscard]] bool empty() const {
         return size_ == 0;
     }
 
-    size_type size() const {
+    [[nodiscard]] size_type size() const {
         return size_;
     }
 
     Value &operator[](const Key &key) {
-        auto it = find(key);
-        if (it == end()) {
-            return insert(std::make_pair(key, Value())).first->second;
-        }
-        return it->second;
+        return insert(std::make_pair(key, Value())).first->second;
     }
 
     Value &at(const Key &key) {
@@ -274,7 +270,7 @@ public:
         if (it == end()) {
             throw std::out_of_range("key not found");
         }
-        return it->second;
+        return (*this)[key];
     }
 
     const Value &at(const Key &key) const {
@@ -282,7 +278,7 @@ public:
         if (it == end()) {
             throw std::out_of_range("key not found");
         }
-        return it->second;
+        return (*this)[key];
     }
 
     std::pair<iterator, bool> insert(const value_type &val) {
@@ -297,22 +293,22 @@ public:
 
         while (current) {
             prev = current;
-            if (compare(val.first, current->data->first)) {
-                current = current->left;
+            if (compare(val.first, current->getData()->first)) {
+                current = current->getLeft();
             } else {
-                current = current->right;
+                current = current->getRight();
             }
         }
         if (!prev) {
             prev = new_node;
-        } else if (val.first == prev->data->first) {
+        } else if (val.first == prev->getData()->first) {
             return std::make_pair(iterator(prev), false);
-        } else if (compare(val.first, prev->data->first)) {
-            prev->left = new_node;
+        } else if (compare(val.first, prev->getData()->first)) {
+            prev->getLeft() = new_node;
         } else {
-            prev->right = new_node;
+            prev->getRight() = new_node;
         }
-        new_node->parent = prev;
+        new_node->getParent() = prev;
         ++size_;
         return std::make_pair(iterator(new_node), true);
     }
@@ -331,49 +327,49 @@ public:
             return 0;
         }
         auto node = it.node_.lock();
-        auto cond = -1;
-        if (!node->parent.lock()) {
-            cond = 0;
-        } else if (node->parent.lock()->right == node) {
-            cond = 1;
+        auto state = -1;
+        if (!node->getParent().lock()) {
+            state = 0;
+        } else if (node->getParent().lock()->getRight() == node) {
+            state = 1;
         }
-        if (node->right) {
-            auto leftmost_of_right = node->right;
-            while (leftmost_of_right->left) {
-                leftmost_of_right = leftmost_of_right->left;
+        if (node->getRight()) {
+            auto leftmostOfRight = node->getRight();
+            while (leftmostOfRight->getLeft()) {
+                leftmostOfRight = leftmostOfRight->getLefrt();
             }
 
-            if (node->left) {
-                node->left->parent = leftmost_of_right;
+            if (node->getLeft()) {
+                node->getLeft()->setParent(leftmostOfRight);
             }
-            leftmost_of_right->left = node->left;
+            leftmostOfRight->setLeft(node->getLeft());
 
-            if (cond != 0) {
-                node->right->parent = node->parent;
-                if (cond == -1) {
-                    node->parent.lock()->left = node->right;
+            if (state != 0) {
+                node->getRight()->setParent(node->getParent());
+                if (state == -1) {
+                    node->getParent.lock()->setLeft(node->geRight());
                 } else {
-                    node->parent.lock()->right = node->right;
+                    node->getParent.lock()->setRight(node->geRight());
                 }
             } else {
-                root = node->right;
+                root = node->getRight();
             }
-        } else if (node->left) {
-            if (cond != 0) {
-                node->left->parent = node->parent;
-                if (cond == -1) {
-                    node->parent.lock()->left = node->left;
+        } else if (node->getLeft()) {
+            if (state != 0) {
+                node->getLeft()->setParent(node->getParent());
+                if (state == -1) {
+                    node->getParent().lock()->setLeft(node->getLeft());
                 } else {
-                    node->parent.lock()->right = node->left;
+                    node->getParent().lock()->setRight(node->getLeft());
                 }
             } else {
-                root = node->left;
+                root = node->getLeft();
             }
         } else {
-            if (cond == -1) {
-                node->parent.lock()->left = nullptr;
-            } else if (cond == 1) {
-                node->parent.lock()->right = nullptr;
+            if (state == -1) {
+                node->getParent().lock()->setLeft(nullptr);
+            } else if (state == 1) {
+                node->getParent().lock()->setRight(nullptr);
             } else {
                 root = nullptr;
             }
@@ -406,11 +402,11 @@ public:
         if (!current) {
             return end();
         }
-        while (current->data->first != key) {
-            if (compare(key, current->data->first)) {
-                current = current->left;
-            } else if (!compare(key, current->data->first)) {
-                current = current->right;
+        while (current->getData()->first != key) {
+            if (compare(key, current->getData()->first)) {
+                current = current->getLeft();
+            } else if (!compare(key, current->getData()->first)) {
+                current = current->getRight();
             }
             if (!current) {
                 return end();
@@ -424,11 +420,11 @@ public:
         if (!current) {
             return end();
         }
-        while (current->data->first != key) {
-            if (compare(key, current->data->first)) {
-                current = current->left;
-            } else if (!compare(key, current->data->first)) {
-                current = current->right;
+        while (current->getData()->first != key) {
+            if (compare(key, current->getData()->first)) {
+                current = current->getLeft();
+            } else if (!compare(key, current->getData()->first)) {
+                current = current->getRight();
             }
             if (!current) {
                 return end();
@@ -438,9 +434,8 @@ public:
     }
 };
 
-
 template<typename K, typename V, typename C, typename A>
-bool operator==(const btree<K, V, C, A> &x, const btree<K, V, C, A> &y) {
+bool operator==(const btree<K, V, C> &x, const btree<K, V, C> &y) {
     if (x.size() != y.size()) {
         return false;
     }
@@ -453,7 +448,6 @@ bool operator==(const btree<K, V, C, A> &x, const btree<K, V, C, A> &y) {
 }
 
 template<typename K, typename V, typename C, typename A>
-bool operator!=(const btree<K, V, C, A> &x, const btree<K, V, C, A> &y) {
+bool operator!=(const btree<K, V, C> &x, const btree<K, V, C> &y) {
     return !(x == y);
 }
-
