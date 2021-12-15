@@ -9,30 +9,52 @@ class BloomFilter final {
 public:
     BloomFilter() = delete;
 
-    BloomFilter(size_t size_, HashFunc hashFunc, size_t numFunctions_) : size(size_), hash(hashFunc),  numFunctions(numFunctions_){
-
+    BloomFilter(size_t size_, HashFunc hashFunc, size_t numFunctions_) : size(size_), hash(hashFunc) {
+        if (numFunctions_ < salts.size()) {
+            table = std::vector<char>{};
+            hash = hashFunc;
+            numFunctions = numFunctions_;
+        }
     }
 
     ~BloomFilter() = default;
 
     void insert(const Value &value) {
-
-    }
-
-    void insert(Value &&value) {
-
+        /* Generate hash of the value to insert */
+        auto hashValue = hash(value);
+        /* Generate multiple unique hashes by XORing with values in the
+         * salt table. */
+        for (auto i = 0; i < numFunctions; ++i) {
+            auto uniqueHash = hashValue ^ salts[i];
+            auto index = (uniqueHash % size);
+            /* Insert into the table.
+             * index / 8 finds the byte index of the table,
+             * index % 8 gives the bit index within that byte to set. */
+            table[index / 8] |= (1 << (index % 8));
+        }
     }
 
     bool query(const Value &value) const {
-
+        auto hashValue = hash(value);
+        for (auto i = 0; i < numFunctions; ++i) {
+            auto uniqueHash = hashValue ^ salts[i];
+            auto index = (uniqueHash % size);
+            /* Test if the particular bit is set; if it is not set,
+             * this value can not have been inserted. */
+            if (!(table[index / 8] & (1 << (index % 8)))) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    std::vector<char> &read() {
-
+    std::vector<char> read() {
+        auto copy = table;
+        return copy;
     }
 
     void load(const std::vector<char> &array) {
-
+        table = array;
     }
 
     friend BloomFilter<Value> &FiltersUnion(const BloomFilter<Value> &first, const BloomFilter<Value> &second);
