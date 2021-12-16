@@ -18,7 +18,7 @@ namespace Bloom {
 
     template<typename Value>
     class BloomFilter final {
-        using HashFunc = size_t (*)(Value data);
+        using HashFunc = size_t (*)(const Value& data);
         using t_BloomFilter = BloomFilter<Value>;
     public:
         BloomFilter() = default;
@@ -26,11 +26,14 @@ namespace Bloom {
         BloomFilter(const t_BloomFilter &another) = default;
 
         BloomFilter(size_t size_, HashFunc hashFunc, size_t numFunctions_) : size(size_) {
-            if (numFunctions_ < salts.size()) {
-                table = std::vector<char>{};
+            if(!hashFunc) {
+                throw BloomExceptions("Hash Function is nullptr");
+            }
+            if (numFunctions_ <= salts.size()) {
+                table = std::vector<char>(size);
                 hash = hashFunc;
                 numFunctions = numFunctions_;
-            } else{
+            } else {
                 throw BloomExceptions("numFunctions is bigger than 64");
             }
         }
@@ -49,7 +52,6 @@ namespace Bloom {
         ~BloomFilter() = default;
 
         void insert(const Value &value) {
-            /* Generate hash of the value to insert */
             auto hashValue = hash(value);
             /* Generate multiple unique hashes by XORing with values in the
              * salt table. */
@@ -65,6 +67,8 @@ namespace Bloom {
 
         bool query(const Value &value) const {
             auto hashValue = hash(value);
+            /* Generate multiple unique hashes by XORing with values in the
+             * salt table. */
             for (auto i = 0; i < numFunctions; ++i) {
                 auto uniqueHash = hashValue ^ salts[i];
                 auto index = (uniqueHash % size);
@@ -77,9 +81,8 @@ namespace Bloom {
             return true;
         }
 
-        std::vector<char> &read(std::vector<char> &copy) {
+        void read(std::vector<char> &copy) {
             copy = table;
-            return copy;
         }
 
         void load(const std::vector<char> &array) {
@@ -87,7 +90,7 @@ namespace Bloom {
         }
 
         static t_BloomFilter BloomFiltersUnion(const t_BloomFilter &first, const t_BloomFilter &second) {
-            if (first == second) {
+            if ((first.numFunctions == second.numFunctions) && (first.size == second.size) && (first.hash == second.hash) && (first.table == second.table)) {
                 return fillWith<true>(first, second);
             } else {
                 throw BloomExceptions("Bloom filters with different params cannot be united");
@@ -96,7 +99,7 @@ namespace Bloom {
 
         static t_BloomFilter
         BloomFiltersIntersection(const t_BloomFilter &first, const t_BloomFilter &second) {
-            if (first == second) {
+            if ((first.numFunctions == second.numFunctions) && (first.size == second.size) && (first.hash == second.hash) && (first.table == second.table)) {
                 return fillWith<false>(first, second);
             } else {
                 throw BloomExceptions("Bloom filters with different params cannot be intersected");
@@ -104,8 +107,9 @@ namespace Bloom {
         }
 
         bool operator==(const t_BloomFilter &another) {
-            return (numFunctions == another.numFunctions) && (size == another.size) && (hash == another.hash);
+            return (numFunctions == another.numFunctions) && (size == another.size) && (hash == another.hash) && (table == another.table);
         }
+
 
         t_BloomFilter &operator=(const t_BloomFilter &another) {
             if (this != &another) {
@@ -130,6 +134,7 @@ namespace Bloom {
             }
             return *this;
         }
+
     private:
         HashFunc hash;
         std::vector<char> table;
@@ -139,15 +144,15 @@ namespace Bloom {
 
         template<bool WithUnion>
         static BloomFilter<Value> fillWith(const BloomFilter<Value> &first, const BloomFilter<Value> &second) {
-            auto result = new BloomFilter<Value>(first.size, first.hash, first.numFunctions);
+            BloomFilter<Value> result(first.size, first.hash, first.numFunctions) ;
             /* The table is an array of bits, packed into bytes.  Round up
              * to the nearest byte. */
             auto arraySize = (first.size + 7) / 8;
             for (auto i = 0; i < arraySize; ++i) {
                 if (WithUnion) {
-                    result->table[i] = first.table[i] | second.table[i];
+                    result.table[i] = first.table[i] | second.table[i];
                 } else {
-                    result->table[i] = first.table[i] & second.table[i];
+                    result.table[i] = first.table[i] & second.table[i];
                 }
 
             }

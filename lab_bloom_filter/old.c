@@ -70,8 +70,7 @@ static const unsigned int salts[] = {
 
 BloomFilter *bloom_filter_new(unsigned int table_size,
                               BloomFilterHashFunc hash_func,
-                              unsigned int num_functions)
-{
+                              unsigned int num_functions) {
     BloomFilter *filter;
 
     /* There is a limit on the number of functions which can be
@@ -107,14 +106,12 @@ BloomFilter *bloom_filter_new(unsigned int table_size,
     return filter;
 }
 
-void bloom_filter_free(BloomFilter *bloomfilter)
-{
+void bloom_filter_free(BloomFilter *bloomfilter) {
     free(bloomfilter->table);
     free(bloomfilter);
 }
 
-void bloom_filter_insert(BloomFilter *bloomfilter, BloomFilterValue value)
-{
+void bloom_filter_insert(BloomFilter *bloomfilter, BloomFilterValue value) {
     unsigned int hash;
     unsigned int subhash;
     unsigned int index;
@@ -128,7 +125,7 @@ void bloom_filter_insert(BloomFilter *bloomfilter, BloomFilterValue value)
     /* Generate multiple unique hashes by XORing with values in the
      * salt table. */
 
-    for (i=0; i<bloomfilter->num_functions; ++i) {
+    for (i = 0; i < bloomfilter->num_functions; ++i) {
 
         /* Generate a unique hash */
 
@@ -147,8 +144,7 @@ void bloom_filter_insert(BloomFilter *bloomfilter, BloomFilterValue value)
     }
 }
 
-int bloom_filter_query(BloomFilter *bloomfilter, BloomFilterValue value)
-{
+int bloom_filter_query(BloomFilter *bloomfilter, BloomFilterValue value) {
     unsigned int hash;
     unsigned int subhash;
     unsigned int index;
@@ -163,7 +159,7 @@ int bloom_filter_query(BloomFilter *bloomfilter, BloomFilterValue value)
     /* Generate multiple unique hashes by XORing with values in the
      * salt table. */
 
-    for (i=0; i<bloomfilter->num_functions; ++i) {
+    for (i = 0; i < bloomfilter->num_functions; ++i) {
 
         /* Generate a unique hash */
 
@@ -193,8 +189,7 @@ int bloom_filter_query(BloomFilter *bloomfilter, BloomFilterValue value)
     return 1;
 }
 
-void bloom_filter_read(BloomFilter *bloomfilter, unsigned char *array)
-{
+void bloom_filter_read(BloomFilter *bloomfilter, unsigned char *array) {
     unsigned int array_size;
 
     /* The table is an array of bits, packed into bytes.  Round up
@@ -207,8 +202,7 @@ void bloom_filter_read(BloomFilter *bloomfilter, unsigned char *array)
     memcpy(array, bloomfilter->table, array_size);
 }
 
-void bloom_filter_load(BloomFilter *bloomfilter, unsigned char *array)
-{
+void bloom_filter_load(BloomFilter *bloomfilter, unsigned char *array) {
     unsigned int array_size;
 
     /* The table is an array of bits, packed into bytes.  Round up
@@ -221,8 +215,7 @@ void bloom_filter_load(BloomFilter *bloomfilter, unsigned char *array)
     memcpy(bloomfilter->table, array, array_size);
 }
 
-BloomFilter *bloom_filter_union(BloomFilter *filter1, BloomFilter *filter2)
-{
+BloomFilter *bloom_filter_union(BloomFilter *filter1, BloomFilter *filter2) {
     BloomFilter *result;
     unsigned int i;
     unsigned int array_size;
@@ -253,7 +246,7 @@ BloomFilter *bloom_filter_union(BloomFilter *filter1, BloomFilter *filter2)
 
     /* Populate the table of the new filter */
 
-    for (i=0; i<array_size; ++i) {
+    for (i = 0; i < array_size; ++i) {
         result->table[i] = filter1->table[i] | filter2->table[i];
     }
 
@@ -261,8 +254,7 @@ BloomFilter *bloom_filter_union(BloomFilter *filter1, BloomFilter *filter2)
 }
 
 BloomFilter *bloom_filter_intersection(BloomFilter *filter1,
-                                       BloomFilter *filter2)
-{
+                                       BloomFilter *filter2) {
     BloomFilter *result;
     unsigned int i;
     unsigned int array_size;
@@ -293,7 +285,7 @@ BloomFilter *bloom_filter_intersection(BloomFilter *filter1,
 
     /* Populate the table of the new filter */
 
-    for (i=0; i<array_size; ++i) {
+    for (i = 0; i < array_size; ++i) {
         result->table[i] = filter1->table[i] & filter2->table[i];
     }
 

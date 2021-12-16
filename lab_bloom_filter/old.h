@@ -57,7 +57,7 @@ typedef struct _BloomFilter BloomFilter;
 typedef void *BloomFilterValue;
 
 /**
- * Hash function used to generate hash values for values inserted into a
+ * IntHash function used to generate hash values for values inserted into a
  * bloom filter.
  *
  * @param data   The value to generate a hash value for.
@@ -73,7 +73,7 @@ typedef unsigned int (*BloomFilterHashFunc)(BloomFilterValue data);
  *                         the table size, the more elements can be
  *                         stored, and the lesser the chance of false
  *                         positives.
- * @param hash_func        Hash function to use on values stored in the
+ * @param hash_func        IntHash function to use on values stored in the
  *                         filter.
  * @param num_functions    Number of hash functions to apply to each
  *                         element on insertion.  This running time for
