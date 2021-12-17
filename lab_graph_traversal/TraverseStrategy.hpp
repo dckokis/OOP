@@ -18,7 +18,7 @@ public:
     explicit TraverseStrategy(std::shared_ptr<Finder> traverse_) : traverse(std::move(
             traverse_)) {};
 
-    virtual void execute(std::shared_ptr<Graph> graph, const vertex &begin) = 0;
+    virtual void execute(const Graph& graph, const vertex &begin) = 0;
 
     virtual ~TraverseStrategy() = default;
 

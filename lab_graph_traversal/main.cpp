@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 
 TEST(DFS, EmptyGraph) {
-    auto g = std::make_shared<Graph>();
+    Graph g;
     std::shared_ptr<Finder> tr = std::make_shared<PathToVertex>(4);
     DFS s(tr);
     s.execute(g, 1);
@@ -12,9 +12,9 @@ TEST(DFS, EmptyGraph) {
 }
 
 TEST(DFS, VisitNonExistentVertex) {
-    auto g = std::make_shared<Graph>();
-    g->addEdge(1, 2);
-    g->addEdge(1, 3);
+    Graph g;
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
 
     std::shared_ptr<Finder> tr = std::make_shared<PathToVertex>(4);
     DFS s(tr);
@@ -23,23 +23,23 @@ TEST(DFS, VisitNonExistentVertex) {
 }
 
 TEST (DFS, VisitExistentVertex) {
-    auto g = std::make_shared<Graph>();
-    g->addEdge(1, 2);
-    g->addEdge(2, 1);
-    g->addEdge(1, 3);
-    g->addEdge(3, 1);
-    g->addEdge(1, 4);
-    g->addEdge(4, 1);
-    g->addEdge(4, 5);
-    g->addEdge(5, 4);
-    g->addEdge(4, 6);
-    g->addEdge(6, 4);
-    g->addEdge(4, 7);
-    g->addEdge(7, 4);
-    g->addEdge(6, 8);
-    g->addEdge(8, 6);
-    g->addEdge(6, 9);
-    g->addEdge(9, 6);
+    Graph g;
+    g.addEdge(1, 2);
+    g.addEdge(2, 1);
+    g.addEdge(1, 3);
+    g.addEdge(3, 1);
+    g.addEdge(1, 4);
+    g.addEdge(4, 1);
+    g.addEdge(4, 5);
+    g.addEdge(5, 4);
+    g.addEdge(4, 6);
+    g.addEdge(6, 4);
+    g.addEdge(4, 7);
+    g.addEdge(7, 4);
+    g.addEdge(6, 8);
+    g.addEdge(8, 6);
+    g.addEdge(6, 9);
+    g.addEdge(9, 6);
 
     std::shared_ptr<Finder> tr0 = std::make_shared<PathToVertex>(1);
     DFS s0(tr0);
@@ -70,9 +70,9 @@ TEST (DFS, VisitExistentVertex) {
 }
 
 TEST(DFS, VisitNonExistentEdge) {
-    auto g = std::make_shared<Graph>();
-    g->addEdge(1, 2);
-    g->addEdge(1, 3);
+    Graph g;
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
 
     std::shared_ptr<Finder> tr = std::make_shared<PathToEdge>(1, 4);
     DFS s(tr);
@@ -81,15 +81,15 @@ TEST(DFS, VisitNonExistentEdge) {
 }
 
 TEST(DFS, VisitExistentEdge) {
-    auto g = std::make_shared<Graph>();
-    g->addEdge(1, 2);
-    g->addEdge(1, 3);
-    g->addEdge(1, 4);
-    g->addEdge(4, 5);
-    g->addEdge(4, 6);
-    g->addEdge(4, 7);
-    g->addEdge(6, 8);
-    g->addEdge(6, 9);
+    Graph g;
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
+    g.addEdge(1, 4);
+    g.addEdge(4, 5);
+    g.addEdge(4, 6);
+    g.addEdge(4, 7);
+    g.addEdge(6, 8);
+    g.addEdge(6, 9);
 
     std::shared_ptr<Finder> tr = std::make_shared<PathToEdge>(1, 4);
     DFS s(tr);
@@ -114,7 +114,7 @@ TEST(DFS, VisitExistentEdge) {
 }
 
 TEST(BFS, EmptyGraph) {
-    auto g = std::make_shared<Graph>();
+    Graph g;
     std::shared_ptr<Finder> tr = std::make_shared<PathToVertex>(4);
     BFS s(tr);
     s.execute(g, 1);
@@ -122,9 +122,9 @@ TEST(BFS, EmptyGraph) {
 }
 
 TEST(BFS, VisitNonExistentVertex) {
-    auto g = std::make_shared<Graph>();
-    g->addEdge(1, 2);
-    g->addEdge(1, 3);
+    Graph g;
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
 
     std::shared_ptr<Finder> tr = std::make_shared<PathToVertex>(4);
     BFS s(tr);
@@ -133,15 +133,15 @@ TEST(BFS, VisitNonExistentVertex) {
 }
 
 TEST(BFS, VisitExistentVertex) {
-    auto g = std::make_shared<Graph>();
-    g->addEdge(1, 2);
-    g->addEdge(1, 3);
-    g->addEdge(1, 4);
-    g->addEdge(4, 5);
-    g->addEdge(4, 6);
-    g->addEdge(4, 7);
-    g->addEdge(6, 8);
-    g->addEdge(6, 9);
+    Graph g;
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
+    g.addEdge(1, 4);
+    g.addEdge(4, 5);
+    g.addEdge(4, 6);
+    g.addEdge(4, 7);
+    g.addEdge(6, 8);
+    g.addEdge(6, 9);
 
     std::shared_ptr<Finder> tr0 = std::make_shared<PathToVertex>(1);
     BFS s0(tr0);
@@ -172,9 +172,9 @@ TEST(BFS, VisitExistentVertex) {
 }
 
 TEST(BFS, VisitNonExistentEdge) {
-    auto g = std::make_shared<Graph>();
-    g->addEdge(1, 2);
-    g->addEdge(1, 3);
+    Graph g;
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
 
     std::shared_ptr<Finder> tr = std::make_shared<PathToEdge>(1, 4);
     BFS s(tr);
@@ -183,23 +183,23 @@ TEST(BFS, VisitNonExistentEdge) {
 }
 
 TEST(BFS, VisitExistentEdge) {
-    auto g = std::make_shared<Graph>();
-    g->addEdge(1, 2);
-    g->addEdge(2, 1);
-    g->addEdge(1, 3);
-    g->addEdge(3, 1);
-    g->addEdge(1, 4);
-    g->addEdge(4, 1);
-    g->addEdge(4, 5);
-    g->addEdge(5, 4);
-    g->addEdge(4, 6);
-    g->addEdge(6, 4);
-    g->addEdge(4, 7);
-    g->addEdge(7, 4);
-    g->addEdge(6, 8);
-    g->addEdge(8, 6);
-    g->addEdge(6, 9);
-    g->addEdge(9, 6);
+    Graph g;
+    g.addEdge(1, 2);
+    g.addEdge(2, 1);
+    g.addEdge(1, 3);
+    g.addEdge(3, 1);
+    g.addEdge(1, 4);
+    g.addEdge(4, 1);
+    g.addEdge(4, 5);
+    g.addEdge(5, 4);
+    g.addEdge(4, 6);
+    g.addEdge(6, 4);
+    g.addEdge(4, 7);
+    g.addEdge(7, 4);
+    g.addEdge(6, 8);
+    g.addEdge(8, 6);
+    g.addEdge(6, 9);
+    g.addEdge(9, 6);
 
     std::shared_ptr<Finder> tr = std::make_shared<PathToEdge>(1, 4);
     BFS s(tr);

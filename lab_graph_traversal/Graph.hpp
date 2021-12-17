@@ -16,7 +16,7 @@ public:
         graph[edgeEnd];
     }
 
-    const std::vector<vertex> &getNeighbours(const vertex &v) {
+    [[nodiscard]] const std::vector<vertex> &getNeighbours(const vertex &v) const{
         return graph.at(v);
     }
 

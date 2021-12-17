@@ -10,8 +10,8 @@ public:
 
     explicit DFS(std::shared_ptr<Finder> traverse_) : TraverseStrategy(std::move(traverse_)) {};
 
-    void execute(std::shared_ptr<Graph> graph, const vertex &begin_) override {
-        if (graph->getSize() == 0) {
+    void execute(const Graph& graph, const vertex &begin_) override {
+        if (graph.getSize() == 0) {
             return;
         }
         std::unordered_map<vertex, vertex> previous;
@@ -31,7 +31,7 @@ public:
                     break;
                 }
 
-                const auto &neighbours = graph->getNeighbours(cur);
+                const auto &neighbours = graph.getNeighbours(cur);
                 for (auto i = neighbours.crbegin(); i != neighbours.crend(); ++i) {
                     if (*i != previous[cur]) {
                         stack.push(std::make_pair(*i, false));
