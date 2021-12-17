@@ -207,17 +207,19 @@ public:
     }
 
     btree &operator=(const btree &another) {
-        clear();
-        compare = another.compare;
-        size_ = another.size_;
-        root = another.root;
+        if(this != &another) {
+            clear();
+            compare = another.compare;
+            size_ = another.size_;
+            root = another.root;
+        }
         return *this;
     }
 
     btree &operator=(btree &&another) noexcept {
-        swap(root, another.root);
-        swap(size_, another.size_);
-        swap(compare, another.compare);
+        std::swap(root, another.root);
+        std::swap(size_, another.size_);
+        std::swap(compare, another.compare);
         return *this;
     }
 

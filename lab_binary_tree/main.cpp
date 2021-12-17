@@ -57,3 +57,61 @@ TEST(Constructor, Copy)
         ASSERT_EQ(t1.at(i->first), t2.at(i->first));
     }
 }
+
+TEST(Constructor, Move) {
+    btree<custom, int> t1;
+    const auto key_0 = custom(0, "zero");
+    const auto key_1 = custom(0.1, "one");
+    const auto key_2 = custom(0.2, "two");
+    t1[key_2] = 2;
+    t1[key_1] = 1;
+    t1[key_0] = 0;
+    auto t2 = btree<custom, int>(std::move(t1));
+    ASSERT_TRUE(t1.empty());
+    ASSERT_EQ(t2[key_2], 2);
+    ASSERT_EQ(t2[key_1], 1);
+    ASSERT_EQ(t2[key_0], 0);
+}
+
+TEST(Operator, CopyAssigment) {
+    btree<std::string, std::string> t1;
+    t1["One"] = "_one";
+    auto& t2 = t1;
+    ASSERT_TRUE(!t2.empty());
+    ASSERT_EQ(t2.size(), 1);
+    ASSERT_EQ((t2.find("One"))->second, "_one");
+}
+
+TEST(Operator, MoveAssigment) {
+    btree<custom, std::string> t1;
+    const auto key_0 = custom(0, "zero");
+    const auto key_1 = custom(0.1, "one");
+    const auto key_2 = custom(0.2, "two");
+    t1[key_2] = "str2";
+    t1[key_1] = "str1";
+    t1[key_0] = "str0";
+    auto t2 = std::move(t1);
+    ASSERT_TRUE(t1.empty());
+    ASSERT_EQ(t2[key_2], "str2");
+    ASSERT_EQ(t2[key_1], "str1");
+    ASSERT_EQ(t2[key_0], "str0");
+
+    t1 = std::move(t2);
+    ASSERT_TRUE(t2.empty());
+    ASSERT_EQ(t1[key_2], "str2");
+    ASSERT_EQ(t1[key_1], "str1");
+    ASSERT_EQ(t1[key_0], "str0");
+}
+
+TEST(Operator, Brackets) {
+    const auto key_1 = custom(0.2, "one");
+    const auto key_2 = custom(0.1, "zero");
+    btree<custom, std::string> t;
+    t[key_1] = "_one";
+    t[key_2] = "_two";
+    t[key_1] = "_three";
+    ASSERT_TRUE(!t.empty());
+    ASSERT_EQ(t.size(), 2);
+    ASSERT_EQ(t[key_1], "_three");
+    ASSERT_EQ(t[key_2], "_two");
+}
