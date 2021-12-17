@@ -30,7 +30,7 @@ namespace Bloom {
                 throw BloomExceptions("Hash Function is nullptr");
             }
             if (numFunctions_ <= salts.size()) {
-                table = std::vector<char>(size);
+                table = std::vector<unsigned char>(size);
                 hash = hashFunc;
                 numFunctions = numFunctions_;
             } else {
@@ -81,16 +81,16 @@ namespace Bloom {
             return true;
         }
 
-        void read(std::vector<char> &copy) {
+        void read(std::vector<unsigned char> &copy) {
             copy = table;
         }
 
-        void load(const std::vector<char> &array) {
+        void load(const std::vector<unsigned char> &array) {
             table = array;
         }
 
         static t_BloomFilter BloomFiltersUnion(const t_BloomFilter &first, const t_BloomFilter &second) {
-            if ((first.numFunctions == second.numFunctions) && (first.size == second.size) && (first.hash == second.hash) && (first.table == second.table)) {
+            if ((first.numFunctions == second.numFunctions) && (first.size == second.size) && (first.hash == second.hash)) {
                 return fillWith<true>(first, second);
             } else {
                 throw BloomExceptions("Bloom filters with different params cannot be united");
@@ -99,7 +99,7 @@ namespace Bloom {
 
         static t_BloomFilter
         BloomFiltersIntersection(const t_BloomFilter &first, const t_BloomFilter &second) {
-            if ((first.numFunctions == second.numFunctions) && (first.size == second.size) && (first.hash == second.hash) && (first.table == second.table)) {
+            if ((first.numFunctions == second.numFunctions) && (first.size == second.size) && (first.hash == second.hash)) {
                 return fillWith<false>(first, second);
             } else {
                 throw BloomExceptions("Bloom filters with different params cannot be intersected");
@@ -137,7 +137,7 @@ namespace Bloom {
 
     private:
         HashFunc hash;
-        std::vector<char> table;
+        std::vector<unsigned char> table;
         size_t size{};
         size_t numFunctions{};
         static std::array<size_t, 64> salts;
