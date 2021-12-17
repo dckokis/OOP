@@ -21,15 +21,14 @@ public:
 private:
     class TreeNode final {
     private:
-        using value_ptr = std::unique_ptr<value_type, std::function<void(value_type *)>>;
-        value_ptr data;
+        pointer data;
         std::shared_ptr<TreeNode> left, right;
         std::weak_ptr<TreeNode> parent;
     public:
-        explicit TreeNode(value_ptr &&pair) : data(std::move(pair)) {}
+        explicit TreeNode(pointer &&pair) : data(std::move(pair)) {}
 
         explicit TreeNode(Key &&key, Value &&value) {
-            data = std::make_unique<TreeNode>(value_ptr(key, value));
+            data = new std::pair<const Key, Value>(key, value);
         }
 
         std::shared_ptr<TreeNode> getRight() {
@@ -56,7 +55,7 @@ private:
             parent = new_parent;
         }
 
-        value_ptr getData() {
+        pointer getData() {
             return data;
         }
     };
@@ -125,7 +124,7 @@ private:
         }
 
     public:
-        TreeIterator() = delete;
+        TreeIterator() = default;
 
         explicit TreeIterator(const std::shared_ptr<TreeNode> &node, const bool end_flag = false) {
             node_ = node;
@@ -174,7 +173,7 @@ private:
             if (end_flag_ || !node) {
                 throw std::out_of_range("skip list iterator out of range");
             }
-            return node->getData().get();
+            return node->getData();
         }
 
         bool operator==(const TreeIterator &another) const {
@@ -188,7 +187,7 @@ private:
 
     std::shared_ptr<TreeNode> root{};
     size_type size_{};
-    inline static constexpr Compare compare = Compare();
+    inline static Compare compare = Compare();
 public:
     using iterator = TreeIterator<false>;
     using const_iterator = TreeIterator<true>;
@@ -210,9 +209,8 @@ public:
     btree &operator=(const btree &another) {
         clear();
         compare = another.compare;
-        for (auto i = another.begin(); i != another.end(); ++i) {
-            (*this)[i->first] = i->second;
-        }
+        size_ = another.size_;
+        root = another.root;
         return *this;
     }
 
@@ -246,11 +244,11 @@ public:
     }
 
     iterator end() {
-        return {};
+        return iterator(root, true);
     }
 
     const_iterator end() const {
-        return {};
+        return const_iterator(root, true);
     }
 
     [[nodiscard]] bool empty() const {
@@ -304,11 +302,11 @@ public:
         } else if (val.first == prev->getData()->first) {
             return std::make_pair(iterator(prev), false);
         } else if (compare(val.first, prev->getData()->first)) {
-            prev->getLeft() = new_node;
+            prev->setLeft(new_node);
         } else {
-            prev->getRight() = new_node;
+            prev->setRight(new_node);
         }
-        new_node->getParent() = prev;
+        new_node->setParent(prev);
         ++size_;
         return std::make_pair(iterator(new_node), true);
     }
