@@ -64,63 +64,53 @@ private:
     struct TreeIterator {
     protected:
         std::weak_ptr<TreeNode> node_{};
-        bool end_flag_{};
 
         friend class tree;
 
         void increment() {
             std::shared_ptr<TreeNode> node = node_.lock();
-            if (end_flag_) {
+            if (!node) {
                 throw std::out_of_range("skip list iterator out of range");
             }
             if (node->getRight()) {
-                if (!node->getRight()->getLeft()) {
-                    node = node->getRight();
-                } else {
-                    node = node->getRight();
-                    while (node->getLeft()) {
-                        node = node->getLeft();
-                    }
+                node = node->getRight();
+                while (node->getLeft()) {
+                    node = node->getLeft();
                 }
+                node_ = node;
+                return;
+            }
+            auto data = node->getData();
+            auto parentData = node->getParent().lock()->getData();
+            if (compare(data->first, parentData->first)) {
+                node = node->getParent().lock();
             } else {
-                while (node->getParent().lock() && node == node->getParent().lock()->getRight()) {
-                    node = node->getParent().lock();
-                }
-                if (!node->getParent().lock()) {
-                    end_flag_ = true;
-                } else {
-                    node = node->getParent().lock();
-                }
+                node = node->getParent().lock()->getParent().lock();
             }
             node_ = node;
         }
 
         void decrement() {
             std::shared_ptr<TreeNode> node = node_.lock();
-            if (end_flag_) {
+            if (!node) {
                 while (node->getRight()) {
                     node = node->getRight();
                 }
-                end_flag_ = false;
-            } else if (node->getLeft()) {
-                if (!node->getLeft()->getRight()) {
-                    node = node->getLeft();
-                } else {
-                    node = node->getLeft();
-                    while (node->getRight()) {
-                        node = node->getRight();
-                    }
-                }
-            } else {
-                while (node->getParent().lock() && node == node->getParent().lock()->getLeft()) {
+                node_ = node;
+                return;
+            }
+            if (node->getLeft()) {
+                node = node->getRight();
+                while (node->getRight()) {
                     node = node->getParent().lock();
                 }
-                if (!node->getParent().lock()) {
-                    throw std::out_of_range("skip list iterator out of range");
+                auto parent = node->getParent().lock();
+                if (parent) {
+                    node = parent;
                 }
-                node = node->getParent().lock();
+                node_ = node;
+                return;
             }
-            node_ = node;
         }
 
     public:
@@ -128,7 +118,6 @@ private:
 
         explicit TreeIterator(const std::shared_ptr<TreeNode> &node, const bool end_flag = false) {
             node_ = node;
-            end_flag_ = end_flag;
         }
 
         using value_type = std::conditional_t<IsConst, const value_type, value_type>;
@@ -145,7 +134,7 @@ private:
 
         TreeIterator operator++(int) {
             auto tmp = *this;
-            increment();
+            ++this;
             return tmp;
         }
 
@@ -156,28 +145,29 @@ private:
 
         TreeIterator operator--(int) {
             auto tmp = *this;
-            decrement();
+            --this;
             return tmp;
         }
 
         reference operator*() const {
             std::shared_ptr<TreeNode> node = node_.lock();
-            if (end_flag_ || !node) {
-                throw std::out_of_range("skip list iterator out of range");
+            if (!node) {
+                throw std::out_of_range("btree iterator out of range");
             }
             return *(node->getData());
         }
 
         pointer operator->() const {
             std::shared_ptr<TreeNode> node = node_.lock();
-            if (end_flag_ || !node) {
-                throw std::out_of_range("skip list iterator out of range");
+            if (!node) {
+                throw std::out_of_range("btree iterator out of range");
             }
             return node->getData();
         }
 
         bool operator==(const TreeIterator &another) const {
-            return end_flag_ == another.end_flag_ && node_.lock() == another.node_.lock();
+            //if (!another.node_.lock() && !node_.lock()) return true;
+            return node_.lock() == another.node_.lock();
         }
 
         bool operator!=(const TreeIterator &another) const {
@@ -207,11 +197,13 @@ public:
     }
 
     btree &operator=(const btree &another) {
-        if(this != &another) {
-            clear();
+        if (this != &another) {
+            //clear();
             compare = another.compare;
-            size_ = another.size_;
-            root = another.root;
+            //size_ = another.size_;
+            for (auto i = another.begin(); i != another.end(); ++i) {
+                insert(std::make_pair(i->first, i->second));
+            }
         }
         return *this;
     }
@@ -246,11 +238,11 @@ public:
     }
 
     iterator end() {
-        return iterator(root, true);
+        return iterator{};
     }
 
     const_iterator end() const {
-        return const_iterator(root, true);
+        return const_iterator{};
     }
 
     [[nodiscard]] bool empty() const {
@@ -282,7 +274,7 @@ public:
     }
 
     std::pair<iterator, bool> insert(const value_type &val) {
-        auto new_node = std::make_shared<TreeNode>(std::move(Key(val.first)), std::move(Value(val.second)));
+        auto new_node = std::make_shared<TreeNode>(Key(val.first), Value(val.second));
         if (!root) {
             root = new_node;
             ++size_;
