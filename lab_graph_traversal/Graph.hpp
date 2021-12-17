@@ -8,6 +8,10 @@ public:
     using vertex = int;
 
    void addEdge(const vertex &edgeBegin, const vertex &edgeEnd) {
+       auto neigbours = graph[edgeBegin];
+       if(std::find(neigbours.begin(), neigbours.end(), edgeEnd) != neigbours.end()) {
+           return;
+       }
         graph[edgeBegin].push_back(edgeEnd);
         graph[edgeEnd];
     }
@@ -16,7 +20,7 @@ public:
         return graph.at(v);
     }
 
-    [[nodiscard]] const size_t getSize() const {
+    [[nodiscard]] size_t getSize() const {
         return graph.size();
     }
 

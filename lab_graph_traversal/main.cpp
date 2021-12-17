@@ -1,5 +1,6 @@
-#include <iostream>
 #include "Strategy.hpp"
+#include "DFS.hpp"
+#include "BFS.hpp"
 #include <gtest/gtest.h>
 
 TEST(DFS, EmptyGraph) {
