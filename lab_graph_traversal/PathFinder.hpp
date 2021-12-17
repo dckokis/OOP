@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Traverse.hpp"
+#include "Finder.hpp"
 
-class PathFinder : public Traverse {
+class PathFinder : public Finder {
 public:
     using vertex = typename Graph::vertex;
 

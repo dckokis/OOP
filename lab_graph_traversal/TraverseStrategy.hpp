@@ -5,27 +5,27 @@
 #include <utility>
 #include <memory>
 #include "Graph.hpp"
-#include "Traverse.hpp"
+#include "Finder.hpp"
 #include "PathFinder.hpp"
 #include "PathTo.hpp"
 
-class Strategy {
+class TraverseStrategy {
 public:
     using vertex = typename Graph::vertex;
 
-    Strategy() = delete;
+    TraverseStrategy() = delete;
 
-    explicit Strategy(Graph &_graph, std::shared_ptr<Traverse> &traverse_) : graph(_graph), traverse(
-            traverse_) {};
+    explicit TraverseStrategy(std::shared_ptr<Finder> traverse_) : traverse(std::move(
+            traverse_)) {};
 
-    virtual void execute(const vertex &begin) = 0;
+    virtual void execute(std::shared_ptr<Graph> graph, const vertex &begin) = 0;
 
-    virtual ~Strategy() = default;
+    virtual ~TraverseStrategy() = default;
 
 protected:
-    Graph &graph;
-    std::shared_ptr<Traverse> traverse;
-    std::unordered_map<vertex, vertex> previous;
+    //Graph &graph;
+    std::shared_ptr<Finder> traverse;
+    //std::unordered_map<vertex, vertex> previous;
 
     void begin(const vertex &begin) const { this->traverse->begin(begin); };
 

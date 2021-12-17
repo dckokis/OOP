@@ -1,47 +1,47 @@
 #pragma once
 
 #include <memory>
-#include "Strategy.hpp"
+#include <utility>
+#include "TraverseStrategy.hpp"
 
-class DFS final : public Strategy {
+class DFS final : public TraverseStrategy {
 public:
     DFS() = delete;
 
-    explicit DFS(Graph &_graph, std::shared_ptr<Traverse> &traverse_) : Strategy(
-            _graph, traverse_) {};
+    explicit DFS(std::shared_ptr<Finder> traverse_) : TraverseStrategy(std::move(traverse_)) {};
 
-    void execute(const vertex &begin) override {
-        if (this->graph.getSize() == 0) {
+    void execute(std::shared_ptr<Graph> graph, const vertex &begin_) override {
+        if (graph->getSize() == 0) {
             return;
         }
-        this->previous.clear();
+        std::unordered_map<vertex, vertex> previous;
         std::stack<std::pair<vertex, bool>> stack;
-        this->begin(begin);
+        begin(begin_);
 
-        stack.push(std::make_pair(begin, false));
-        this->previous[begin] = begin;
+        stack.push(std::make_pair(begin_, false));
+        previous[begin_] = begin_;
         while (!stack.empty()) {
             auto&[cur, attended] = stack.top();
             if (!attended) {
-                this->visitVertex(cur);
-                this->visitEdge(this->previous.at(cur), cur);
+                visitVertex(cur);
+                visitEdge(previous.at(cur), cur);
                 attended = true;
 
-                if (this->traverse->IsFinished()) {
+                if (traverse->IsFinished()) {
                     break;
                 }
 
-                const auto &neighbours = this->graph.getNeighbours(cur);
+                const auto &neighbours = graph->getNeighbours(cur);
                 for (auto i = neighbours.crbegin(); i != neighbours.crend(); ++i) {
-                    if (*i != this->previous[cur]) {
+                    if (*i != previous[cur]) {
                         stack.push(std::make_pair(*i, false));
-                        this->previous[*i] = cur;
+                        previous[*i] = cur;
                     }
                 }
             } else {
                 stack.pop();
             }
         }
-        this->end();
+        end();
     }
 };
