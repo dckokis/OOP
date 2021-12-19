@@ -45,12 +45,12 @@ TEST(Constructor, CustomComp)
 
 TEST(Constructor, Copy)
 {
-    btree<std::string, custom> t1;
-    t1["Two"] = custom(0.5, "one");
-    t1["One"] = custom(0.1, "two");
-    t1["Four"] = custom(0.4, "three");
-    t1["Three"] = custom(0.11, "five");
-    auto t2 = btree<std::string, custom>(t1);
+    btree<int, custom> t1;
+    t1[2] = custom(0.5, "one");
+    t1[1] = custom(0.1, "two");
+    t1[4] = custom(0.4, "three");
+    t1[3] = custom(0.11, "five");
+    auto t2 = btree<int, custom>(t1);
     ASSERT_TRUE(!t2.empty());
     ASSERT_EQ(t2.size(), 4);
     for (auto i = t1.begin(); i != t1.end(); ++i){

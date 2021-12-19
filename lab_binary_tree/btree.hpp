@@ -27,8 +27,15 @@ private:
     public:
         explicit TreeNode(pointer &&pair) : data(std::move(pair)) {}
 
-        explicit TreeNode(Key &&key, Value &&value) {
+        explicit TreeNode(const Key &key, const Value &value) {
             data = new std::pair<const Key, Value>(key, value);
+        }
+
+        TreeNode(TreeNode *another) {
+            data = another->data;
+            left = another->getLeft();
+            right = another->getRight();
+            parent = another->getParent();
         }
 
         std::shared_ptr<TreeNode> getRight() {
@@ -67,56 +74,10 @@ private:
 
         friend class tree;
 
-        void increment() {
-            std::shared_ptr<TreeNode> node = node_.lock();
-            if (!node) {
-                throw std::out_of_range("skip list iterator out of range");
-            }
-            if (node->getRight()) {
-                node = node->getRight();
-                while (node->getLeft()) {
-                    node = node->getLeft();
-                }
-                node_ = node;
-                return;
-            }
-            auto data = node->getData();
-            auto parentData = node->getParent().lock()->getData();
-            if (compare(data->first, parentData->first)) {
-                node = node->getParent().lock();
-            } else {
-                node = node->getParent().lock()->getParent().lock();
-            }
-            node_ = node;
-        }
-
-        void decrement() {
-            std::shared_ptr<TreeNode> node = node_.lock();
-            if (!node) {
-                while (node->getRight()) {
-                    node = node->getRight();
-                }
-                node_ = node;
-                return;
-            }
-            if (node->getLeft()) {
-                node = node->getRight();
-                while (node->getRight()) {
-                    node = node->getParent().lock();
-                }
-                auto parent = node->getParent().lock();
-                if (parent) {
-                    node = parent;
-                }
-                node_ = node;
-                return;
-            }
-        }
-
     public:
         TreeIterator() = default;
 
-        explicit TreeIterator(const std::shared_ptr<TreeNode> &node, const bool end_flag = false) {
+        explicit TreeIterator(std::shared_ptr<TreeNode> node, const bool end_flag = false) {
             node_ = node;
         }
 
@@ -128,18 +89,92 @@ private:
         using distance_type = difference_type;
 
         TreeIterator &operator++() {
-            increment();
+            std::shared_ptr<TreeNode> node = node_.lock();
+            if (!node) {
+                throw std::out_of_range("btree iterator out of range");
+            }
+            if (node->getRight()) {
+                node = node->getRight();
+                while (node->getLeft()) {
+                    node = node->getLeft();
+                }
+                node_ = node;
+                return *this;
+            }
+            auto data = node->getData();
+            auto parent = node->getParent().lock();
+            if (!parent) {
+                node = nullptr;
+                node_ = node;
+                return *this;
+            }
+            auto parentData = parent->getData();
+            if (compare(data->first, parentData->first)) {
+                node = parent;
+            } else {
+                auto cur = parent;
+                auto curData = cur->getData();
+                while (compare(curData->first, data->first)) {
+                    auto curParent = cur->getParent().lock();
+                    if (curParent) {
+                        cur = curParent;
+                    } else {
+                        node = nullptr;
+                        node_ = node;
+                        return *this;
+                    }
+                }
+                node = cur;
+            }
+            node_ = node;
             return *this;
         }
 
         TreeIterator operator++(int) {
             auto tmp = *this;
-            ++this;
+            ++(*this);
             return tmp;
         }
 
         TreeIterator &operator--() {
-            decrement();
+            std::shared_ptr<TreeNode> node = node_.lock();
+            if (!node) {
+                throw std::out_of_range("btree iterator out of range");
+            }
+            if (node->getLeft()) {
+                node = node->getLeft();
+                while (node->getRight()) {
+                    node = node->getRight();
+                }
+                node_ = node;
+                return *this;
+            }
+            auto data = node->getData();
+            auto parent = node->getParent().lock();
+            if (!parent) {
+                node = nullptr;
+                node_ = node;
+                return *this;
+            }
+            auto parentData = parent->getData();
+            if (compare(parentData->first, data->first)) {
+                node = parent;
+            } else {
+                auto cur = parent;
+                auto curData = cur->getData();
+                while (compare(data->first, curData->first)) {
+                    auto curParent = cur->getParent().lock();
+                    if (curParent) {
+                        cur = curParent;
+                    } else {
+                        node = nullptr;
+                        node_ = node;
+                        return *this;
+                    }
+                }
+                node = cur;
+            }
+            node_ = node;
             return *this;
         }
 
@@ -166,7 +201,6 @@ private:
         }
 
         bool operator==(const TreeIterator &another) const {
-            //if (!another.node_.lock() && !node_.lock()) return true;
             return node_.lock() == another.node_.lock();
         }
 
@@ -198,12 +232,18 @@ public:
 
     btree &operator=(const btree &another) {
         if (this != &another) {
-            //clear();
+            clear();
             compare = another.compare;
-            //size_ = another.size_;
-            for (auto i = another.begin(); i != another.end(); ++i) {
+            auto rootIter = iterator(another.root);
+            for (auto i = rootIter; i != another.begin(); --i) {
                 insert(std::make_pair(i->first, i->second));
             }
+//            for (auto i = rootIter; i != another.begin(); ++i) {
+//                insert(std::make_pair(i->first, i->second));
+//            }
+//            for (auto i = another.begin(); i != another.end(); ++i) {
+//                insert(std::make_pair(i->first, i->second));
+//            }
         }
         return *this;
     }
