@@ -1,251 +1,215 @@
-#include "TestWrapper.hpp"
+#include "Adapter.hpp"
 #include <gtest/gtest.h>
 #include "bloomFilter.hpp"
-#include "TestWrapper.hpp"
 
-using namespace Bloom;
+using namespace BloomFilterNamespace;
 using namespace std;
-unsigned int hashf(void* data)
-{
-    return std::hash<void*>()(data);
+
+unsigned int hashf(void *data) {
+    return std::hash<void *>()(data);
 }
 
-class BloomFilterTest : public ::testing::Test
-{
+class BloomFilterTest : public testing::Test {
 protected:
-    baseFilter<void*>* bf1;
-    baseFilter<void*>* bf2;
-    baseFilter<void*>* bf3;
-    baseFilter<void*>* bf4;
-    baseFilter<void*>* bf5;
+    BaseFilter<void *> *bloomFirst;
+    BaseFilter<void *> *bloomSecond;
+    BaseFilter<void *> *bloomThird;
+    BaseFilter<void *> *bloomFourth;
+    BaseFilter<void *> *bloomFifth;
 
-    void SetUp() override
-    {
-        /*  bf1 = new BloomFilterAdapter(4, hashf, 4);
-          bf2 = new BloomFilterAdapter(4, hashf, 4);
-          bf3 = new BloomFilterAdapter(15, hashf, 6);*/
-        bf1 = new bloomFilter<void *>(4, 4);
-        bf2 = new bloomFilter<void*>(4, 4);
-        bf3 = new bloomFilter<void*>(15, 6);
+    void SetUp() override {
+//        bloomFirst = new bloomAdapter(4, hashf, 4);
+//        bloomSecond = new bloomAdapter(4, hashf, 4);
+//        bloomThird = new bloomAdapter(15, hashf, 6);
+        bloomFirst = new bloomFilter<void *>(4, 4);
+        bloomSecond = new bloomFilter<void *>(4, 4);
+        bloomThird = new bloomFilter<void *>(15, 6);
     }
 
-    virtual void TearDown()
-    {
-        delete bf1;
-        delete bf2;
-        delete bf3;
+    void TearDown() override {
+        delete bloomFirst;
+        delete bloomSecond;
+        delete bloomThird;
     }
 };
 
-TEST_F(BloomFilterTest, bfLoadRead)
-{
-    std::vector<unsigned char> arr{ 5 };
+TEST_F(BloomFilterTest, bfLoadRead) {
+    std::vector<unsigned char> arr{5};
     std::vector<unsigned char> arr1(1);
     std::vector<unsigned char> arr2(1);
-    bf1->load(arr);
-    bf2->load(arr);
-    bf1->read(arr1);
-    bf2->read(arr2);
+    bloomFirst->load(arr);
+    bloomSecond->load(arr);
+    bloomFirst->read(arr1);
+    bloomSecond->read(arr2);
     EXPECT_EQ(arr[0], arr1[0]);
     EXPECT_EQ(arr1[0], arr2[0]);
 }
 
-TEST_F(BloomFilterTest, bfLoadReadNull)
-{
-    std::vector<unsigned char> arr{ 5 };
+TEST_F(BloomFilterTest, bfLoadReadNull) {
+    std::vector<unsigned char> arr{5};
     std::vector<unsigned char> arr1(1);
-    bf4 = bf1->BloomFiltersIntersection(bf3);
-    bf4->load(arr);
-    bf4->read(arr1);
+    bloomFourth = bloomFirst->BloomFiltersIntersection(bloomThird);
+    bloomFourth->load(arr);
+    bloomFourth->read(arr1);
     EXPECT_FALSE(arr[0] == arr1[0]);
-    delete bf4;
+    delete bloomFourth;
 }
 
-TEST_F(BloomFilterTest, bfLoadRead16)
-{
-    std::vector<unsigned char> arr{5,6};
+TEST_F(BloomFilterTest, bfLoadRead16) {
+    std::vector<unsigned char> arr{5, 6};
     std::vector<unsigned char> arr1(2);
-    bf3->load(arr);
-    bf3->read(arr1);
+    bloomThird->load(arr);
+    bloomThird->read(arr1);
     EXPECT_EQ(arr[0], arr1[0]);
     EXPECT_EQ(arr[1], arr1[1]);
 }
 
-TEST_F(BloomFilterTest, bfInsertQuery)
-{
+TEST_F(BloomFilterTest, bfInsertQuery) {
     int a = 5;
-    bf1->insert(&a);
-    EXPECT_EQ(bf1->query(&a),1);
+    bloomFirst->insert(&a);
+    EXPECT_EQ(bloomFirst->query(&a), 1);
 }
 
-TEST_F(BloomFilterTest, bfIntersection)
-{
+TEST_F(BloomFilterTest, bfIntersection) {
     int a = 5;
-    bf1->insert(&a);
-    bf2->insert(&a);
-    bf4 = bf2->BloomFiltersIntersection(bf1);
-    EXPECT_EQ(bf4->query(&a), 1);
-    delete bf4;
+    bloomFirst->insert(&a);
+    bloomSecond->insert(&a);
+    bloomFourth = bloomSecond->BloomFiltersIntersection(bloomFirst);
+    EXPECT_EQ(bloomFourth->query(&a), 1);
+    delete bloomFourth;
 }
 
-TEST_F(BloomFilterTest, bfIntersectionWithNull)
-{
+TEST_F(BloomFilterTest, bfIntersectionWithNull) {
     int a = 5;
-    bf1->insert(&a);
-    bf3->insert(&a);
-    bf4 = bf3->BloomFiltersIntersection(bf1);
-    bf5 = bf4->BloomFiltersIntersection(bf1);
-    EXPECT_EQ(bf4->query(&a), 0);
-    EXPECT_EQ(bf5->query(&a), 0);
-    delete bf4;
-    delete bf5;
+    bloomFirst->insert(&a);
+    bloomThird->insert(&a);
+    bloomFourth = bloomThird->BloomFiltersIntersection(bloomFirst);
+    bloomFifth = bloomFourth->BloomFiltersIntersection(bloomFirst);
+    EXPECT_EQ(bloomFourth->query(&a), 0);
+    EXPECT_EQ(bloomFifth->query(&a), 0);
+    delete bloomFourth;
+    delete bloomFifth;
 }
 
 
-TEST_F(BloomFilterTest, bfIntersectionItself)
-{
+TEST_F(BloomFilterTest, bfIntersectionItself) {
     int a = 5;
-    bf1->insert(&a);
-    bf4 = bf1->BloomFiltersIntersection(bf1);
-    EXPECT_EQ(bf4->query(&a), 1);
-    delete bf4;
+    bloomFirst->insert(&a);
+    bloomFourth = bloomFirst->BloomFiltersIntersection(bloomFirst);
+    EXPECT_EQ(bloomFourth->query(&a), 1);
+    delete bloomFourth;
 }
 
-TEST_F(BloomFilterTest, bfIntersectionItself2)
-{
+TEST_F(BloomFilterTest, bfIntersectionItself2) {
     int a = 5;
     int b = 6;
-    bf1->insert(&a);
-    bf1->insert(&b);
-    bf4 = bf1->BloomFiltersIntersection(bf1);
-    EXPECT_EQ(bf4->query(&a), 1);
-    EXPECT_EQ(bf4->query(&b), 1);
-    delete bf4;
+    bloomFirst->insert(&a);
+    bloomFirst->insert(&b);
+    bloomFourth = bloomFirst->BloomFiltersIntersection(bloomFirst);
+    EXPECT_EQ(bloomFourth->query(&a), 1);
+    EXPECT_EQ(bloomFourth->query(&b), 1);
+    delete bloomFourth;
 }
 
-TEST_F(BloomFilterTest, bfIntersection2)
-{
+TEST_F(BloomFilterTest, bfIntersection2) {
     int a = 5;
     int b = 6;
-    bf1->insert(&a);
-    bf1->insert(&b);
-    bf2->insert(&a);
-    bf2->insert(&b);
-    bf4 = bf2->BloomFiltersIntersection(bf1);
-    EXPECT_EQ(bf4->query(&a), 1);
-    EXPECT_EQ(bf4->query(&b), 1);
-    delete bf4;
+    bloomFirst->insert(&a);
+    bloomFirst->insert(&b);
+    bloomSecond->insert(&a);
+    bloomSecond->insert(&b);
+    bloomFourth = bloomSecond->BloomFiltersIntersection(bloomFirst);
+    EXPECT_EQ(bloomFourth->query(&a), 1);
+    EXPECT_EQ(bloomFourth->query(&b), 1);
+    delete bloomFourth;
 }
 
-TEST_F(BloomFilterTest, bfNULLIntersection)
-{
+TEST_F(BloomFilterTest, bfNULLIntersection) {
     int a = 5;
-    bf1->insert(&a);
-    bf3->insert(&a);
-    bf4 = bf3->BloomFiltersIntersection(bf1);
-    EXPECT_EQ(bf4->query(&a), 0);
-    delete bf4;
+    bloomFirst->insert(&a);
+    bloomThird->insert(&a);
+    bloomFourth = bloomThird->BloomFiltersIntersection(bloomFirst);
+    EXPECT_EQ(bloomFourth->query(&a), 0);
+    delete bloomFourth;
 }
 
-TEST_F(BloomFilterTest, bfNULLIntersection2)
-{
+TEST_F(BloomFilterTest, bfNULLIntersection2) {
     int a = 5;
-    bf1->insert(&a);
-    bf2->insert(&a);
-    bf3->insert(&a);
-    bf4 = bf2->BloomFiltersIntersection(bf1);
-    bf5 = bf3->BloomFiltersIntersection(bf4);
-    EXPECT_EQ(bf4->query(&a), 1);
-    EXPECT_EQ(bf5->query(&a), 0);
-    delete bf4;
-    delete bf5;
+    bloomFirst->insert(&a);
+    bloomSecond->insert(&a);
+    bloomThird->insert(&a);
+    bloomFourth = bloomSecond->BloomFiltersIntersection(bloomFirst);
+    bloomFifth = bloomThird->BloomFiltersIntersection(bloomFourth);
+    EXPECT_EQ(bloomFourth->query(&a), 1);
+    EXPECT_EQ(bloomFifth->query(&a), 0);
+    delete bloomFourth;
+    delete bloomFifth;
 }
 
-TEST_F(BloomFilterTest, bfUnion)
-{
+TEST_F(BloomFilterTest, bfUnion) {
     int a = 5;
     int b = 6;
-    bf1->insert(&a);
-    bf2->insert(&b);
-    bf4 = bf2->BloomFiltersUnion(bf1);
-    EXPECT_EQ(bf4->query(&a), 1);
-    EXPECT_EQ(bf4->query(&b), 1);
-    delete bf4;
+    bloomFirst->insert(&a);
+    bloomSecond->insert(&b);
+    bloomFourth = bloomSecond->BloomFiltersUnion(bloomFirst);
+    EXPECT_EQ(bloomFourth->query(&a), 1);
+    EXPECT_EQ(bloomFourth->query(&b), 1);
+    delete bloomFourth;
 }
 
-TEST_F(BloomFilterTest, bfUnionWithNull)
-{
+TEST_F(BloomFilterTest, bfUnionWithNull) {
     int a = 5;
     int b = 6;
-    bf1->insert(&a);
-    bf3->insert(&b);
-    bf4 = bf3->BloomFiltersUnion(bf1);
-    bf5 = bf4->BloomFiltersUnion(bf1);
-    EXPECT_EQ(bf4->query(&a), 0);
-    EXPECT_EQ(bf5->query(&a), 0);
-    EXPECT_EQ(bf4->query(&b), 0);
-    EXPECT_EQ(bf5->query(&b), 0);
-    delete bf4;
-    delete bf5;
+    bloomFirst->insert(&a);
+    bloomThird->insert(&b);
+    bloomFourth = bloomThird->BloomFiltersUnion(bloomFirst);
+    bloomFifth = bloomFourth->BloomFiltersUnion(bloomFirst);
+    EXPECT_EQ(bloomFourth->query(&a), 0);
+    EXPECT_EQ(bloomFifth->query(&a), 0);
+    EXPECT_EQ(bloomFourth->query(&b), 0);
+    EXPECT_EQ(bloomFifth->query(&b), 0);
+    delete bloomFourth;
+    delete bloomFifth;
 }
 
-TEST_F(BloomFilterTest, bfUnion3)
-{
+TEST_F(BloomFilterTest, bfUnion3) {
     int a = 5;
     int b = 6;
     int c = 7;
-    bf1->insert(&a);
-    bf1->insert(&c);
-    bf2->insert(&b);
-    bf4 = bf2->BloomFiltersUnion(bf1);
-    EXPECT_EQ(bf4->query(&a), 1);
-    EXPECT_EQ(bf4->query(&b), 1);
-    EXPECT_EQ(bf4->query(&c), 1);
-    delete bf4;
+    bloomFirst->insert(&a);
+    bloomFirst->insert(&c);
+    bloomSecond->insert(&b);
+    bloomFourth = bloomSecond->BloomFiltersUnion(bloomFirst);
+    EXPECT_EQ(bloomFourth->query(&a), 1);
+    EXPECT_EQ(bloomFourth->query(&b), 1);
+    EXPECT_EQ(bloomFourth->query(&c), 1);
+    delete bloomFourth;
 }
 
-TEST_F(BloomFilterTest, bfNULLUnion)
-{
+TEST_F(BloomFilterTest, bfNULLUnion) {
     int a = 5;
     int b = 6;
-    bf1->insert(&a);
-    bf3->insert(&b);
-    bf4 = bf3->BloomFiltersUnion(bf1);
-    EXPECT_EQ(bf4->query(&a), 0);
-    EXPECT_EQ(bf4->query(&b), 0);
-    delete bf4;
+    bloomFirst->insert(&a);
+    bloomThird->insert(&b);
+    bloomFourth = bloomThird->BloomFiltersUnion(bloomFirst);
+    EXPECT_EQ(bloomFourth->query(&a), 0);
+    EXPECT_EQ(bloomFourth->query(&b), 0);
+    delete bloomFourth;
 }
 
 
-TEST_F(BloomFilterTest, bfNULLUnion2)
-{
+TEST_F(BloomFilterTest, bfNULLUnion2) {
     int a = 5;
     int b = 6;
-    bf1->insert(&a);
-    bf2->insert(&b);
-    bf3->insert(&b);
-    bf4 = bf2->BloomFiltersUnion(bf1);
-    bf5 = bf3->BloomFiltersUnion(bf4);
-    EXPECT_EQ(bf4->query(&a), 1);
-    EXPECT_EQ(bf4->query(&b), 1);
-    EXPECT_EQ(bf5->query(&b), 0);
-    EXPECT_EQ(bf5->query(&a), 0);
-    delete bf4;
-    delete bf5;
-}
-
-
-GTEST_API_ int main(int argc, char* argv[])
-{
-    if (argc > 0)
-    {
-        testing::internal::FilePath arg(argv[0]);
-        const auto name = arg.RemoveDirectoryName().RemoveExtension("exe").string();
-        testing::GTEST_FLAG(output) = std::string("xml:") + name + ".xml";
-    }
-    testing::InitGoogleTest(&argc, argv);
-//#if defined(_MSC_VER)
-//    testing::UnitTest::GetInstance()->listeners().Append(new testing::MSVCMemoryLeakListener());
-//#endif // defined(_MSC_VER)
-    return RUN_ALL_TESTS();
+    bloomFirst->insert(&a);
+    bloomSecond->insert(&b);
+    bloomThird->insert(&b);
+    bloomFourth = bloomSecond->BloomFiltersUnion(bloomFirst);
+    bloomFifth = bloomThird->BloomFiltersUnion(bloomFourth);
+    EXPECT_EQ(bloomFourth->query(&a), 1);
+    EXPECT_EQ(bloomFourth->query(&b), 1);
+    EXPECT_EQ(bloomFifth->query(&b), 0);
+    EXPECT_EQ(bloomFifth->query(&a), 0);
+    delete bloomFourth;
+    delete bloomFifth;
 }

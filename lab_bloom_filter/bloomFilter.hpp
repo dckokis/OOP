@@ -4,7 +4,7 @@
 #include <array>
 #include <xstring>
 
-namespace Bloom {
+namespace BloomFilterNamespace {
     class BloomExceptions final : std::exception {
     private:
         std::string m_error;
@@ -37,31 +37,31 @@ namespace Bloom {
         };
     }
 
-    template<typename T>
-    class baseFilter {
+    template<typename Value>
+    class BaseFilter {
     public:
-        virtual void insert(const T &value) = 0;
+        virtual void insert(const Value &value) = 0;
 
-        virtual bool query(const T &value) = 0;
+        virtual bool query(const Value &value) = 0;
 
         virtual void read(std::vector<unsigned char> &array) = 0;
 
         virtual void load(std::vector<unsigned char> &array) = 0;
 
-        virtual baseFilter<T> *BloomFiltersUnion(baseFilter *filter2) = 0;
+        virtual BaseFilter<Value> *BloomFiltersUnion(BaseFilter *filter2) = 0;
 
-        virtual baseFilter<T> *BloomFiltersIntersection(baseFilter *filter2) = 0;
+        virtual BaseFilter<Value> *BloomFiltersIntersection(BaseFilter *filter2) = 0;
 
-        virtual ~baseFilter() = default;
+        virtual ~BaseFilter() = default;
 
     };
 
     template<typename Value>
-    class nullFilter final : public baseFilter<Value> {
+    class NULLbloom final : public BaseFilter<Value> {
     public:
-        nullFilter() = default;;
+        NULLbloom() = default;;
 
-        ~nullFilter() = default;;
+        ~NULLbloom() = default;;
 
         void insert(const Value &) override {}
 
@@ -71,15 +71,13 @@ namespace Bloom {
 
         void load(std::vector<unsigned char> &) override {}
 
-        baseFilter<Value> *BloomFiltersUnion(baseFilter<Value> *) override { return new nullFilter(); }
+        BaseFilter<Value> *BloomFiltersUnion(BaseFilter<Value> *) override { return new NULLbloom(); }
 
-        baseFilter<Value> *BloomFiltersIntersection(baseFilter<Value> *) override { return new nullFilter(); }
+        BaseFilter<Value> *BloomFiltersIntersection(BaseFilter<Value> *) override { return new NULLbloom(); }
     };
 
     template<typename Value, typename Hash = std::hash<Value>>
-    class bloomFilter final : public baseFilter<Value> {
-        using HashFunc = Hash;
-        using t_BloomFilter = bloomFilter<Value>;
+    class bloomFilter final : public BaseFilter<Value> {
     public:
         bloomFilter() = default;
 
@@ -133,22 +131,22 @@ namespace Bloom {
             table = array;
         }
 
-        bloomFilter<Value> *BloomFiltersUnion(baseFilter<Value> *another) override {
+        BaseFilter<Value> *BloomFiltersUnion(BaseFilter<Value> *another) override {
             auto filter2 = dynamic_cast<bloomFilter<Value> *>(another);
             if ((numFunctions == filter2->getNumFunctions()) && (size == filter2->tableSize())) {
                 return fillWith<true>(filter2);
             } else {
-                throw BloomExceptions("Bloom filters with different params cannot be united");
+                return new NULLbloom<Value>;
             }
         }
 
-        bloomFilter<Value> *
-        BloomFiltersIntersection(baseFilter<Value> *another) override {
+        BaseFilter<Value> *
+        BloomFiltersIntersection(BaseFilter<Value> *another) override {
             auto filter2 = dynamic_cast<bloomFilter<Value> *>(another);
             if ((numFunctions == filter2->getNumFunctions()) && (size == filter2->tableSize())) {
                 return fillWith<false>(filter2);
             } else {
-                throw BloomExceptions("Bloom filters with different params cannot be intersected");
+                return new NULLbloom<Value>;
             }
         }
 
@@ -165,7 +163,7 @@ namespace Bloom {
         }
 
     private:
-        inline static constexpr HashFunc hashFunc = Hash();
+        inline static constexpr Hash hashFunc = Hash();
         std::vector<unsigned char> table;
         size_t size{};
         size_t numFunctions{};
