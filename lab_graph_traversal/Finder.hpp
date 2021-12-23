@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Graph.hpp"
+#include "TraverseStrategy.hpp"
 #include <unordered_map>
 
 class Finder {
@@ -20,15 +21,17 @@ public:
     virtual void visitEdge(const vertex &source, const vertex &dest) = 0;
 
 
-    [[nodiscard]] bool IsFinished() const { // я тут получаю по сути копию, делать копию константной смысла нет, мы ее все равно копируем
+    [[nodiscard]] bool
+    IsFinished() const { // я тут получаю по сути копию, делать копию константной смысла нет, мы ее все равно копируем
         return isFinished;
     }
 
+
+protected:
     [[nodiscard]] std::deque<vertex> getPath() const {
         return path;
     }
-
-protected:
+    friend class TraverseStrategy;
     bool isFinished = false;
     std::deque<vertex> path{};
 };

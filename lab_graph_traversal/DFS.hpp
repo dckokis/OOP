@@ -8,7 +8,7 @@ class DFS final : public TraverseStrategy {
 public:
     DFS() = delete;
 
-    explicit DFS(std::shared_ptr<Finder> traverse_) : TraverseStrategy(std::move(traverse_)) {};
+    explicit DFS(std::unique_ptr<Finder> traverse_) : TraverseStrategy(std::move(traverse_)) {};
 
     void execute(const Graph& graph, const vertex &begin_) override {
         if (graph.getSize() == 0) {
@@ -27,7 +27,7 @@ public:
                 visitEdge(previous.at(cur), cur);
                 attended = true;
 
-                if (traverse->IsFinished()) {
+                if (finder->IsFinished()) {
                     break;
                 }
 

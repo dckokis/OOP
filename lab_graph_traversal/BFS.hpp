@@ -8,9 +8,9 @@ class BFS final : public TraverseStrategy {
 public:
     BFS() = delete;
 
-    explicit BFS(std::shared_ptr<Finder> traverse_) : TraverseStrategy(std::move(traverse_)) {};
+    explicit BFS(std::unique_ptr<Finder> traverse_) : TraverseStrategy(std::move(traverse_)) {};
 
-    void execute(const Graph& graph, const vertex &begin_) override {
+    void execute(const Graph &graph, const vertex &begin_) override {
         if (graph.getSize() == 0) {
             return;
         }
@@ -20,16 +20,16 @@ public:
 
         q.push(begin_);
         previous[begin_] = begin_;
-        while(!q.empty()){
+        while (!q.empty()) {
             auto cur = q.front();
             q.pop();
             visitVertex(cur);
             visitEdge(previous.at(cur), cur);
-            if(traverse->IsFinished()) {
+            if (finder->IsFinished()) {
                 break;
             }
             const auto &neighbours = graph.getNeighbours(cur);
-            for(auto i = neighbours.crbegin(); i != neighbours.crend(); ++i) {
+            for (auto i = neighbours.crbegin(); i != neighbours.crend(); ++i) {
                 if (*i != previous[cur]) {
                     q.push(*i);
                     previous[*i] = cur;

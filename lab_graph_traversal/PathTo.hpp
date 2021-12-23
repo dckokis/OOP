@@ -23,11 +23,11 @@ private:
 
     void buildPath() override {
         auto cur = destination;
-        while (cur != this->sourceVertex) {
-            this->path.emplace_front(cur);
-            cur = this->ancestor[cur];
+        while (cur != sourceVertex) {
+            path.emplace_front(cur);
+            cur = ancestor[cur];
         }
-        this->path.emplace_front(cur);
+        path.emplace_front(cur);
     }
 };
 
@@ -51,10 +51,10 @@ private:
 
     void buildPath() override {
         auto cur = second;
-        while (cur != this->first) {
-            this->path.emplace_front(cur);
-            cur = this->ancestor[cur];
+        while (cur != first) {
+            path.emplace_front(cur);
+            cur = ancestor[cur];
         }
-        this->path.emplace_front(cur);
+        path.emplace_front(cur);
     }
 };

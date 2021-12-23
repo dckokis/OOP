@@ -15,23 +15,25 @@ public:
 
     TraverseStrategy() = delete;
 
-    explicit TraverseStrategy(std::shared_ptr<Finder> traverse_) : traverse(std::move(
+    explicit TraverseStrategy(std::unique_ptr<Finder> traverse_) : finder(std::move(
             traverse_)) {};
 
     virtual void execute(const Graph& graph, const vertex &begin) = 0;
 
+    [[nodiscard]] std::deque<vertex> getPath() const {
+        return finder->getPath();
+    }
+
     virtual ~TraverseStrategy() = default;
 
 protected:
-    //Graph &graph;
-    std::shared_ptr<Finder> traverse;
-    //std::unordered_map<vertex, vertex> previous;
+    std::unique_ptr<Finder> finder;
 
-    void begin(const vertex &begin) const { this->traverse->begin(begin); };
+    void begin(const vertex &begin) const { this->finder->begin(begin); };
 
-    void end() const { this->traverse->end(); };
+    void end() const { this->finder->end(); };
 
-    void visitVertex(vertex &vertex) const { this->traverse->visitVertex(vertex); };
+    void visitVertex(vertex &vertex) const { this->finder->visitVertex(vertex); };
 
-    void visitEdge(vertex &begin, vertex &end) const { this->traverse->visitEdge(begin, end); };
+    void visitEdge(vertex &begin, vertex &end) const { this->finder->visitEdge(begin, end); };
 };
