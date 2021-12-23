@@ -3,30 +3,15 @@
 
 using namespace Bloom;
 using namespace std;
-size_t IntHash(const int &data) {
-    int N = 13;
-    double A = 0.618033;
-    int h = N * fmod(data * A, 1);
-    return h;
-}
-
-unsigned int StringHash(const string& data) {
-    auto len = data.length();
-    int N = 17;
-    double A = 0.618033;
-    int h = N * fmod(len * A, 1);
-    return h;
-}
 
 TEST(Bloom, FalseConstructor) {
-    ASSERT_THROW(new BloomFilter<int>(0, nullptr, 10), BloomExceptions);
-    ASSERT_THROW(new BloomFilter<int>(0, IntHash, 100), BloomExceptions);
+    ASSERT_THROW(new BloomFilter<int>(0, 256), BloomExceptions);
 }
 
 TEST(Bloom, insert) {
     /*int*/
     {
-        BloomFilter<int> test(5, IntHash, 5);
+        BloomFilter<int> test(5, 5);
         int data = 1;
         test.insert(data);
         ASSERT_TRUE(test.query(data));
@@ -37,7 +22,7 @@ TEST(Bloom, insert) {
     }
     /*string*/
     {
-        BloomFilter<string> test(5, StringHash, 5);
+        BloomFilter<string> test(5, 5);
         auto data = "hello";
         test.insert(data);
         ASSERT_TRUE(test.query(data));
@@ -50,7 +35,7 @@ TEST(Bloom, insert) {
 TEST(Bloom, query) {
     /*int*/
     {
-        BloomFilter<int> test(5, IntHash, 5);
+        BloomFilter<int> test(5, 5);
         int data = 1;
         test.insert(data);
         int falseData = 2;
@@ -59,11 +44,11 @@ TEST(Bloom, query) {
     }
     /*string*/
     {
-        BloomFilter<string> test(5, StringHash, 5);
+        BloomFilter<string> test(5, 5);
         auto data = "hello";
         test.insert(data);
         auto falseData = "world";
-        auto falseData1 = "helloooworld";
+        auto falseData1 = "GOTOHELL";
         ASSERT_TRUE(test.query(data));
         ASSERT_FALSE(test.query(falseData1));
         //ASSERT_FALSE(test.query(falseData)); such code will cause false positive match
@@ -71,45 +56,44 @@ TEST(Bloom, query) {
 }
 
 TEST(Bloom, read) {
-    BloomFilter<int> test(5, IntHash, 5);
+    BloomFilter<int> test(5, 5);
     int data1 = 1;
     test.insert(data1);
     int data2 = 2;
     test.insert(data2);
     ASSERT_TRUE(test.query(data1));
     ASSERT_TRUE(test.query(data2));
-    auto copy = vector<unsigned char>();
-    test.read(copy);
+    auto copy = test.read();
     ASSERT_EQ(copy.size(), 5);
 }
 
 TEST(Bloom, Union) {
-    BloomFilter<int> first(5, IntHash, 5);
+    BloomFilter<int> first(5, 5);
     int data = 1;
     first.insert(data);
     ASSERT_TRUE(first.query(data));
-    BloomFilter<int> second(5, IntHash, 5);
+    BloomFilter<int> second(5, 5);
     int anotherData = 2;
     second.insert(anotherData);
     ASSERT_TRUE(second.query(anotherData));
     auto united = BloomFilter<int>::BloomFiltersUnion(first, second);
     ASSERT_TRUE(united.query(data));
     ASSERT_TRUE(united.query(anotherData));
-    BloomFilter<int> third(10, IntHash, 5);
+    BloomFilter<int> third(10, 5);
     ASSERT_THROW(BloomFilter<int>::BloomFiltersUnion(third, second), BloomExceptions);
 }
 
 TEST(Bloom, Intersection) {
-    BloomFilter<int> first(10, IntHash, 5);
+    BloomFilter<int> first(10, 5);
     int data1 = 1;
-    int data2 = 99;
+    int data2 = 2452635;
     first.insert(data1);
     first.insert(data2);
     ASSERT_TRUE(first.query(data1));
     ASSERT_TRUE(first.query(data2));
-    BloomFilter<int> second(10, IntHash, 5);
+    BloomFilter<int> second(10, 5);
     int anotherData1 = 1;
-    int anotherData2 = 3;
+    int anotherData2 = 324586285;
     second.insert(anotherData1);
     second.insert(anotherData2);
     ASSERT_TRUE(second.query(anotherData1));

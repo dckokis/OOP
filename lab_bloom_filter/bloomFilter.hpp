@@ -37,43 +37,65 @@ namespace Bloom {
         };
     }
 
-    template<typename Value>
-    class BloomFilter final {
-        using HashFunc = size_t (*)(const Value& data);
-        using t_BloomFilter = BloomFilter<Value>;
+    template<typename T>
+    class baseFilter {
     public:
-        BloomFilter() = default;
+        virtual void insert(const T &value) = 0;
 
-        BloomFilter(const t_BloomFilter &another) = default;
+        virtual bool query(const T &value) = 0;
 
-        BloomFilter(size_t size_, HashFunc hashFunc, size_t numFunctions_) : size(size_) {
-            if(!hashFunc) {
-                throw BloomExceptions("Hash Function is nullptr");
-            }
+        virtual void read(std::vector<unsigned char> &array) = 0;
+
+        virtual void load(std::vector<unsigned char> &array) = 0;
+
+        virtual baseFilter<T> *BloomFiltersUnion(baseFilter *filter2) = 0;
+
+        virtual baseFilter<T> *BloomFiltersIntersection(baseFilter *filter2) = 0;
+
+        virtual ~baseFilter() = default;
+
+    };
+
+    template<typename Value>
+    class nullFilter final : public baseFilter<Value> {
+    public:
+        nullFilter() = default;;
+
+        ~nullFilter() = default;;
+
+        void insert(const Value &) override {}
+
+        bool query(const Value &) override { return false; }
+
+        void read(std::vector<unsigned char> &) override {}
+
+        void load(std::vector<unsigned char> &) override {}
+
+        baseFilter<Value> *BloomFiltersUnion(baseFilter<Value> *) override { return new nullFilter(); }
+
+        baseFilter<Value> *BloomFiltersIntersection(baseFilter<Value> *) override { return new nullFilter(); }
+    };
+
+    template<typename Value, typename Hash = std::hash<Value>>
+    class bloomFilter final : public baseFilter<Value> {
+        using HashFunc = Hash;
+        using t_BloomFilter = bloomFilter<Value>;
+    public:
+        bloomFilter() = default;
+
+        bloomFilter(size_t size_, size_t numFunctions_) : size(size_) {
             if (numFunctions_ <= salts.size()) {
-                table = std::vector<unsigned char>(size);
-                hash = hashFunc;
+                table = std::vector<unsigned char>(((size_ + 7) / 8), 0);
                 numFunctions = numFunctions_;
             } else {
                 throw BloomExceptions("numFunctions is bigger than 64");
             }
         }
 
-        BloomFilter(t_BloomFilter &&another) noexcept {
-            size = another.size;
-            hash = another.hash;
-            numFunctions = another.numFunctions;
-            table = another.table;
-            another.size = 0;
-            another.hash = nullptr;
-            another.numFunctions = 0;
-            another.table = {};
-        }
+        ~bloomFilter() = default;
 
-        ~BloomFilter() = default;
-
-        void insert(const Value &value) {
-            auto hashValue = hash(value);
+        void insert(const Value &value) override {
+            auto hashValue = hashFunc(value);
             /* Generate multiple unique hashes by XORing with values in the
              * salt table. */
             for (auto i = 0; i < numFunctions; ++i) {
@@ -86,8 +108,8 @@ namespace Bloom {
             }
         }
 
-        bool query(const Value &value) const {
-            auto hashValue = hash(value);
+        bool query(const Value &value) override {
+            auto hashValue = hashFunc(value);
             /* Generate multiple unique hashes by XORing with values in the
              * salt table. */
             for (auto i = 0; i < numFunctions; ++i) {
@@ -102,77 +124,63 @@ namespace Bloom {
             return true;
         }
 
-        void read(std::vector<unsigned char> &copy) {
-            copy = table;
+        void read(std::vector<unsigned char> &array) override {
+            const int arraySz = (size + 7) / 8;
+            std::copy(table.begin(), table.begin() + arraySz, array.begin());
         }
 
-        void load(const std::vector<unsigned char> &array) {
+        void load(std::vector<unsigned char> &array) override{
             table = array;
         }
 
-        static t_BloomFilter BloomFiltersUnion(const t_BloomFilter &first, const t_BloomFilter &second) {
-            if ((first.numFunctions == second.numFunctions) && (first.size == second.size) && (first.hash == second.hash)) {
-                return fillWith<true>(first, second);
+        bloomFilter<Value> *BloomFiltersUnion(baseFilter<Value> *another) override {
+            auto filter2 = dynamic_cast<bloomFilter<Value> *>(another);
+            if ((numFunctions == filter2->getNumFunctions()) && (size == filter2->tableSize())) {
+                return fillWith<true>(filter2);
             } else {
                 throw BloomExceptions("Bloom filters with different params cannot be united");
             }
         }
 
-        static t_BloomFilter
-        BloomFiltersIntersection(const t_BloomFilter &first, const t_BloomFilter &second) {
-            if ((first.numFunctions == second.numFunctions) && (first.size == second.size) && (first.hash == second.hash)) {
-                return fillWith<false>(first, second);
+        bloomFilter<Value> *
+        BloomFiltersIntersection(baseFilter<Value> *another) override {
+            auto filter2 = dynamic_cast<bloomFilter<Value> *>(another);
+            if ((numFunctions == filter2->getNumFunctions()) && (size == filter2->tableSize())) {
+                return fillWith<false>(filter2);
             } else {
                 throw BloomExceptions("Bloom filters with different params cannot be intersected");
             }
         }
 
-        bool operator==(const t_BloomFilter &another) {
-            return (numFunctions == another.numFunctions) && (size == another.size) && (hash == another.hash) && (table == another.table);
+        [[nodiscard]] unsigned int tableSize() const {
+            return size;
         }
 
-
-        t_BloomFilter &operator=(const t_BloomFilter &another) {
-            if (this != &another) {
-                size = another.size;
-                hash = another.hash;
-                numFunctions = another.numFunctions;
-                table = another.table;
-            }
-            return *this;
+        [[nodiscard]] unsigned int getNumFunctions() const {
+            return numFunctions;
         }
 
-        t_BloomFilter &operator=(t_BloomFilter &&another) noexcept{
-            if (this != &another) {
-                size = another.size;
-                hash = another.hash;
-                numFunctions = another.numFunctions;
-                table = another.table;
-                another.size = 0;
-                another.hash = nullptr;
-                another.numFunctions = 0;
-                another.table = {};
-            }
-            return *this;
+        std::vector<unsigned char> &getTable() {
+            return table;
         }
 
     private:
-        HashFunc hash;
+        inline static constexpr HashFunc hashFunc = Hash();
         std::vector<unsigned char> table;
         size_t size{};
         size_t numFunctions{};
 
         template<bool WithUnion>
-        static BloomFilter<Value> fillWith(const BloomFilter<Value> &first, const BloomFilter<Value> &second) {
-            BloomFilter<Value> result(first.size, first.hash, first.numFunctions) ;
+        bloomFilter<Value> *fillWith(bloomFilter<Value> *second) {
+            auto result = new bloomFilter<Value>(size, numFunctions);
             /* The table is an array of bits, packed into bytes.  Round up
              * to the nearest byte. */
-            auto arraySize = (first.size + 7) / 8;
+            auto arraySize = (size + 7) / 8;
             for (auto i = 0; i < arraySize; ++i) {
                 if (WithUnion) {
-                    result.table[i] = first.table[i] | second.table[i];
+                    result->getTable()[i] = getTable()[i] | second->getTable()[i];
                 } else {
-                    result.table[i] = first.table[i] & second.table[i];
+                    result->getTable()[i] = getTable()[i] & second->getTable()[i];
                 }
 
             }
