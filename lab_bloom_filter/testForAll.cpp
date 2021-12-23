@@ -18,9 +18,9 @@ protected:
     BaseFilter<void *> *bloomFifth;
 
     void SetUp() override {
-//        bloomFirst = new bloomAdapter(4, hashf, 4);
-//        bloomSecond = new bloomAdapter(4, hashf, 4);
-//        bloomThird = new bloomAdapter(15, hashf, 6);
+//        bloomFirst = new bloomAdapter(4, HashFunction, 4);
+//        bloomSecond = new bloomAdapter(4, HashFunction, 4);
+//        bloomThird = new bloomAdapter(15, HashFunction, 6);
         bloomFirst = new bloomFilter<void *>(4, 4);
         bloomSecond = new bloomFilter<void *>(4, 4);
         bloomThird = new bloomFilter<void *>(15, 6);
