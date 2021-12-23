@@ -94,8 +94,6 @@ namespace BloomFilterNamespace {
 
         void insert(const Value &value) override {
             auto hashValue = hashFunc(value);
-            /* Generate multiple unique hashes by XORing with values in the
-             * salt table. */
             for (auto i = 0; i < numFunctions; ++i) {
                 auto uniqueHash = hashValue ^ salts[i];
                 auto index = (uniqueHash % size);
@@ -108,8 +106,6 @@ namespace BloomFilterNamespace {
 
         bool query(const Value &value) override {
             auto hashValue = hashFunc(value);
-            /* Generate multiple unique hashes by XORing with values in the
-             * salt table. */
             for (auto i = 0; i < numFunctions; ++i) {
                 auto uniqueHash = hashValue ^ salts[i];
                 auto index = (uniqueHash % size);
@@ -123,8 +119,8 @@ namespace BloomFilterNamespace {
         }
 
         void read(std::vector<unsigned char> &array) override {
-            const int arraySz = (size + 7) / 8;
-            std::copy(table.begin(), table.begin() + arraySz, array.begin());
+            const int arraySize = (size + 7) / 8;
+            std::copy(table.begin(), table.begin() + arraySize, array.begin());
         }
 
         void load(std::vector<unsigned char> &array) override{
