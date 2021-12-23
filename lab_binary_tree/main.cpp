@@ -115,3 +115,14 @@ TEST(Operator, Brackets) {
     ASSERT_EQ(t[key_1], "_three");
     ASSERT_EQ(t[key_2], "_two");
 }
+
+TEST(Operator, Equal)
+{
+    btree<std::string, std::string> t1;
+    t1["Two"] = "_two";
+    t1["One"] = "_one";
+    t1["Three"] = "_three";
+    const auto t2 = t1;
+    ASSERT_TRUE(t1 == t2);
+}
+

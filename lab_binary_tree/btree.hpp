@@ -25,7 +25,7 @@ private:
         std::shared_ptr<TreeNode> left, right;
         std::weak_ptr<TreeNode> parent;
     public:
-        explicit TreeNode(pointer &&pair) : data(std::move(pair)) {}
+        //explicit TreeNode(pointer &&pair) : data(std::move(pair)) {}
 
         explicit TreeNode(const Key &key, const Value &value) {
             data = new std::pair<const Key, Value>(key, value);
@@ -234,16 +234,8 @@ public:
         if (this != &another) {
             clear();
             compare = another.compare;
-            auto rootIter = iterator(another.root);
-            for (auto i = rootIter; i != another.begin(); --i) {
-                insert(std::make_pair(i->first, i->second));
-            }
-//            for (auto i = rootIter; i != another.begin(); ++i) {
-//                insert(std::make_pair(i->first, i->second));
-//            }
-//            for (auto i = another.begin(); i != another.end(); ++i) {
-//                insert(std::make_pair(i->first, i->second));
-//            }
+            root = std::make_shared<TreeNode>(*another.root.get());
+            size_ = another.size_;
         }
         return *this;
     }
