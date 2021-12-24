@@ -25,13 +25,11 @@ private:
         std::shared_ptr<TreeNode> left, right;
         std::weak_ptr<TreeNode> parent;
     public:
-        //explicit TreeNode(pointer &&pair) : data(std::move(pair)) {}
-
         explicit TreeNode(const Key &key, const Value &value) {
             data = new std::pair<const Key, Value>(key, value);
         }
 
-        TreeNode(TreeNode *another) {
+        explicit TreeNode(TreeNode *another) {
             data = another->data;
             left = another->getLeft();
             right = another->getRight();
@@ -322,7 +320,8 @@ public:
 
         while (current) {
             prev = current;
-            if (compare(val.first, current->getData()->first)) {
+            auto curKey = current->getData()->first;
+            if (compare(val.first, curKey)) {
                 current = current->getLeft();
             } else {
                 current = current->getRight();
@@ -363,37 +362,39 @@ public:
         } else if (parent->getRight() == node) {
             state = 1;
         }
+
         if (node->getRight()) {
             auto leftmostOfRight = node->getRight();
             while (leftmostOfRight->getLeft()) {
                 leftmostOfRight = leftmostOfRight->getLeft();
             }
-
-            if (node->getLeft()) {
-                node->getLeft()->setParent(leftmostOfRight);
+            auto left = node->getLeft();
+            if (left) {
+                left->setParent(leftmostOfRight);
             }
-            leftmostOfRight->setLeft(node->getLeft());
-
+            leftmostOfRight->setLeft(left);
+            auto right = node->getRight();
             if (state != 0) {
-                node->getRight()->setParent(node->getParent());
+                right->setParent(node->getParent());
                 if (state == -1) {
-                    parent->setLeft(node->getRight());
+                    parent->setLeft(right);
                 } else {
-                    parent->setRight(node->getRight());
+                    parent->setRight(right);
                 }
             } else {
-                root = node->getRight();
+                root = right;
             }
         } else if (node->getLeft()) {
+            auto left = node->getLeft();
             if (state != 0) {
-                node->getLeft()->setParent(node->getParent());
+                left->setParent(node->getParent());
                 if (state == -1) {
-                    parent->setLeft(node->getLeft());
+                    parent->setLeft(left);
                 } else {
-                    parent->setRight(node->getLeft());
+                    parent->setRight(left);
                 }
             } else {
-                root = node->getLeft();
+                root = left;
             }
         } else {
             if (state == -1) {
@@ -451,9 +452,10 @@ public:
             return end();
         }
         while (current->getData()->first != key) {
-            if (compare(key, current->getData()->first)) {
+            auto curKey = current->getData()->first;
+            if (compare(key, curKey)) {
                 current = current->getLeft();
-            } else if (!compare(key, current->getData()->first)) {
+            } else if (!compare(key, curKey)) {
                 current = current->getRight();
             }
             if (!current) {
