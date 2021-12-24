@@ -210,15 +210,33 @@ private:
     std::shared_ptr<TreeNode> root{};
     size_type size_{};
     inline static Compare compare = Compare();
-    std::shared_ptr<TreeNode> leftest() {
+    std::shared_ptr<TreeNode> leftest() const{
         auto current = root;
         if (!current) {
-            return end();
+            return current;
         }
         while (current->getLeft()) {
             current = current->getLeft();
         }
         return current;
+    }
+
+    std::shared_ptr<TreeNode> findByKey(const Key &key){
+        auto current = root;
+        if (!current) {
+            return current;
+        }
+        while (current->getData()->first != key) {
+            auto curKey = current->getData()->first;
+            if (compare(key, curKey)) {
+                current = current->getLeft();
+            } else if (!compare(key, curKey)) {
+                current = current->getRight();
+            }
+            if (!current) {
+                return current;
+            }
+        }
     }
 public:
     using iterator = TreeIterator<false>;
@@ -242,7 +260,6 @@ public:
         if (this != &another) {
             clear();
             compare = another.compare;
-            auto new_root = *another.root.get();
             root = std::make_shared<TreeNode>(*another.root.get());
             size_ = another.size_;
         }
@@ -257,11 +274,19 @@ public:
     }
 
     iterator begin() {
-        return iterator(leftest());
+        auto node = leftest();
+        if ( !node) {
+            return end();
+        }
+        return iterator(node);
     }
 
     const_iterator begin() const {
-        return const_iterator(leftest());
+        auto node = leftest();
+        if ( !node) {
+            return end();
+        }
+        return const_iterator(node);
     }
 
     iterator end() {
