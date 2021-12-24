@@ -357,7 +357,7 @@ public:
         }
         auto node = it.node_.lock();
         auto state = -1;
-        auto parent = node->getParent.lock();
+        auto parent = node->getParent().lock();
         if (!parent) {
             state = 0;
         } else if (parent->getRight() == node) {

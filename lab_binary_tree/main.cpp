@@ -350,7 +350,7 @@ TEST(Method, ClearNonEmpty) {
     ASSERT_EQ(t.size(), 0);
     t[-5] = 1;
     t[-10] = 0;
-    t[0] = 2;
+    t[1] = 2;
     t[-1] = 5;
     ASSERT_EQ(t.begin()->second, 0);
     ASSERT_EQ(t.begin()->first, -10);
