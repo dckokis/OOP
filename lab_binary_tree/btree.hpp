@@ -210,6 +210,16 @@ private:
     std::shared_ptr<TreeNode> root{};
     size_type size_{};
     inline static Compare compare = Compare();
+    std::shared_ptr<TreeNode> leftest() {
+        auto current = root;
+        if (!current) {
+            return end();
+        }
+        while (current->getLeft()) {
+            current = current->getLeft();
+        }
+        return current;
+    }
 public:
     using iterator = TreeIterator<false>;
     using const_iterator = TreeIterator<true>;
@@ -247,25 +257,11 @@ public:
     }
 
     iterator begin() {
-        auto current = root;
-        if (!current) {
-            return end();
-        }
-        while (current->getLeft()) {
-            current = current->getLeft();
-        }
-        return iterator(current);
+        return iterator(leftest());
     }
 
     const_iterator begin() const {
-        auto current = root;
-        if (!current) {
-            return end();
-        }
-        while (current->getLeft()) {
-            current = current->getLeft();
-        }
-        return const_iterator(current);
+        return const_iterator(leftest());
     }
 
     iterator end() {
