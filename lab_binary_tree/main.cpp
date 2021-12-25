@@ -1,19 +1,19 @@
 #include <gtest/gtest.h>
 #include "btree.hpp"
 
-class custom {
+class Custom {
     double x_{};
     std::string str_{};
 public:
-    custom() = default;
+    Custom() = default;
 
-    explicit custom(double &&x, std::string &&str) : x_(x), str_(str) {}
+    explicit Custom(double &&x, std::string &&str) : x_(x), str_(str) {}
 
-    bool operator==(const custom &another) const { return x_ == another.x_ && str_ == another.str_; }
+    bool operator==(const Custom &another) const { return x_ == another.x_ && str_ == another.str_; }
 
-    bool operator!=(const custom &another) const { return !(*this == another); }
+    bool operator!=(const Custom &another) const { return !(*this == another); }
 
-    bool operator<(const custom &another) const { return x_ < another.x_; }
+    bool operator<(const Custom &another) const { return x_ < another.x_; }
 };
 
 TEST(Constructor, Empty) {
@@ -46,12 +46,12 @@ TEST(Constructor, CustomComp) {
 }
 
 TEST(Constructor, Copy) {
-    btree<int, custom> t1;
-    t1[2] = custom(0.5, "one");
-    t1[1] = custom(0.1, "two");
-    t1[4] = custom(0.4, "three");
-    t1[3] = custom(0.11, "five");
-    auto t2 = btree<int, custom>(t1);
+    btree<int, Custom> t1;
+    t1[1] = Custom(0.5, "one");
+    t1[2] = Custom(0.1, "two");
+    t1[3] = Custom(0.4, "three");
+    t1[4] = Custom(0.11, "five");
+    auto t2 = btree<int, Custom>(t1);
     ASSERT_TRUE(!t2.empty());
     ASSERT_EQ(t2.size(), 4);
     for (auto i = t1.begin(); i != t1.end(); ++i) {
@@ -60,14 +60,14 @@ TEST(Constructor, Copy) {
 }
 
 TEST(Constructor, Move) {
-    btree<custom, int> t1;
-    const auto key_0 = custom(0, "zero");
-    const auto key_1 = custom(0.1, "one");
-    const auto key_2 = custom(0.2, "two");
+    btree<Custom, int> t1;
+    const auto key_0 = Custom(0, "zero");
+    const auto key_1 = Custom(0.1, "one");
+    const auto key_2 = Custom(0.2, "two");
     t1[key_2] = 2;
     t1[key_1] = 1;
     t1[key_0] = 0;
-    auto t2 = btree<custom, int>(std::move(t1));
+    auto t2 = btree<Custom, int>(std::move(t1));
     ASSERT_TRUE(t1.empty());
     ASSERT_EQ(t2[key_2], 2);
     ASSERT_EQ(t2[key_1], 1);
@@ -77,17 +77,21 @@ TEST(Constructor, Move) {
 TEST(Operator, CopyAssigment) {
     btree<std::string, std::string> t1;
     t1["One"] = "_one";
+    t1["Two"] = "_two";
     auto &t2 = t1;
     ASSERT_TRUE(!t2.empty());
-    ASSERT_EQ(t2.size(), 1);
+    ASSERT_EQ(t2.size(), 2);
     ASSERT_EQ((t2.find("One"))->second, "_one");
+    for (auto i = t1.begin(); i != t1.end(); ++i) {
+        ASSERT_EQ(t1.at(i->first), t2.at(i->first));
+    }
 }
 
 TEST(Operator, MoveAssigment) {
-    btree<custom, std::string> t1;
-    const auto key_0 = custom(0, "zero");
-    const auto key_1 = custom(0.1, "one");
-    const auto key_2 = custom(0.2, "two");
+    btree<Custom, std::string> t1;
+    const auto key_0 = Custom(0, "zero");
+    const auto key_1 = Custom(0.1, "one");
+    const auto key_2 = Custom(0.2, "two");
     t1[key_2] = "str2";
     t1[key_1] = "str1";
     t1[key_0] = "str0";
@@ -105,9 +109,9 @@ TEST(Operator, MoveAssigment) {
 }
 
 TEST(Operator, Brackets) {
-    const auto key_1 = custom(0.2, "one");
-    const auto key_2 = custom(0.1, "zero");
-    btree<custom, std::string> t;
+    const auto key_1 = Custom(0.2, "one");
+    const auto key_2 = Custom(0.1, "zero");
+    btree<Custom, std::string> t;
     t[key_1] = "_one";
     t[key_2] = "_two";
     t[key_1] = "_three";
@@ -123,7 +127,7 @@ TEST(Operator, Equality) {
         t1["Two"] = "_two";
         t1["One"] = "_one";
         t1["Three"] = "_three";
-        const auto t2 = t1;
+        const auto &t2 = t1;
         ASSERT_TRUE(t1 == t2);
     }
     {

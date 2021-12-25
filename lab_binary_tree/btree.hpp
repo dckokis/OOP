@@ -210,7 +210,8 @@ private:
     std::shared_ptr<TreeNode> root{};
     size_type size_{};
     inline static Compare compare = Compare();
-    std::shared_ptr<TreeNode> leftest() const{
+
+    std::shared_ptr<TreeNode> leftest() const {
         auto current = root;
         if (!current) {
             return current;
@@ -221,23 +222,24 @@ private:
         return current;
     }
 
-    std::shared_ptr<TreeNode> findByKey(const Key &key){
+    std::shared_ptr<TreeNode> findByKey(const Key &key) const {
         auto current = root;
-        if (!current) {
-            return current;
-        }
-        while (current->getData()->first != key) {
-            auto curKey = current->getData()->first;
-            if (compare(key, curKey)) {
-                current = current->getLeft();
-            } else if (!compare(key, curKey)) {
-                current = current->getRight();
+        if (current) {
+            while (current->getData()->first != key) {
+                auto curKey = current->getData()->first;
+                if (compare(key, curKey)) {
+                    current = current->getLeft();
+                } else if (!compare(key, curKey)) {
+                    current = current->getRight();
+                }
+                if (!current) {
+                    break;
+                }
             }
-            if (!current) {
-                return current;
-            }
         }
+        return current;
     }
+
 public:
     using iterator = TreeIterator<false>;
     using const_iterator = TreeIterator<true>;
@@ -259,9 +261,9 @@ public:
     btree &operator=(const btree &another) {
         if (this != &another) {
             clear();
-            compare = another.compare;
-            root = std::make_shared<TreeNode>(*another.root.get());
-            size_ = another.size_;
+            for (auto &elem: another) {
+                insert(elem);
+            }
         }
         return *this;
     }
@@ -275,7 +277,7 @@ public:
 
     iterator begin() {
         auto node = leftest();
-        if ( !node) {
+        if (!node) {
             return end();
         }
         return iterator(node);
@@ -283,7 +285,7 @@ public:
 
     const_iterator begin() const {
         auto node = leftest();
-        if ( !node) {
+        if (!node) {
             return end();
         }
         return const_iterator(node);
@@ -450,38 +452,17 @@ public:
     }
 
     iterator find(const Key &key) {
-        auto current = root;
+        auto current = findByKey(key);
         if (!current) {
             return end();
-        }
-        while (current->getData()->first != key) {
-            if (compare(key, current->getData()->first)) {
-                current = current->getLeft();
-            } else if (!compare(key, current->getData()->first)) {
-                current = current->getRight();
-            }
-            if (!current) {
-                return end();
-            }
         }
         return iterator(current);
     }
 
     const_iterator find(const Key &key) const {
-        auto current = root;
+        auto current = findByKey(key);
         if (!current) {
             return end();
-        }
-        while (current->getData()->first != key) {
-            auto curKey = current->getData()->first;
-            if (compare(key, curKey)) {
-                current = current->getLeft();
-            } else if (!compare(key, curKey)) {
-                current = current->getRight();
-            }
-            if (!current) {
-                return end();
-            }
         }
         return const_iterator(current);
     }
