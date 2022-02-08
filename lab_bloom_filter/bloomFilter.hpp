@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <array>
-#include <xstring>
 
 namespace BloomFilterNamespace {
     class BloomExceptions final : std::exception {
@@ -97,9 +96,6 @@ namespace BloomFilterNamespace {
             for (auto i = 0; i < numFunctions; ++i) {
                 auto uniqueHash = hashValue ^ salts[i];
                 auto index = (uniqueHash % size);
-                /* Insert into the table.
-                 * index / 8 finds the byte index of the table,
-                 * index % 8 gives the bit index within that byte to set. */
                 table[index / 8] |= (1 << (index % 8));
             }
         }
@@ -109,8 +105,6 @@ namespace BloomFilterNamespace {
             for (auto i = 0; i < numFunctions; ++i) {
                 auto uniqueHash = hashValue ^ salts[i];
                 auto index = (uniqueHash % size);
-                /* Test if the particular bit is set; if it is not set,
-                 * this value can not have been inserted. */
                 if (!(table[index / 8] & (1 << (index % 8)))) {
                     return false;
                 }
@@ -167,8 +161,6 @@ namespace BloomFilterNamespace {
         template<bool WithUnion>
         bloomFilter<Value> *fillWith(bloomFilter<Value> *second) {
             auto result = new bloomFilter<Value>(size, numFunctions);
-            /* The table is an array of bits, packed into bytes.  Round up
-             * to the nearest byte. */
             auto arraySize = (size + 7) / 8;
             for (auto i = 0; i < arraySize; ++i) {
                 if (WithUnion) {
