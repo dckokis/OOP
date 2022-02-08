@@ -1,9 +1,6 @@
 #pragma once
 
-#pragma once
-
 #include <functional>
-
 
 class SolveStrategy {
 public:
