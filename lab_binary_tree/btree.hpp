@@ -1,5 +1,4 @@
 #pragma once
-
 #include <algorithm>
 #include <functional>
 #include <memory>
@@ -17,7 +16,6 @@ public:
     using const_reference = std::add_const_t<reference>;
     using pointer = std::add_pointer_t<value_type>;
     using const_pointer = std::add_const_t<pointer>;
-
 private:
     class TreeNode final {
     private:
@@ -71,7 +69,6 @@ private:
         std::weak_ptr<TreeNode> node_{};
 
         friend class btree;
-
     public:
         TreeIterator() = default;
 
