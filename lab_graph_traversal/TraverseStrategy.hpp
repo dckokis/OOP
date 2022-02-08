@@ -25,7 +25,6 @@ public:
     }
 
     virtual ~TraverseStrategy() = default;
-
 protected:
     std::unique_ptr<Finder> finder;
 
