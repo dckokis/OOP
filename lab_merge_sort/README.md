@@ -1,2 +1,2 @@
-# Задача «FilterIterator»
-Реализовать класс, аналогичный boost::filter_iterator - итерируется только по тем элементам, которые удовлетворяют заданным условию. More details: http://oop.afti.ru/tasks/filteriterator
+# Задача «Сортировка слиянием»
+Реализовать сортировку слиянием (merge sort) с задаваемым компаратором. More details: http://oop.afti.ru/tasks/sortirovka-sliyaniem
